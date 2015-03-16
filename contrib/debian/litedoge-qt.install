@@ -1,0 +1,5 @@
+litedoge-qt usr/bin
+share/pixmaps/bitcoin32.xpm usr/share/pixmaps
+share/pixmaps/bitcoin80.xpm usr/share/pixmaps
+debian/litedoge-qt.desktop usr/share/applications
+debian/litedoge-qt.protocol usr/share/kde4/services/
