@@ -10,7 +10,7 @@
 #include "json_spirit_error_position.h"
 
 //#define BOOST_SPIRIT_THREADSAFE  // uncomment for multithreaded use, requires linking to boost.thread
-
+#ifndef Q_MOC_RUN
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/version.hpp>
@@ -29,6 +29,7 @@
     #include <boost/spirit/iterator/multi_pass.hpp>
     #include <boost/spirit/iterator/position_iterator.hpp>
     #define spirit_namespace boost::spirit
+#endif
 #endif
 
 namespace json_spirit
