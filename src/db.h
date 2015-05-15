@@ -14,7 +14,10 @@
 #include <string>
 #include <vector>
 
+#ifndef Q_MOC_RUN
 #include <boost/filesystem/path.hpp>
+#endif
+
 #include <db_cxx.h>
 
 class CAddrMan;
