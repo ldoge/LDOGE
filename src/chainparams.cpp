@@ -93,6 +93,7 @@ public:
 
         vSeeds.push_back(CDNSSeedData("91.121.6.19", "91.121.6.19"));
         vSeeds.push_back(CDNSSeedData("93.157.4.11", "93.157.4.11"));
+        vSeeds.push_back(CDNSSeedData("37.187.99.136", "37.187.99.136"));
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(90);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(8);
