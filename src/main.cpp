@@ -1023,15 +1023,59 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
     nSubsidy = (halvings >= 64)? 0 : (nSubsidy >> halvings);
     nSubsidy -= nSubsidy*(pindexBest->nHeight % g_RewardHalvingPeriod)/(2*g_RewardHalvingPeriod);
     }
-    else if(pindexBest->nHeight < 250000)
+    else if(pindexBest->nHeight < 144999)
     {
     nSubsidy = 30000 * COIN;
     }
-    else
+    else if(pindexBest->nHeight < 189999)
+    {
+    nSubsidy = 28000 * COIN;
+    }
+    else if(pindexBest->nHeight < 234999)
+    {
+    nSubsidy = 26000 * COIN;
+    }
+    else if(pindexBest->nHeight < 279999)
+    {
+    nSubsidy = 24000 * COIN;
+    }
+    else if(pindexBest->nHeight < 324999)
+    {
+    nSubsidy = 22000 * COIN;
+    }
+    else if(pindexBest->nHeight < 369999)
+    {
+    nSubsidy = 20000 * COIN;
+    }
+    else if(pindexBest->nHeight < 414999)
+    {
+    nSubsidy = 18000 * COIN;
+    }
+    else if(pindexBest->nHeight < 459999)
+    {
+    nSubsidy = 16000 * COIN;
+    }
+    else if(pindexBest->nHeight < 504999)
+    {
+    nSubsidy = 14000 * COIN;
+    }
+    else if(pindexBest->nHeight < 549999)
+    {
+    nSubsidy = 12000 * COIN;
+    }
+    else if(pindexBest->nHeight < 594999)
     {
     nSubsidy = 10000 * COIN;
     }
-
+    else if(pindexBest->nHeight < 639999)
+    {
+    nSubsidy = 8000 * COIN;
+    }
+    else
+    {
+    nSubsidy = 6000 * COIN;
+    }
+ 
     return nSubsidy + nFees;
 }
 
