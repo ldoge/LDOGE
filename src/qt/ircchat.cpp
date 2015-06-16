@@ -152,7 +152,7 @@ void ChatWindow::connecte()
     ui->splitter->show();
     Serveur *serveur=new Serveur;
     QTextEdit *textEdit=new QTextEdit;
-    ui->homepage->hide();
+    ui->connectBox->hide();
     ui->labelLogo->show();
 
     ui->tab->addTab(textEdit,"Console/PM");
