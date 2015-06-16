@@ -41,7 +41,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="../bitcoin.qrc">:/images/horLogo</pixmap>
+     <pixmap>:/images/horLogo</pixmap>
     </property>
    </widget>
    <widget class="QLabel" name="join">
@@ -57,7 +57,7 @@
      <string notr="true">font: 14pt &quot;Ubuntu&quot;; color: white;</string>
     </property>
     <property name="text">
-     <string>Join Securitycoin IRC channel:</string>
+     <string>Join litedoge IRC channel:</string>
     </property>
    </widget>
    <widget class="QLabel" name="nickname">
@@ -119,7 +119,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="chanServ">
      <attribute name="title">
@@ -188,13 +188,13 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap resource="../bitcoin.qrc">:/images/chatLogo</pixmap>
+     <pixmap>:/images/chatLogo</pixmap>
     </property>
    </widget>
   </widget>
   <action name="actionQuit">
    <property name="text">
-    <string>Quitter</string>
+    <string>Quit</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
@@ -202,7 +202,7 @@
   </action>
   <action name="actionCloseTab">
    <property name="text">
-    <string>Fermer l'onglet</string>
+    <string>Close Tab</string>
    </property>
   </action>
   <zorder>widgetLogo</zorder>
@@ -210,8 +210,6 @@
   <zorder>splitter</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="../bitcoin.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

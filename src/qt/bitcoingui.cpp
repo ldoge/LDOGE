@@ -853,10 +853,11 @@ void BitcoinGUI::openTwitter()
 void BitcoinGUI::gotoChatWindow()
 {
     chatPageAction->setChecked(true);
-    centralWidget->setCurrentWidget(chatPage);
+    centralStackedWidget->setCurrentWidget(chatPage);
 
     exportAction->setEnabled(false);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+    connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
