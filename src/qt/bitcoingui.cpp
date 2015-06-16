@@ -121,6 +121,8 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     sendCoinsPage = new SendCoinsDialog(this);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+    chatPage = new ChatWindow(this);
+
 
     centralStackedWidget = new QStackedWidget(this);
     centralStackedWidget->addWidget(overviewPage);
@@ -128,6 +130,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(addressBookPage);
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
+    centralStackedWidget->addWidget(chatPage);
 
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
@@ -396,6 +399,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(blockExplorerAction);
     toolbar->addAction(websiteAction);
     toolbar->addAction(twitterAction);
+    toolbar->addAction(chatPageAction);
 
     toolbar->addWidget(makeToolBarSpacer());
 
@@ -470,6 +474,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
+        chatPage->setModel(clientModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
@@ -843,6 +848,15 @@ void BitcoinGUI::openWebsite()
 void BitcoinGUI::openTwitter()
 {
     QDesktopServices::openUrl(QUrl("https://www.twitter.com/litedoge"));
+}
+
+void BitcoinGUI::gotoChatWindow()
+{
+    chatPageAction->setChecked(true);
+    centralWidget->setCurrentWidget(chatPage);
+
+    exportAction->setEnabled(false);
+    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
