@@ -32,6 +32,7 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
+#include "ircchat.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
