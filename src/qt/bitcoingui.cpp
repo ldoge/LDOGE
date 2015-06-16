@@ -288,6 +288,7 @@ void BitcoinGUI::createActions()
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
     connect(twitterAction, SIGNAL(triggered()), this, SLOT(openTwitter()));
+    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatWindow()));
 
     quitAction = new QAction(tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
