@@ -59,7 +59,7 @@ void Serveur::connected()
 
 void Serveur::joins()
 {
-    join("#securitycoin");
+    join("#litedoge");
 }
 
 void Serveur::readServeur()
