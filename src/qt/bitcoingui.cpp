@@ -272,7 +272,7 @@ void BitcoinGUI::createActions()
     twitterAction = new QAction(QIcon(":/icons/twitter"), tr("&&Such Twitter"), this);
     twitterAction->setToolTip(tr("Visit us on Twitter"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr(""), this);
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&&Litedoge IRC"), this);
     chatPageAction->setToolTip((tr("Join Litedoge IRC Channel")));
     chatPageAction->setCheckable(true);
     tabGroup->addAction(chatPageAction);

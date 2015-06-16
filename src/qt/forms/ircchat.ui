@@ -141,6 +141,12 @@
       <height>30</height>
      </rect>
     </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="placeholderText">
+     <string>Enter Message Here...</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="disconnect">
     <property name="geometry">
