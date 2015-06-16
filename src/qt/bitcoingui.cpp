@@ -269,6 +269,12 @@ void BitcoinGUI::createActions()
     twitterAction = new QAction(QIcon(":/icons/twitter"), tr("&&Such Twitter"), this);
     twitterAction->setToolTip(tr("Visit us on Twitter"));
 
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr(""), this);
+    chatPageAction->setToolTip((tr("Join Litedoge IRC Channel")));
+    chatPageAction->setCheckable(true);
+    tabGroup->addAction(chatPageAction);
+
+
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
