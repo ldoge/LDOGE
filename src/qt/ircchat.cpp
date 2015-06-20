@@ -83,6 +83,7 @@ void ChatWindow::disconnectFromServer() {
     ui->splitter->hide();
     ui->labelLogo->hide();
     ui->homepage->show();
+    ui->connectBox->show();
 
 }
 
