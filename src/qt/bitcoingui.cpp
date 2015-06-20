@@ -272,8 +272,8 @@ void BitcoinGUI::createActions()
     twitterAction = new QAction(QIcon(":/icons/twitter"), tr("&&Such Twitter"), this);
     twitterAction->setToolTip(tr("Visit us on Twitter"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&&Litedoge IRC"), this);
-    chatPageAction->setToolTip((tr("Join Litedoge IRC Channel")));
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&&LiteDoge IRC"), this);
+    chatPageAction->setToolTip((tr("Join LiteDoge IRC Channel")));
     chatPageAction->setCheckable(true);
     tabGroup->addAction(chatPageAction);
 
@@ -384,9 +384,9 @@ void BitcoinGUI::createToolBars()
     if (fUseBlackTheme)
     {
         QWidget* header = new QWidget();
-        header->setMinimumSize(160, 116);
+        header->setMinimumSize(160, 120);
         header->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        header->setStyleSheet("QWidget { background-color: rgb(24,26,30); background-repeat: no-repeat; background-image: url(:/images/header); background-position: top center; }");
+        header->setStyleSheet("QWidget { background-color: rgb(30,32,36); background-repeat: no-repeat; background-image: url(:/images/header); background-position: top center; }");
         toolbar->addWidget(header);
         toolbar->addWidget(makeToolBarSpacer());
     }
@@ -408,14 +408,15 @@ void BitcoinGUI::createToolBars()
 
     addToolBar(Qt::LeftToolBarArea, toolbar);
 
-    int w = 0;
+//    int w = 0;
+
+//    foreach(QAction *action, toolbar->actions()) {
+//        w = std::max(w, toolbar->widgetForAction(action)->width());
+//    }
 
     foreach(QAction *action, toolbar->actions()) {
-        w = std::max(w, toolbar->widgetForAction(action)->width());
-    }
-
-    foreach(QAction *action, toolbar->actions()) {
-        toolbar->widgetForAction(action)->setFixedWidth(w);
+//        toolbar->widgetForAction(action)->setFixedWidth(w);
+        toolbar->widgetForAction(action)->setFixedWidth(170);
     }
 }
 

@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="styleSheet">
-   <string notr="true">background: transparent;</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="widgetLogo" native="true">
    <property name="geometry">
@@ -72,13 +72,12 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="chanServ">
        <attribute name="title">
         <string>Tab 1</string>
        </attribute>
-       <zorder>connectBox</zorder>
       </widget>
       <widget class="QWidget" name="chat">
        <attribute name="title">
@@ -202,12 +201,6 @@
      </widget>
     </widget>
    </widget>
-   <zorder>labelLogo</zorder>
-   <zorder>homepage</zorder>
-   <zorder>homepage</zorder>
-   <zorder>homepage</zorder>
-   <zorder>homepage</zorder>
-   <zorder>homepage</zorder>
   </widget>
   <action name="actionQuit">
    <property name="text">

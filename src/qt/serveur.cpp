@@ -51,7 +51,7 @@ void Serveur::connected()
 {
     affichage->append("Connecting...");
 
-	sendData("USER "+pseudo+" localhost "+serveur+" :"+pseudo);
+    sendData("USER "+pseudo+" localhost "+serveur+" :"+pseudo);
     sendData("NICK "+pseudo);
     affichage->append("Connected to irc.freenode.net");
 
@@ -71,14 +71,14 @@ void Serveur::readServeur()
 
 	if(message.startsWith("PING :"))
 	{
-		QStringList liste=message.split(" ");
+        QStringList liste=message.split(" ");
 		QString msg="PONG "+liste.at(1);
 		sendData(msg);
 	}
 	else if(message.contains("Nickname is already in use."))
 	{
         pseudo=pseudo+"_2";
-		pseudo.remove("\r\n");
+        pseudo.remove("\r\n");
 		sendData("NICK "+pseudo);
 		emit pseudoChanged(pseudo);
         ecrire("-> Name changed to "+pseudo);
@@ -262,7 +262,8 @@ QString Serveur::parseCommande(QString comm,bool serveur)
         if(comm.startsWith(":"))
             comm.insert(0,":");
 
-        return "PRIVMSG "+destChan+" "+comm.replace(" ","\t");
+//        return "PRIVMSG "+destChan+" "+comm.replace(" ","\t");
+         return "PRIVMSG "+destChan+" "+comm;
     }
 	else
 	{
