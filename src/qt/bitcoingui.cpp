@@ -32,7 +32,11 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "ircchat.h"
+#include "ui_chatpage.h"
+#include "chatpage.h"
+#include "cookiejar.h"
+#include "webview.h"
+
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -121,7 +125,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     sendCoinsPage = new SendCoinsDialog(this);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
-    chatPage = new ChatWindow(this);
+    chatPage = new ChatPage(this);
 
 
     centralStackedWidget = new QStackedWidget(this);
@@ -275,6 +279,7 @@ void BitcoinGUI::createActions()
     chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&&LiteDoge IRC"), this);
     chatPageAction->setToolTip((tr("Join LiteDoge IRC Channel")));
     chatPageAction->setCheckable(true);
+    chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(chatPageAction);
 
 
@@ -291,7 +296,7 @@ void BitcoinGUI::createActions()
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
     connect(twitterAction, SIGNAL(triggered()), this, SLOT(openTwitter()));
-    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatWindow()));
+    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
 
     quitAction = new QAction(tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -457,6 +462,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
         rpcConsole->setClientModel(clientModel);
         addressBookPage->setOptionsModel(clientModel->getOptionsModel());
         receiveCoinsPage->setOptionsModel(clientModel->getOptionsModel());
+
     }
 }
 
@@ -475,7 +481,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
-        chatPage->setModel(clientModel);
+        chatPage->setModel(walletModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
@@ -851,7 +857,7 @@ void BitcoinGUI::openTwitter()
     QDesktopServices::openUrl(QUrl("https://www.twitter.com/litedoge"));
 }
 
-void BitcoinGUI::gotoChatWindow()
+void BitcoinGUI::gotoChatPage()
 {
     chatPageAction->setChecked(true);
     centralStackedWidget->setCurrentWidget(chatPage);

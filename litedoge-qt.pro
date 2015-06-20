@@ -12,6 +12,12 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 }
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets
+    QT += webkitwidgets
+} else {
+    QT += webkit
+}
 
 # for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
@@ -227,8 +233,10 @@ HEADERS += src/qt/bitcoingui.h \
     src/clientversion.h \
     src/threadsafety.h \
     src/tinyformat.h \
-    src/qt/ircchat.h \
-    src/qt/serveur.h
+    src/qt/autosaver.h \
+    src/qt/chatpage.h \
+    src/qt/cookiejar.h \
+    src/qt/webview.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -306,8 +314,10 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
     src/pbkdf2.cpp \
-    src/qt/ircchat.cpp \
-    src/qt/serveur.cpp
+    src/qt/autosaver.cpp \
+    src/qt/chatpage.cpp \
+    src/qt/cookiejar.cpp \
+    src/qt/webview.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -325,7 +335,7 @@ FORMS += \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
-    src/qt/forms/ircchat.ui
+    src/qt/forms/chatpage.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h

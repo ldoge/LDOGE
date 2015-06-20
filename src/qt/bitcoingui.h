@@ -16,7 +16,7 @@ class SendCoinsDialog;
 class SignVerifyMessageDialog;
 class Notificator;
 class RPCConsole;
-class ChatWindow;
+class ChatPage;
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -67,7 +67,7 @@ private:
     AddressBookPage *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     SignVerifyMessageDialog *signVerifyMessageDialog;
-    ChatWindow *chatPage;
+    ChatPage *chatPage;
 
     QLabel *labelEncryptionIcon;
     QLabel *labelStakingIcon;
@@ -166,7 +166,7 @@ private slots:
     void openWebsite();
     void openTwitter();
     /** Switch to IRC Chat Page */
-    void gotoChatWindow();
+    void gotoChatPage();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
