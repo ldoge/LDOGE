@@ -14,10 +14,9 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 }
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
-    QT += webkitwidgets
-} else {
-    QT += webkit
+    QT += webkit webkitwidgets
 }
+    QT += webkit
 
 # for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
@@ -367,7 +366,6 @@ OTHER_FILES += \
     doc/*.rst doc/*.txt doc/README README.md res/bitcoin-qt.rc
 
 # platform specific defaults, if not overridden on command line
-# platform specific defaults, if not overridden on command line
 isEmpty(BOOST_LIB_SUFFIX) {
     macx:BOOST_LIB_SUFFIX = -mt
     windows:BOOST_LIB_SUFFIX = -mgw44-mt-1_53
@@ -378,7 +376,7 @@ isEmpty(BOOST_THREAD_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_LIB_PATH) {
-    macx:BDB_LIB_PATH = /opt/local/lib/db48
+    macx:BDB_LIB_PATH = /usr/local/lib
 }
 
 isEmpty(BDB_LIB_SUFFIX) {
@@ -386,7 +384,7 @@ isEmpty(BDB_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_INCLUDE_PATH) {
-    macx:BDB_INCLUDE_PATH = /opt/local/include/db48
+    macx:BDB_INCLUDE_PATH = /usr/local/include/
 }
 
 isEmpty(BOOST_LIB_PATH) {
@@ -398,19 +396,19 @@ isEmpty(BOOST_INCLUDE_PATH) {
 }
 
 isEmpty(OPENSSL_LIB_PATH) {
-    macx:OPENSSL_LIB_PATH = /opt/local/lib
+    macx:OPENSSL_LIB_PATH = /usr/local/lib
 }
 
 isEmpty(OPENSSL_INCLUDE_PATH) {
-    macx:OPENSSL_INCLUDE_PATH = /opt/local/include
+    macx:OPENSSL_INCLUDE_PATH = /usr/local/include
 
 }
 isEmpty(MINIUPNPC_LIB_PATH) {
-    macx:MINIUPNPC_LIB_PATH = /opt/local/lib
+    macx:MINIUPNPC_LIB_PATH = /usr/local/lib
 }
 
 isEmpty(MINIUPNPC_INCLUDE_PATH) {
-    macx:MINIUPNPC_INCLUDE_PATH = /opt/local/include
+    macx:MINIUPNPC_INCLUDE_PATH = /usr/local/include
 }
 
 windows:DEFINES += WIN32
