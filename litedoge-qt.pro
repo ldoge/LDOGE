@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 1.0.1.2
 INCLUDEPATH += src src/json src/qt
-QT += network
+QT += network webkit
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
@@ -11,12 +11,8 @@ CONFIG += thread
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+    QT += webkitwidgets
 }
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    QT += webkit webkitwidgets
-}
-    QT += webkit
 
 # for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
