@@ -32,6 +32,11 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
+#include "ui_chatpage.h"
+#include "chatpage.h"
+#include "cookiejar.h"
+#include "webview.h"
+
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -120,6 +125,8 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     sendCoinsPage = new SendCoinsDialog(this);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+    chatPage = new ChatPage(this);
+
 
     centralStackedWidget = new QStackedWidget(this);
     centralStackedWidget->addWidget(overviewPage);
@@ -127,6 +134,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(addressBookPage);
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
+    centralStackedWidget->addWidget(chatPage);
 
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
@@ -268,6 +276,13 @@ void BitcoinGUI::createActions()
     twitterAction = new QAction(QIcon(":/icons/twitter"), tr("&&Such Twitter"), this);
     twitterAction->setToolTip(tr("Visit us on Twitter"));
 
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&&LiteDoge IRC"), this);
+    chatPageAction->setToolTip((tr("Join LiteDoge IRC Channel")));
+    chatPageAction->setCheckable(true);
+    chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
+    tabGroup->addAction(chatPageAction);
+
+
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -281,6 +296,7 @@ void BitcoinGUI::createActions()
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
     connect(twitterAction, SIGNAL(triggered()), this, SLOT(openTwitter()));
+    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
 
     quitAction = new QAction(tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -373,9 +389,9 @@ void BitcoinGUI::createToolBars()
     if (fUseBlackTheme)
     {
         QWidget* header = new QWidget();
-        header->setMinimumSize(160, 116);
+        header->setMinimumSize(160, 120);
         header->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        header->setStyleSheet("QWidget { background-color: rgb(24,26,30); background-repeat: no-repeat; background-image: url(:/images/header); background-position: top center; }");
+        header->setStyleSheet("QWidget { background-color: rgb(30,32,36); background-repeat: no-repeat; background-image: url(:/images/header); background-position: top center; }");
         toolbar->addWidget(header);
         toolbar->addWidget(makeToolBarSpacer());
     }
@@ -388,6 +404,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(blockExplorerAction);
     toolbar->addAction(websiteAction);
     toolbar->addAction(twitterAction);
+    toolbar->addAction(chatPageAction);
 
     toolbar->addWidget(makeToolBarSpacer());
 
@@ -396,14 +413,15 @@ void BitcoinGUI::createToolBars()
 
     addToolBar(Qt::LeftToolBarArea, toolbar);
 
-    int w = 0;
+//    int w = 0;
+
+//    foreach(QAction *action, toolbar->actions()) {
+//        w = std::max(w, toolbar->widgetForAction(action)->width());
+//    }
 
     foreach(QAction *action, toolbar->actions()) {
-        w = std::max(w, toolbar->widgetForAction(action)->width());
-    }
-
-    foreach(QAction *action, toolbar->actions()) {
-        toolbar->widgetForAction(action)->setFixedWidth(w);
+//        toolbar->widgetForAction(action)->setFixedWidth(w);
+        toolbar->widgetForAction(action)->setFixedWidth(170);
     }
 }
 
@@ -444,6 +462,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
         rpcConsole->setClientModel(clientModel);
         addressBookPage->setOptionsModel(clientModel->getOptionsModel());
         receiveCoinsPage->setOptionsModel(clientModel->getOptionsModel());
+
     }
 }
 
@@ -462,6 +481,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
+        chatPage->setModel(walletModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
@@ -835,6 +855,16 @@ void BitcoinGUI::openWebsite()
 void BitcoinGUI::openTwitter()
 {
     QDesktopServices::openUrl(QUrl("https://www.twitter.com/litedoge"));
+}
+
+void BitcoinGUI::gotoChatPage()
+{
+    chatPageAction->setChecked(true);
+    centralStackedWidget->setCurrentWidget(chatPage);
+
+    exportAction->setEnabled(false);
+    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+    connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
