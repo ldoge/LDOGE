@@ -67,7 +67,6 @@ private:
     AddressBookPage *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     SignVerifyMessageDialog *signVerifyMessageDialog;
-    ChatPage *chatPage;
 
     QLabel *labelEncryptionIcon;
     QLabel *labelStakingIcon;

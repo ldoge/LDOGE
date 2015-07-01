@@ -32,11 +32,6 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "ui_chatpage.h"
-#include "chatpage.h"
-#include "cookiejar.h"
-#include "webview.h"
-
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
@@ -125,7 +120,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     sendCoinsPage = new SendCoinsDialog(this);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
-    chatPage = new ChatPage(this);
 
 
     centralStackedWidget = new QStackedWidget(this);
@@ -134,7 +128,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(addressBookPage);
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
-    centralStackedWidget->addWidget(chatPage);
 
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
@@ -278,10 +271,6 @@ void BitcoinGUI::createActions()
 
     chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&&LiteDoge IRC"), this);
     chatPageAction->setToolTip((tr("Join LiteDoge IRC Channel")));
-    chatPageAction->setCheckable(true);
-    chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
-    tabGroup->addAction(chatPageAction);
-
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
@@ -481,7 +470,6 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
-        chatPage->setModel(walletModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
@@ -859,12 +847,7 @@ void BitcoinGUI::openTwitter()
 
 void BitcoinGUI::gotoChatPage()
 {
-    chatPageAction->setChecked(true);
-    centralStackedWidget->setCurrentWidget(chatPage);
-
-    exportAction->setEnabled(false);
-    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
-    connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
+    QDesktopServices::openUrl(QUrl("https://kiwiirc.com/client/irc.kiwiirc.com/#litedoge"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
