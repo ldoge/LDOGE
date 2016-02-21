@@ -30,6 +30,7 @@ public:
         Fee,               // qint64
         ReserveBalance,    // qint64
         DisplayUnit,       // BitcoinUnits::Unit
+        ThirdPartyTxUrls,       // QString
         Language,          // QString
         CoinControlFeatures, // bool
         MinimizeCoinAge,   // bool
@@ -49,11 +50,13 @@ public:
     bool getMinimizeToTray();
     bool getMinimizeOnClose();
     int getDisplayUnit();
+    QString getThirdPartyTxUrls() { return strThirdPartyTxUrls; }
     bool getCoinControlFeatures();
     QString getLanguage() { return language; }
 
 private:
     int nDisplayUnit;
+    QString strThirdPartyTxUrls;
     bool fMinimizeToTray;
     bool fMinimizeOnClose;
     bool fCoinControlFeatures;
