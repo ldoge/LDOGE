@@ -98,7 +98,7 @@ private:
     QAction *openRPCConsoleAction;
     QAction *blockExplorerAction;
     QAction *websiteAction;
-    QAction *twitterAction;
+    QAction *facebookAction;
     QAction *chatPageAction;
 
     QSystemTrayIcon *trayIcon;
@@ -164,7 +164,7 @@ private slots:
     void gotoSendCoinsPage();
     void openBlockExplorer();
     void openWebsite();
-    void openTwitter();
+    void openFacebook();
     /** Switch to IRC Chat Page */
     void gotoChatPage();
 

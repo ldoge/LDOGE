@@ -273,8 +273,8 @@ void BitcoinGUI::createActions()
     websiteAction = new QAction(QIcon(":/icons/globe"), tr("&&Wow Website"), this);
     websiteAction->setToolTip(tr("Go to the Official LiteDoge Website"));
 
-    twitterAction = new QAction(QIcon(":/icons/twitter"), tr("&&Such Twitter"), this);
-    twitterAction->setToolTip(tr("Visit us on Twitter"));
+    facebookAction = new QAction(QIcon(":/icons/facebook"), tr("&&Such Facebook"), this);
+    facebookAction->setToolTip(tr("Visit us on Facebook"));
 
     chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&&LiteDoge IRC"), this);
     chatPageAction->setToolTip((tr("Join LiteDoge IRC Channel")));
@@ -295,7 +295,7 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
-    connect(twitterAction, SIGNAL(triggered()), this, SLOT(openTwitter()));
+    connect(facebookAction, SIGNAL(triggered()), this, SLOT(openFacebook()));
     connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
 
     quitAction = new QAction(tr("E&xit"), this);
@@ -403,7 +403,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(addressBookAction);
     toolbar->addAction(blockExplorerAction);
     toolbar->addAction(websiteAction);
-    toolbar->addAction(twitterAction);
+    toolbar->addAction(facebookAction);
     toolbar->addAction(chatPageAction);
 
     toolbar->addWidget(makeToolBarSpacer());
@@ -844,17 +844,17 @@ void BitcoinGUI::gotoSendCoinsPage()
 
 void BitcoinGUI::openBlockExplorer()
 {
-    QDesktopServices::openUrl(QUrl("http://blockexperts.com/ldoge"));
+    QDesktopServices::openUrl(QUrl("http://www.presstab.pw/phpexplorer/LDOGE/index.php"));
 }
 
 void BitcoinGUI::openWebsite()
 {
-    QDesktopServices::openUrl(QUrl("http://www.litedoge.org"));
+    QDesktopServices::openUrl(QUrl("http://www.ldoge.tech"));
 }
 
-void BitcoinGUI::openTwitter()
+void BitcoinGUI::openFacebook()
 {
-    QDesktopServices::openUrl(QUrl("https://www.twitter.com/litedoge"));
+    QDesktopServices::openUrl(QUrl("http://www.facebook.com/litedoge"));
 }
 
 void BitcoinGUI::gotoChatPage()
