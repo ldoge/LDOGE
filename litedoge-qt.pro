@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.3.0.0
 INCLUDEPATH += src src/json src/qt
-QT += network webkit
+QT += network
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
@@ -11,7 +11,6 @@ CONFIG += thread
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    QT += webkitwidgets
 }
 
 # for boost 1.37, add -mt to the boost libraries
@@ -228,10 +227,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/clientversion.h \
     src/threadsafety.h \
     src/tinyformat.h \
-    src/qt/autosaver.h \
-    src/qt/chatpage.h \
-    src/qt/cookiejar.h \
-    src/qt/webview.h
+    src/qt/autosaver.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -309,10 +305,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
     src/pbkdf2.cpp \
-    src/qt/autosaver.cpp \
-    src/qt/chatpage.cpp \
-    src/qt/cookiejar.cpp \
-    src/qt/webview.cpp
+    src/qt/autosaver.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -329,8 +322,7 @@ FORMS += \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
-    src/qt/forms/optionsdialog.ui \
-    src/qt/forms/chatpage.ui
+    src/qt/forms/optionsdialog.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
