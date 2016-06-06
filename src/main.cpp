@@ -577,8 +577,13 @@ bool CTransaction::CheckTransaction() const
 
 int64_t GetMinFee(const CTransaction& tx, unsigned int nBlockSize, enum GetMinFee_mode mode, unsigned int nBytes)
 {
-    // Base fee is either MIN_TX_FEE or MIN_RELAY_TX_FEE
+    // Base fee is either MIN_TX_FEE (or MIN_TX_FEEv2 after block 639999) or MIN_RELAY_TX_FEE
+if(pindexBest->nHeight < 639999) {
     int64_t nBaseFee = (mode == GMF_RELAY) ? MIN_RELAY_TX_FEE : MIN_TX_FEE;
+    }
+else {
+    int64_t nBaseFee = (mode == GMF_RELAY) ? MIN_RELAY_TX_FEEv2 : MIN_TX_FEEv2;
+    }
 
     unsigned int nNewBlockSize = nBlockSize + nBytes;
     int64_t nMinFee = (1 + (int64_t)nBytes / 1000) * nBaseFee;
@@ -678,12 +683,20 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
         int64_t nFees = tx.GetValueIn(mapInputs)-tx.GetValueOut();
         unsigned int nSize = ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION);
 
-        // Don't accept it if it can't get into a block
+        // Don't accept it if it can't get into a block & change MIN_TX_FEE to MIN_TX_FEEv2 at block 639999
         int64_t txMinFee = GetMinFee(tx, 1000, GMF_RELAY, nSize);
-        if ((fLimitFree && nFees < txMinFee) || (!fLimitFree && nFees < MIN_TX_FEE))
+ 
+         if(pindexBest->nHeight < 639999) {
+            if ((fLimitFree && nFees < txMinFee) || (!fLimitFree && nFees < MIN_TX_FEE))
             return error("AcceptToMemoryPool : not enough fees %s, %d < %d",
                          hash.ToString(),
                          nFees, txMinFee);
+        else {
+            if ((fLimitFree && nFees < txMinFee) || (!fLimitFree && nFees < MIN_TX_FEEv2))
+            return error("AcceptToMemoryPool : not enough fees %s, %d < %d",
+                         hash.ToString(),
+                         nFees, txMinFee);
+            }
 
         // Continuously rate-limit free transactions
         // This mitigates 'penny-flooding' -- sending thousands of free transactions just to
