@@ -44,9 +44,13 @@ static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 750;
 /** The maximum number of entries in an 'inv' protocol message */
 static const unsigned int MAX_INV_SZ = 50000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
-static const int64_t MIN_TX_FEE = 10000000; //0.1 coins
+static const int64_t MIN_TX_FEE = 1000000; //0.01 coins
 /** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
+/** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) after block 639999 */
+static const int64_t MIN_TX_FEEv2 = 10000000; //0.1 coins
+/** Fees smaller than this (in satoshi) are considered zero fee (for relaying) after block 639999 */
+static const int64_t MIN_RELAY_TX_FEEv2 = MIN_TX_FEEv2;
 /** No amount larger than this (in satoshi) is valid for sending*/
 static const int64_t MAX_MONEY = 50000000000 * COIN;
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
