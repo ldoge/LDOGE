@@ -691,6 +691,7 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
             return error("AcceptToMemoryPool : not enough fees %s, %d < %d",
                          hash.ToString(),
                          nFees, txMinFee);
+            }
         else {
             if ((fLimitFree && nFees < txMinFee) || (!fLimitFree && nFees < MIN_TX_FEEv2))
             return error("AcceptToMemoryPool : not enough fees %s, %d < %d",
