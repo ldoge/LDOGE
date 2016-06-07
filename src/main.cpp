@@ -577,8 +577,8 @@ bool CTransaction::CheckTransaction() const
 
 int64_t GetMinFee(const CTransaction& tx, unsigned int nBlockSize, enum GetMinFee_mode mode, unsigned int nBytes)
 {
-    // Base fee is either MIN_TX_FEE (or MIN_TX_FEEv2 after block 639999) or MIN_RELAY_TX_FEE
-if(pindexBest->nHeight < 639999) {
+    // Base fee is either MIN_TX_FEE (or MIN_TX_FEEv2 after block 594999) or MIN_RELAY_TX_FEE
+if(pindexBest->nHeight < 594999) {
     int64_t nBaseFee = (mode == GMF_RELAY) ? MIN_RELAY_TX_FEE : MIN_TX_FEE;
     }
 else {
@@ -683,10 +683,10 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
         int64_t nFees = tx.GetValueIn(mapInputs)-tx.GetValueOut();
         unsigned int nSize = ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION);
 
-        // Don't accept it if it can't get into a block & change MIN_TX_FEE to MIN_TX_FEEv2 at block 639999
+        // Don't accept it if it can't get into a block & change MIN_TX_FEE to MIN_TX_FEEv2 at block 594999
         int64_t txMinFee = GetMinFee(tx, 1000, GMF_RELAY, nSize);
  
-         if(pindexBest->nHeight < 639999) {
+         if(pindexBest->nHeight < 594999) {
             if ((fLimitFree && nFees < txMinFee) || (!fLimitFree && nFees < MIN_TX_FEE))
             return error("AcceptToMemoryPool : not enough fees %s, %d < %d",
                          hash.ToString(),
@@ -3002,7 +3002,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         uint64_t nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
  
-        if(pindexBest->nHeight < 639999) {
+ // change variable to be used for the minimum protocol version allowed on the network from MIN_PEER_PROTO_VERSION to MIN_PEER_PROTO_VERSIONv2 after block 594999
+        if(pindexBest->nHeight < 594999) {
             if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
             {
                 // disconnect from peers older than this proto version
