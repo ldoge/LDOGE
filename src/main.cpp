@@ -578,11 +578,13 @@ bool CTransaction::CheckTransaction() const
 int64_t GetMinFee(const CTransaction& tx, unsigned int nBlockSize, enum GetMinFee_mode mode, unsigned int nBytes)
 {
     // Base fee is either MIN_TX_FEE (or MIN_TX_FEEv2 after block 594999) or MIN_RELAY_TX_FEE
+int64_t nBaseFee;
+
 if(pindexBest->nHeight < 594999) {
-    int64_t nBaseFee = (mode == GMF_RELAY) ? MIN_RELAY_TX_FEE : MIN_TX_FEE;
+    nBaseFee = (mode == GMF_RELAY) ? MIN_RELAY_TX_FEE : MIN_TX_FEE;
     }
 else {
-    int64_t nBaseFee = (mode == GMF_RELAY) ? MIN_RELAY_TX_FEEv2 : MIN_TX_FEEv2;
+    nBaseFee = (mode == GMF_RELAY) ? MIN_RELAY_TX_FEEv2 : MIN_TX_FEEv2;
     }
 
     unsigned int nNewBlockSize = nBlockSize + nBytes;
