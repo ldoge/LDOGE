@@ -577,8 +577,13 @@ bool CTransaction::CheckTransaction() const
 
 int64_t GetMinFee(const CTransaction& tx, unsigned int nBlockSize, enum GetMinFee_mode mode, unsigned int nBytes)
 {
-    // Base fee is either MIN_TX_FEE or MIN_RELAY_TX_FEE
+    // Base fee is either MIN_TX_FEE (or MIN_TX_FEEv2 after block 594999) or MIN_RELAY_TX_FEE
+if(pindexBest->nHeight < 594999) {
     int64_t nBaseFee = (mode == GMF_RELAY) ? MIN_RELAY_TX_FEE : MIN_TX_FEE;
+    }
+else {
+    int64_t nBaseFee = (mode == GMF_RELAY) ? MIN_RELAY_TX_FEEv2 : MIN_TX_FEEv2;
+    }
 
     unsigned int nNewBlockSize = nBlockSize + nBytes;
     int64_t nMinFee = (1 + (int64_t)nBytes / 1000) * nBaseFee;
@@ -678,12 +683,21 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CTransaction &tx, bool fLimitFree,
         int64_t nFees = tx.GetValueIn(mapInputs)-tx.GetValueOut();
         unsigned int nSize = ::GetSerializeSize(tx, SER_NETWORK, PROTOCOL_VERSION);
 
-        // Don't accept it if it can't get into a block
+        // Don't accept it if it can't get into a block & change MIN_TX_FEE to MIN_TX_FEEv2 at block 594999
         int64_t txMinFee = GetMinFee(tx, 1000, GMF_RELAY, nSize);
-        if ((fLimitFree && nFees < txMinFee) || (!fLimitFree && nFees < MIN_TX_FEE))
+ 
+         if(pindexBest->nHeight < 594999) {
+            if ((fLimitFree && nFees < txMinFee) || (!fLimitFree && nFees < MIN_TX_FEE))
             return error("AcceptToMemoryPool : not enough fees %s, %d < %d",
                          hash.ToString(),
                          nFees, txMinFee);
+            }
+        else {
+            if ((fLimitFree && nFees < txMinFee) || (!fLimitFree && nFees < MIN_TX_FEEv2))
+            return error("AcceptToMemoryPool : not enough fees %s, %d < %d",
+                         hash.ToString(),
+                         nFees, txMinFee);
+            }
 
         // Continuously rate-limit free transactions
         // This mitigates 'penny-flooding' -- sending thousands of free transactions just to
@@ -1069,11 +1083,19 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
     }
     else if(pindexBest->nHeight < 639999)
     {
-    nSubsidy = 8000 * COIN;
+    nSubsidy = 4000 * COIN;
     }
+    else if(pindexBest->nHeight < 684999)
+    {
+    nSubsidy = 2000 * COIN;
+    }
+    else if(pindexBest->nHeight < 729999)
+    {
+    nSubsidy = 1000 * COIN;
+    }    
     else
     {
-    nSubsidy = 6000 * COIN;
+    nSubsidy = 500 * COIN;
     }
  
     return nSubsidy + nFees;
@@ -2979,12 +3001,25 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         CAddress addrFrom;
         uint64_t nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
-        if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
-        {
-            // disconnect from peers older than this proto version
-            LogPrintf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString(), pfrom->nVersion);
-            pfrom->fDisconnect = true;
-            return false;
+ 
+ // change variable to be used for the minimum protocol version allowed on the network from MIN_PEER_PROTO_VERSION to MIN_PEER_PROTO_VERSIONv2 after block 594999
+        if(pindexBest->nHeight < 594999) {
+            if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+            {
+                // disconnect from peers older than this proto version
+                LogPrintf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString(), pfrom->nVersion);
+                pfrom->fDisconnect = true;
+                return false;
+            }
+        }
+        else {
+            if (pfrom->nVersion < MIN_PEER_PROTO_VERSIONv2)
+            {
+                // disconnect from peers older than this proto version
+                LogPrintf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString(), pfrom->nVersion);
+                pfrom->fDisconnect = true;
+                return false;
+            }
         }
 
         if (pfrom->nVersion == 10300)
