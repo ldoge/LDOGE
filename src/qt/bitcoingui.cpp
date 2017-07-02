@@ -834,7 +834,7 @@ void BitcoinGUI::gotoSendCoinsPage()
 
 void BitcoinGUI::openBlockExplorer()
 {
-    QDesktopServices::openUrl(QUrl("http://www.presstab.pw/phpexplorer/LDOGE/index.php"));
+    QDesktopServices::openUrl(QUrl("http://ldoge.miningalts.com"));
 }
 
 void BitcoinGUI::openWebsite()
