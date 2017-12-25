@@ -91,10 +91,14 @@ public:
         assert(hashGenesisBlock == uint256("0x0000032101032f27e7cdddb1196353f7fc9e1b6294717432135add95534f67c6"));
         assert(genesis.hashMerkleRoot == uint256("0x6e8089863e3811437cca6029c8eb113e0ddec4cb553e7cfdf8944c964cf86832"));
 
-        vSeeds.push_back(CDNSSeedData("fuzzbawls.pw", "ldoge.seed.fuzzbawls.pw"));
-        vSeeds.push_back(CDNSSeedData("91.121.6.19", "91.121.6.19"));
-        vSeeds.push_back(CDNSSeedData("93.157.4.11", "93.157.4.11"));
-        vSeeds.push_back(CDNSSeedData("37.187.99.136", "37.187.99.136"));
+        vSeeds.push_back(CDNSSeedData("46.4.37.190", "46.4.37.190"));
+        vSeeds.push_back(CDNSSeedData("134.255.218.110", "134.255.218.110"));
+        vSeeds.push_back(CDNSSeedData("213.133.99.84", "213.133.99.84"));
+        vSeeds.push_back(CDNSSeedData("66.214.14.254", "66.214.14.254"));
+        vSeeds.push_back(CDNSSeedData("73.120.71.189", "73.120.71.189"));
+        vSeeds.push_back(CDNSSeedData("108.21.75.150", "108.21.75.150"));
+        vSeeds.push_back(CDNSSeedData("71.197.143.70", "71.197.143.70"));
+        vSeeds.push_back(CDNSSeedData("188.153.14.20", "188.153.14.20"));
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(90);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(8);
