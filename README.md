@@ -2,9 +2,17 @@
 
 Copy-paste unix commands to run a full litedoge node and start staking. 
 
+## Why litedoge?
+
+Best way to learn about cryptocurrencies is to learn by doing! 
+
+Litedoge is easy to learn, based on bitcoin and available in exchanges.
+
+This guide walks you trough installing the wallet and begin playing around with purchasing, staking and moving small amounts of cryptocurrency around.
+
 ## Server and operating system
 
-Litedoge runs on any unix or bsd server. Even Raspberry PI. In this guide I'll focus on Ubuntu 16.04 running on cloud server.
+Litedoge runs on any unix or BSD server. Even Raspberry PI. In this guide I'll focus on Ubuntu 16.04 running on a cloud server.
 
 Here are few host providers who offer cheap virtual private servers (vps) for international customers:
 
@@ -30,20 +38,20 @@ Update the OS:
 
 ```
 apt update -qqy --fix-missing \
-	&& apt-get upgrade -y \
-	&& apt-get clean -y \
-	&& apt-get autoremove -y --purge
+    && apt-get upgrade -y \
+    && apt-get clean -y \
+    && apt-get autoremove -y --purge
 ```
 
 Install dependencies:
 
 ```
 apt install build-essential -y \
-	&& apt install libssl-dev -y \
-	&& apt install libdb++-dev -y \
-	&& apt install libboost-all-dev -y \
-	&& apt install libminiupnpc-dev -y \
-	&& apt install git -y
+    && apt install libssl-dev -y \
+    && apt install libdb++-dev -y \
+    && apt install libboost-all-dev -y \
+    && apt install libminiupnpc-dev -y \
+    && apt install git -y
 ```
 
 ## Create user
@@ -213,12 +221,6 @@ Chmod
 chmod a+x /bin/ldoge
 ```
 
-## Show litedoged status
-
-```
-ldoge getinfo
-```
-
 ## Follow litedoged logs
 
 ```
@@ -275,30 +277,101 @@ Wait few seconds and check your balance:
 ldoge getbalance
 ```
 
+Note: this will return your spendable balance. When you are staking, `getbalance` will be lower than your actual wallet balance.
+
 ## Start staking
 
-Unlock wallet for staking
+You can earn LiteDoge by validating block transactions.
+
+Keep your coins for at least 8 hours in your wallet and they will be eligible for staking.
+
+The time needed to get stake reward depends on the number of coins you hold in your wallet.
+
+Unlock wallet for staking for 99999999 seconds which is ~3,1709791667 years
 
 ```
 ldoge walletpassphrase your-strong-password-here 99999999 true
 ```
 
-Check staking status
+Fourth parameter `true` means `[stakingonly]`
+
+Note: When litedoged is restarted, you'll need to unlock your wallet manually to resume staking.
+
+## Check staking status
+
+Check node info for balances:
+
+```
+ldoge getinfo
+
+{
+    ...
+    "balance" : 3000000.00000000, // Spendable balance
+    ...
+    "stake" : 8000000.00000000,   // Locked for staking
+    ...
+    "unlocked_until" : 1612455147, // Wallet unlocked for staking
+    ...
+}
+```
+
+Check staking status:
 
 ```
 ldoge getstakinginfo
 
-ldoge getmininginfo
+{
+    "enabled" : true, // Staking is on
+    "staking" : true, // You have had coins for at least 8 hours in your wallet and they are eligible for staking. 
+    ...
+}
 ```
+
+Check last transactions for paid rewards:
+
+```
+ldoge listtransactions
+
+[
+    ...
+    {
+        ...                      // Paid to address
+        "address" : "dJ68iVea94kWWgR4DFStwMnUzZUs4uVDhS",
+        "category" : "immature", // updates to "generate" after 500 confirmations
+        "amount" : 500.00000000, // Stake amount
+        ...
+        "generated" : true,      // Paid for staking
+        ...
+    }
+]
+```
+
+You can also check your staking status on LDOGE explorer at http://ldoge.miningalts.com/
+
+With 3,000,000 LDOGE you should be getting rewards about twice a day.
 
 ## Send LDOGE
 
-Move staking profits back to other wallet (replace hash with your address):
+Unlock wallet for 60 secs and move your LDOGEs back to other wallet (replace hash with your address):
 
 ```
-ldoge walletpassphrase your-strong-password-here 99999999
+ldoge walletpassphrase your-strong-password-here 60
 
 ldoge sendtoaddress dJ68iVea94kWWgR4DFStwMnUzZUs4uVDhS amount-ldoge-to-send
+```
+
+Unlock your wallet again for staking
+
+```
+ldoge walletpassphrase your-strong-password-here 99999999 true
+```
+
+## Clear history
+
+It might be a good idea to clear history after using wallet passphrase from command line
+
+```
+cat /dev/null > ~/.bash_history && history -c && exit
 ```
 
 ## Thanks
@@ -308,3 +381,5 @@ If you found this guide useful, please consider sending some LDOGE to `dJ68iVea9
 Send message to https://www.reddit.com/u/suchapp if you have ideas how to improve this guide!
 
 Thanks for staking litedoge! 
+
+Disclaimer: _It is your own responsibility to backup and keep your wallet safe. The writer will not be responsible if your LDOGEs are lost, deleted, or stolen_.
