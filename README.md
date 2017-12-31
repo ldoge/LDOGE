@@ -154,7 +154,23 @@ EOF
 
 You can download the blockchain to make initial sync faster. You'll find it from bitcointalk's litedoge threads or discord chat.
 
+Copy file `bootstrap.dat` to litedoge datadir `/home/litedoge/.litedoge` before starting the server.
+
 If `bootstrap.zip` is not available, just skip this step. Initial sync will take few days.
+
+## Configure firewall
+
+Install `ufw` and allow ssh access before enabling it
+
+```
+apt install ufw
+ufw allow 22
+ufw allow 9332
+ufw allow 6667
+ufw allow 17014
+ufw allow 17015
+ufw enable
+```
 
 ## Create systemd service to start litedoge automatically
 
@@ -337,7 +353,7 @@ ldoge listtransactions
     {
         ...                      // Paid to address
         "address" : "dJ68iVea94kWWgR4DFStwMnUzZUs4uVDhS",
-        "category" : "immature", // updates to "generate" after 500 confirmations
+        "category" : "immature", // updates to "generate" after 510 confirmations
         "amount" : 500.00000000, // Stake amount
         ...
         "generated" : true,      // Paid for staking
