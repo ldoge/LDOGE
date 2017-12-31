@@ -243,7 +243,7 @@ Then copy `/home/litedoge/.litedoge/wallet.dat` and store it somewhere safe.
 
 While waiting for sync to complete, read more about LiteDoge at:
 
-Official website: http://www.ldoge.tech/
+Official website: http://www.ldoge.tech/ (http://mirror.ldoge.info)
 
 Reddit: https://reddit.com/r/litedoge
 
@@ -269,7 +269,7 @@ When blockchain is fully synced, use ´getnewaddress´ to get a new LDOGE addres
 ldoge getnewaddress
 ```
 
-command returns address-hash like `dJ68iVea94kWWgR4DFStwMnUzZUs4uVDhS`. Send your LDOGEs to your address.
+command returns address-hash like [`dJ68iVea94kWWgR4DFStwMnUzZUs4uVDhS`](http://ranking.ldoge.info/address/dJ68iVea94kWWgR4DFStwMnUzZUs4uVDhS). Send your LDOGEs to your address.
 
 Wait few seconds and check your balance:
 
@@ -376,7 +376,7 @@ cat /dev/null > ~/.bash_history && history -c && exit
 
 ## Thanks
 
-If you found this guide useful, please consider sending some LDOGE to `dJ68iVea94kWWgR4DFStwMnUzZUs4uVDhS`. 
+If you found this guide useful, please consider sending some LDOGE to [`dJ68iVea94kWWgR4DFStwMnUzZUs4uVDhS`](http://ranking.ldoge.info/address/dJ68iVea94kWWgR4DFStwMnUzZUs4uVDhS). 
 
 Send message to https://www.reddit.com/u/suchapp if you have ideas how to improve this guide!
 
