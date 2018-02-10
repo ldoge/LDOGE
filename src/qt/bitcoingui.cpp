@@ -262,16 +262,16 @@ void BitcoinGUI::createActions()
     tabGroup->addAction(addressBookAction);
 
     blockExplorerAction = new QAction(QIcon(":/icons/link"), tr("&Such Block Explorer"), this);
-    blockExplorerAction->setToolTip(tr("Go to the BlockExperts LiteDoge Block Explorer"));
+    blockExplorerAction->setToolTip(tr("The Ranking Block Explorer"));
 
     websiteAction = new QAction(QIcon(":/icons/globe"), tr("&Wow Website"), this);
-    websiteAction->setToolTip(tr("Go to the Official LiteDoge Website"));
+    websiteAction->setToolTip(tr("The Official Litedoge Website"));
 
     facebookAction = new QAction(QIcon(":/icons/facebook"), tr("&Such Facebook"), this);
-    facebookAction->setToolTip(tr("Visit us on Facebook"));
+    facebookAction->setToolTip(tr("LDOGE Facebook"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&LiteDoge IRC"), this);
-    chatPageAction->setToolTip((tr("Join LiteDoge IRC Channel")));
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&LiteDoge Discord"), this);
+    chatPageAction->setToolTip((tr("Join LDOGE Discord Channel")));
 
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -834,7 +834,7 @@ void BitcoinGUI::gotoSendCoinsPage()
 
 void BitcoinGUI::openBlockExplorer()
 {
-    QDesktopServices::openUrl(QUrl("http://ldoge.miningalts.com"));
+    QDesktopServices::openUrl(QUrl("http://ranking.ldoge.info"));
 }
 
 void BitcoinGUI::openWebsite()
@@ -849,7 +849,7 @@ void BitcoinGUI::openFacebook()
 
 void BitcoinGUI::gotoChatPage()
 {
-    QDesktopServices::openUrl(QUrl("https://kiwiirc.com/client/irc.kiwiirc.com/#litedoge"));
+    QDesktopServices::openUrl(QUrl("https://discord.gg/YttS2YT"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
