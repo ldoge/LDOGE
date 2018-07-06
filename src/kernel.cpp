@@ -1,5 +1,6 @@
-// Copyright (c) 2012-2013 The PPCoin developers
-// Copyright (c) 2014 The BlackCoin developers
+// Copyright (c) 2012-2013 The PPC developers
+// Copyright (c) 2014 The BLK developers
+// Copyright (c) 2018 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
