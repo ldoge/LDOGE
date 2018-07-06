@@ -244,7 +244,7 @@ void BitcoinGUI::createActions()
     tabGroup->addAction(receiveCoinsAction);
 
     sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Please Send"), this);
-    sendCoinsAction->setToolTip(tr("Send coins to a LiteDoge address"));
+    sendCoinsAction->setToolTip(tr("Send coins to a LDOGE address"));
     sendCoinsAction->setCheckable(true);
     sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
     tabGroup->addAction(sendCoinsAction);
@@ -262,16 +262,16 @@ void BitcoinGUI::createActions()
     tabGroup->addAction(addressBookAction);
 
     blockExplorerAction = new QAction(QIcon(":/icons/link"), tr("&Such Block Explorer"), this);
-    blockExplorerAction->setToolTip(tr("The Ranking Block Explorer"));
+    blockExplorerAction->setToolTip(tr("MiningAlts Block Explorer"));
 
     websiteAction = new QAction(QIcon(":/icons/globe"), tr("&Wow Website"), this);
-    websiteAction->setToolTip(tr("The Official Litedoge Website"));
+    websiteAction->setToolTip(tr("The Official LDOGE Website"));
 
     facebookAction = new QAction(QIcon(":/icons/facebook"), tr("&Such Facebook"), this);
     facebookAction->setToolTip(tr("LDOGE Facebook"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&LiteDoge Discord"), this);
-    chatPageAction->setToolTip((tr("Join LDOGE Discord Channel")));
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
+    chatPageAction->setToolTip((tr("Join LDOGE Telegram Channel")));
 
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -623,7 +623,7 @@ void BitcoinGUI::setNumBlocks(int count)
             timeBehindText = tr("%1 and %2").arg(tr("%n year(s)", "", years)).arg(tr("%n week(s)","", remainder/WEEK_IN_SECONDS));
         }
 
-        progressBarLabel->setText(tr(clientModel->isImporting() ? "Importing blocks..." : "Synchronizing with network..."));
+        progressBarLabel->setText(tr(clientModel->isImporting() ? "Importing blocks..." : "Synchronizing litedoge..."));
         progressBarLabel->setVisible(true);
         progressBar->setFormat(tr("%1 behind").arg(timeBehindText));
         progressBar->setMaximum(totalSecs);
@@ -834,12 +834,12 @@ void BitcoinGUI::gotoSendCoinsPage()
 
 void BitcoinGUI::openBlockExplorer()
 {
-    QDesktopServices::openUrl(QUrl("http://ranking.ldoge.info"));
+    QDesktopServices::openUrl(QUrl("http://ldoge.miningalts.com"));
 }
 
 void BitcoinGUI::openWebsite()
 {
-    QDesktopServices::openUrl(QUrl("http://www.ldoge.tech"));
+    QDesktopServices::openUrl(QUrl("https://www.ldoge.tech"));
 }
 
 void BitcoinGUI::openFacebook()
@@ -849,7 +849,7 @@ void BitcoinGUI::openFacebook()
 
 void BitcoinGUI::gotoChatPage()
 {
-    QDesktopServices::openUrl(QUrl("https://discord.gg/YttS2YT"));
+    QDesktopServices::openUrl(QUrl("https://t.me/ldoge"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
