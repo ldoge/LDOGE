@@ -271,7 +271,7 @@ void BitcoinGUI::createActions()
     facebookAction->setToolTip(tr("LDOGE Facebook"));
 
     chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
-    chatPageAction->setToolTip((tr("Join LDOGE Telegram Channel")));
+    chatPageAction->setToolTip((tr("Join LDOGE Discord Channel")));
 
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -849,7 +849,7 @@ void BitcoinGUI::openFacebook()
 
 void BitcoinGUI::gotoChatPage()
 {
-    QDesktopServices::openUrl(QUrl("https://t.me/ldoge"));
+    QDesktopServices::openUrl(QUrl("https://discord.gg/yvYVft6"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
