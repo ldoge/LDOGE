@@ -1090,12 +1090,18 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
     {
     nSubsidy = 1000 * COIN;
     }    
-    else
+    else if(pindexBest->nHeight < 1700000)
     {
     nSubsidy = 500 * COIN;
+    }    
+    else
+    {
+    nSubsidy = 100 * COIN;
     // Subsidy is cut in half every g_RewardHalvingPeriod blocks which will occur approximately every 4 years.
     int halvings = pindexBest->nHeight / g_RewardHalvingPeriod;
+    // Max minted height = 128000000
     nSubsidy = (halvings >= 64)? 0 : (nSubsidy >> halvings);
+    // Inflation calc
     nSubsidy -= nSubsidy*(pindexBest->nHeight % g_RewardHalvingPeriod)/(2*g_RewardHalvingPeriod);
     }
  
