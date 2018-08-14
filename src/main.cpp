@@ -1033,11 +1033,6 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
     else if(pindexBest->nHeight < 51000)
     {
     nSubsidy = 10000 * COIN;
-    
-    // Subsidy is cut in half every g_RewardHalvingPeriod blocks which will occur approximately every 4 years.
-    int halvings = pindexBest->nHeight / g_RewardHalvingPeriod;
-    nSubsidy = (halvings >= 64)? 0 : (nSubsidy >> halvings);
-    nSubsidy -= nSubsidy*(pindexBest->nHeight % g_RewardHalvingPeriod)/(2*g_RewardHalvingPeriod);
     }
     else if(pindexBest->nHeight < 144999)
     {
@@ -1098,6 +1093,10 @@ int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees)
     else
     {
     nSubsidy = 500 * COIN;
+    // Subsidy is cut in half every g_RewardHalvingPeriod blocks which will occur approximately every 4 years.
+    int halvings = pindexBest->nHeight / g_RewardHalvingPeriod;
+    nSubsidy = (halvings >= 64)? 0 : (nSubsidy >> halvings);
+    nSubsidy -= nSubsidy*(pindexBest->nHeight % g_RewardHalvingPeriod)/(2*g_RewardHalvingPeriod);
     }
  
     return nSubsidy + nFees;
