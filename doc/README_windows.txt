@@ -1,4 +1,4 @@
-LiteDoge 0.4.4 BETA
+LiteDoge 
 
 Copyright (c) 2013 NovaCoin Developers
 Copyright (c) 2011-2013 PPCoin Developers
