@@ -237,41 +237,41 @@ void BitcoinGUI::createActions()
     overviewAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
     tabGroup->addAction(overviewAction);
 
-    receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Much Receive"), this);
+    receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Receive"), this);
     receiveCoinsAction->setToolTip(tr("Show the list of addresses for receiving payments"));
     receiveCoinsAction->setCheckable(true);
     receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
     tabGroup->addAction(receiveCoinsAction);
 
-    sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Please Send"), this);
+    sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send"), this);
     sendCoinsAction->setToolTip(tr("Send coins to a LDOGE address"));
     sendCoinsAction->setCheckable(true);
     sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
     tabGroup->addAction(sendCoinsAction);
 
-    historyAction = new QAction(QIcon(":/icons/history"), tr("&Many History"), this);
+    historyAction = new QAction(QIcon(":/icons/history"), tr("&History"), this);
     historyAction->setToolTip(tr("Browse transaction history"));
     historyAction->setCheckable(true);
     historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
     tabGroup->addAction(historyAction);
 
-    addressBookAction = new QAction(QIcon(":/icons/address-book"), tr("&Very Address"), this);
+    addressBookAction = new QAction(QIcon(":/icons/address-book"), tr("&ddress"), this);
     addressBookAction->setToolTip(tr("Edit the list of stored addresses and labels"));
     addressBookAction->setCheckable(true);
     addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
     tabGroup->addAction(addressBookAction);
 
-    blockExplorerAction = new QAction(QIcon(":/icons/link"), tr("&Such Block Explorer"), this);
+    blockExplorerAction = new QAction(QIcon(":/icons/link"), tr("&SuBlock Explorer"), this);
     blockExplorerAction->setToolTip(tr("MiningAlts Block Explorer"));
 
-    websiteAction = new QAction(QIcon(":/icons/globe"), tr("&Wow Website"), this);
-    websiteAction->setToolTip(tr("The Official LDOGE Website"));
+    websiteAction = new QAction(QIcon(":/icons/globe"), tr("&Website"), this);
+    websiteAction->setToolTip(tr("Official LDOGE Website"));
 
-    facebookAction = new QAction(QIcon(":/icons/facebook"), tr("&Such Facebook"), this);
+    facebookAction = new QAction(QIcon(":/icons/facebook"), tr("&Facebook"), this);
     facebookAction->setToolTip(tr("LDOGE Facebook"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
-    chatPageAction->setToolTip((tr("Join LDOGE Discord Channel")));
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&LDOGE Chat"), this);
+    chatPageAction->setToolTip((tr("LDOGE Discord Channel")));
 
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -839,7 +839,7 @@ void BitcoinGUI::openBlockExplorer()
 
 void BitcoinGUI::openWebsite()
 {
-    QDesktopServices::openUrl(QUrl("https://www.ldoge.tech"));
+    QDesktopServices::openUrl(QUrl("https://www.ldoge.org"));
 }
 
 void BitcoinGUI::openFacebook()
