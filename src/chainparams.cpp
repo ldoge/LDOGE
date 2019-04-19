@@ -145,7 +145,6 @@ public:
         // Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nBits  = bnProofOfWorkLimit.GetCompact();
         genesis.nNonce = 224610;
-      
         hashGenesisBlock = genesis.GetHash();
         assert(hashGenesisBlock == uint256("0x0000373f620a91549f65fe8c9938910e60a486d72b72376b8fad424c1762cce4"));
 
@@ -183,7 +182,6 @@ public:
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 18445;
         strDataDir = "regtest";
-
         assert(hashGenesisBlock == uint256("0x57c1442bbbb865ce8d3ac300e77cc8d584e8267e4670204235f07fdcb9554531"));
 
         vSeeds.clear();  // Regtest mode doesn't have any DNS seeds.
