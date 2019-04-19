@@ -22,8 +22,8 @@ From time to time a pull request will become outdated. If this occurs, and the p
 
 Issues with no commits will be given a similar warning, and closed after 15 days from their last activity. Issues closed in this manner will be labeled 'stale'.
 
-Build Process tittiecoind
-Building tittiecoind is very easy and stright forward.
+Build Process litedoged
+Building litedoged is very easy and stright forward.
 
 Use the autogen script to prepare the build environment. Note these commands are not run in the src directoty
 
