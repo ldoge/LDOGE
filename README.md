@@ -21,3 +21,12 @@ Feature branches are created when there are major new features being worked on b
 From time to time a pull request will become outdated. If this occurs, and the pull is no longer automatically mergeable; a comment on the pull will be used to issue a warning of closure. The pull will be closed 15 days after the warning if action is not taken by the author. Pull requests closed in this manner will have their corresponding issue labeled 'stagnant'.
 
 Issues with no commits will be given a similar warning, and closed after 15 days from their last activity. Issues closed in this manner will be labeled 'stale'.
+
+Build Process tittiecoind
+Building tittiecoind is very easy and stright forward.
+
+Use the autogen script to prepare the build environment. Note these commands are not run in the src directoty
+
+./autogen.sh
+./configure
+make
