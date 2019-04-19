@@ -2,26 +2,42 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.4.1.2
 INCLUDEPATH += src src/json src/qt
-QT += network
-DEFINES += ENABLE_WALLET
-DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
+QT += core gui network
+greaterThan(QT_MAJOR_VERSION, 4): QT += widget
+DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
 CONFIG += no_include_pwd
 CONFIG += thread
+CONFIG += static
+ 
+# QMAKE_CC=clang
+# QMAKE_CXX=clang++
+# QMAKE_LINK=clang++
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-}
+freebsd-g++: QMAKE_TARGET.arch = $$QMAKE_HOST.arch
+linux-g++: QMAKE_TARGET.arch = $$QMAKE_HOST.arch
+linux-g++-32: QMAKE_TARGET.arch = i686
+linux-g++-64: QMAKE_TARGET.arch = x86_64
+win32-g++-cross: QMAKE_TARGET.arch = $$TARGET_PLATFORM
 
 # for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
 # for boost thread win32 with _win32 sufix
 # use: BOOST_THREAD_LIB_SUFFIX=_win32-...
-# or when linking against a specific BerkelyDB version: BDB_LIB_SUFFIX=-4.8
+# or when linking against a specific BerkelyDB version: BDB_LIB_SUFFIX=-6.1
 
 # Dependency library locations can be customized with:
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
+
+#BOOST_LIB_SUFFIX=-mgw49-mt-s-1_55
+#BOOST_INCLUDE_PATH=C:/deps/boost_1_55_0
+#BOOST_LIB_PATH=C:/deps/boost_1_55_0/stage/lib
+#BDB_INCLUDE_PATH=C:/deps/db-6.0.20/build_unix
+#BDB_LIB_PATH=C:/deps/db-6.0.20/build_unix
+#OPENSSL_INCLUDE_PATH=C:/d1eps/openssl-1.0.2g/include
+#OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2g
+#QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
+#QRENCODE_LIB_PATH=C:/deps/qrencode-3.4.4/.libs
 
 OBJECTS_DIR = build
 MOC_DIR = build
@@ -29,13 +45,22 @@ UI_DIR = build
 
 # use: qmake "RELEASE=1"
 contains(RELEASE, 1) {
-    # Mac: compile for maximum compatibility (10.5, 32-bit)
-    macx:QMAKE_CXXFLAGS += -mmacosx-version-min=10.8 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/
+    macx:QMAKE_CXXFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
+    macx:QMAKE_CFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
+    macx:QMAKE_OBJECTIVE_CFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
 
     !windows:!macx {
         # Linux: static link
         LIBS += -Wl,-Bstatic
     }
+}
+
+contains(DEBUG, 1) {
+    QMAKE_CXXFLAGS -= -O2
+    QMAKE_CFLAGS -= -O2
+
+    QMAKE_CFLAGS += -g -O0
+    QMAKE_CXXCFLAGS += -g -O0
 }
 
 !win32 {
@@ -46,6 +71,7 @@ QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
 # This can be enabled for Windows, when we switch to MinGW >= 4.4.x.
 }
 # for extra security on Windows: enable ASLR and DEP via GCC linker flags
+
 win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 win32:QMAKE_LFLAGS += -static-libgcc -static-libstdc++
 
@@ -87,7 +113,10 @@ contains(BITCOIN_NEED_QT_PLUGINS, 1) {
     DEFINES += BITCOIN_NEED_QT_PLUGINS
     QTPLUGIN += qcncodecs qjpcodecs qtwcodecs qkrcodecs qtaccessiblewidgets
 }
-
+contains(USE_LEVELDB, 1) {
+    message(Building with LevelDB transaction index)
+    DEFINES += USE_LEVELDB
+    
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 SOURCES += src/txdb-leveldb.cpp
@@ -108,6 +137,38 @@ PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
 QMAKE_EXTRA_TARGETS += genleveldb
 # Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
 QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
+} else {
+    message(Building with Berkeley DB transaction index)
+    SOURCES += src/txdb-bdb.cpp
+}
+
+
+# use: qmake "USE_ASM=1"
+contains(USE_ASM, 1) {
+    message(Using assembler scrypt implementations)
+    DEFINES += USE_ASM
+
+     contains(QMAKE_TARGET.arch, i386) | contains(QMAKE_TARGET.arch, i586) | contains(QMAKE_TARGET.arch, i686) {
+        message("x86 platform, setting -msse2 flag")
+
+        QMAKE_CXXFLAGS += -msse2
+        QMAKE_CFLAGS += -msse2
+    }
+
+    SOURCES += src/crypto/scrypt/asm/scrypt-arm.S src/crypto/scrypt/asm/scrypt-x86.S src/crypto/scrypt/asm/scrypt-x86_64.S src/crypto/scrypt/asm/asm-wrapper.cpp
+} else {
+    # use: qmake "USE_SSE2=1"
+    contains(USE_SSE2, 1) {
+        message(Using SSE2 intrinsic scrypt implementation & generic sha256 implementation)
+        SOURCES += src/crypto/scrypt/intrin/scrypt-sse2.cpp
+        DEFINES += USE_SSE2
+        QMAKE_CXXFLAGS += -msse2
+        QMAKE_CFLAGS += -msse2
+    } else {
+        message(Using generic scrypt implementations)
+        SOURCES += src/crypto/scrypt/generic/scrypt-generic.cpp
+    }
+}
 
 # regenerate src/build.h
 !windows|contains(USE_BUILD_INFO, 1) {
@@ -127,14 +188,9 @@ contains(USE_O3, 1) {
     QMAKE_CFLAGS += -O3
 }
 
-*-g++-32 {
-    message("32 platform, adding -msse2 flag")
-
-    QMAKE_CXXFLAGS += -msse2
-    QMAKE_CFLAGS += -msse2
 }
 
-QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector
+QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wno-unused-local-typedef -Wstack-protector
 
 # Input
 DEPENDPATH += src src/json src/qt
@@ -373,15 +429,15 @@ isEmpty(BOOST_THREAD_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_LIB_PATH) {
-    macx:BDB_LIB_PATH = "/usr/local/opt/berkeley-db@4/lib"
+    macx:BDB_LIB_PATH = "/usr/local/BerkeleyDB.6.1/lib
 }
 
 isEmpty(BDB_LIB_SUFFIX) {
-    macx:BDB_LIB_PATH = /opt/local/lib/db48
+    /usr/local/BerkeleyDB.6.1/lib
 }
 
 isEmpty(BDB_INCLUDE_PATH) {
-    macx:BDB_INCLUDE_PATH = "/usr/local/opt/berkeley-db@4/include/"
+    macx:BDB_INCLUDE_PATH = /opt/local/include/db60
 }
 
 isEmpty(BOOST_LIB_PATH) {
@@ -463,5 +519,15 @@ contains(RELEASE, 1) {
     }
 }
 
+linux-* {
+    # We may need some linuxism here
+    LIBS += -ldl
+}
 
-system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
+netbsd-*|freebsd-*|openbsd-* {
+    # libexecinfo is required for back trace
+    LIBS += -lexecinfo
+}
+
+
+system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
