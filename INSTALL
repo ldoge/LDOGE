@@ -1,9 +1,13 @@
 Building LiteDoge
 
-See doc/readme-qt.rst for instructions on building LiteDoge QT,
-the intended-for-end-users, nice-graphical-interface, reference
-implementation of LiteDoge.
+Use the autogen script to prepare the build environment.
 
-See doc/build-*.txt for instructions on building litedoged,
+    ./autogen.sh
+    ./configure
+    make
+
+Always verify the signatures and checksums.
+
+See doc/build-*.md for instructions on building litedoged,
 the intended-for-services, no-graphical-interface, reference
-implementation of LiteDoge.
+implementation of Litedoge
