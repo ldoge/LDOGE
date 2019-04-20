@@ -21,6 +21,11 @@ extern const std::string CLIENT_NAME;
 extern const std::string CLIENT_BUILD;
 extern const std::string CLIENT_DATE;
 
+static const int LITEDOGE_VERSION =
+                           1000000 * LITEDOGE_VERSION_MAJOR
+                         +   10000 * LITEDOGE_VERSION_MINOR
+                         +     100 * LITEDOGE_VERSION_REVISION
+                         +       1 * LITEDOGE_VERSION_BUILD;
 //
 // database format versioning
 //
@@ -32,6 +37,9 @@ static const int DATABASE_VERSION = 70509;
 
 static const int PROTOCOL_VERSION = 60065;
 
+// earlier versions not supported as of Feb 2012, and are disconnected
+// NOTE: as of bitcoin v0.6 message serialization (vSend, vRecv) still
+// uses MIN_PROTO_VERSION(209), where message format uses PROTOCOL_VERSION
 // intial proto version, to be increased after version/verack negotiation
 static const int INIT_PROTO_VERSION = 209;
 
