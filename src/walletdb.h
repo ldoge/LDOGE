@@ -15,14 +15,7 @@
 
 class CAccount;
 class CAccountingEntry;
-class CBlockLocator;
-class CKeyPool;
-class CMasterKey;
-class CScript;
-class CWallet;
-class CWalletTx;
-class uint160;
-class uint256;
+class CAccountingEntry;
 
 /** Error statuses for the wallet database */
 enum DBErrors
@@ -35,45 +28,13 @@ enum DBErrors
     DB_NEED_REWRITE
 };
 
-class CKeyMetadata
-{
-public:
-    static const int CURRENT_VERSION=1;
-    int nVersion;
-    int64_t nCreateTime; // 0 means unknown
-
-    CKeyMetadata()
-    {
-        SetNull();
-    }
-    CKeyMetadata(int64_t nCreateTime_)
-    {
-        nVersion = CKeyMetadata::CURRENT_VERSION;
-        nCreateTime = nCreateTime_;
-    }
-
-    IMPLEMENT_SERIALIZE
-    (
-        READWRITE(this->nVersion);
-        nVersion = this->nVersion;
-        READWRITE(nCreateTime);
-    )
-
-    void SetNull()
-    {
-        nVersion = CKeyMetadata::CURRENT_VERSION;
-        nCreateTime = 0;
-    }
-};
-
-
 /** Access to the wallet database (wallet.dat) */
 class CWalletDB : public CDB
 {
 public:
-    CWalletDB(const std::string& strFilename, const char* pszMode = "r+") : CDB(strFilename, pszMode)
+  CWalletDB(std::string strFilename, const char* pszMode="r+") : CDB(strFilename.c_str(), pszMode)
     {
-    }
+    {
 private:
     CWalletDB(const CWalletDB&);
     void operator=(const CWalletDB&);
@@ -163,7 +124,8 @@ public:
     {
         return Read(std::make_pair(std::string("setting"), strKey), value);
     }
-   template<typename T> bool WriteSetting(const std::string& strKey, const T& value)
+   template<typename T> 
+   bool WriteSetting(const std::string& strKey, const T& value)
     {
         nWalletDBUpdated++;
         return Write(std::make_pair(std::string("setting"), strKey), value);
