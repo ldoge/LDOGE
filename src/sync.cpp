@@ -3,7 +3,6 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "sync.h"
-
 #include "util.h"
 
 #include <boost/foreach.hpp>
@@ -11,8 +10,8 @@
 #ifdef DEBUG_LOCKCONTENTION
 void PrintLockContention(const char* pszName, const char* pszFile, int nLine)
 {
-    LogPrintf("LOCKCONTENTION: %s\n", pszName);
-    LogPrintf("Locker: %s:%d\n", pszFile, nLine);
+     printf("LOCKCONTENTION: %s\n", pszName);
+     printf("Locker: %s:%d\n", pszFile, nLine);
 }
 #endif /* DEBUG_LOCKCONTENTION */
 
@@ -81,7 +80,7 @@ static void push_lock(void* c, const CLockLocation& locklocation, bool fTry)
     if (lockstack.get() == NULL)
         lockstack.reset(new LockStack);
 
-    LogPrint("lock", "Locking: %s\n", locklocation.ToString());
+    if (fDebug) printf("Locking: %s\n", locklocation.ToString().c_str());
     dd_mutex.lock();
 
     (*lockstack).push_back(std::make_pair(c, locklocation));
@@ -118,16 +117,6 @@ static void pop_lock()
     dd_mutex.unlock();
 }
 
-void EnterCritical(const char* pszName, const char* pszFile, int nLine, void* cs, bool fTry)
-{
-    push_lock(cs, CLockLocation(pszName, pszFile, nLine), fTry);
-}
-
-void LeaveCritical()
-{
-    pop_lock();
-}
-
 std::string LocksHeld()
 {
     std::string result;
@@ -143,6 +132,15 @@ void AssertLockHeldInternal(const char *pszName, const char* pszFile, int nLine,
     fprintf(stderr, "Assertion failed: lock %s not held in %s:%i; locks held:\n%s",
             pszName, pszFile, nLine, LocksHeld().c_str());
     abort();
+}
+void EnterCritical(const char* pszName, const char* pszFile, int nLine, void* cs, bool fTry)
+{
+    push_lock(cs, CLockLocation(pszName, pszFile, nLine), fTry);
+}
+
+void LeaveCritical()
+{
+    pop_lock();
 }
 
 #endif /* DEBUG_LOCKORDER */
