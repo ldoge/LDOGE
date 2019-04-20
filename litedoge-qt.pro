@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = litedoge-qt
-VERSION = 3.4.2.2
+VERSION = 3.5.1.1
 INCLUDEPATH += src src/json src/qt
 QT += network core
 greaterThan(QT_MAJOR_VERSION, 4): QT += widget
