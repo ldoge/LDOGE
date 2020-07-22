@@ -1,0 +1,2 @@
+debian/bin/litedoged usr/bin
+src/litedoged usr/lib/litedoge

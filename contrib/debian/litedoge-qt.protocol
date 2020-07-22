@@ -1,0 +1,11 @@
+[Protocol]
+exec=litedoge-qt '%u'
+protocol=litedoge
+input=none
+output=none
+helper=true
+listing=
+reading=false
+writing=false
+makedir=false
+deleting=false

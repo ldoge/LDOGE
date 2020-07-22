@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=LiteDoge
+Comment=LiteDoge P2P Cryptocurrency
+Comment[fr]=LiteDoge, monnaie virtuelle cryptographique pair à pair
+Comment[tr]=LiteDoge, eşten eşe kriptografik sanal para birimi
+Exec=/usr/bin/litedoge-qt
+Terminal=false
+Type=Application
+Icon=/usr/share/pixmaps/bitcoin80.xpm
+MimeType=x-scheme-handler/litedoge;
+Categories=Office;
