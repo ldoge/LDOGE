@@ -13,11 +13,11 @@
     </message>
     <message>
         <location line="+41"/>
-        <source>Copyright © 2009-2014 The Bitcoin developers
-Copyright © 2012-2014 The LiteDogecoin developers
-Copyright © 2014 The BlackCoin developers</source>
-        <translation>Copyright © 2009-2014 Les développeurs Bitcoin
-Copyright © 2012-2014 Les développeurs LiteDogecoin
+        <source>Copyright © 2009-2020 The Bitcoin developers
+Copyright © 2012-2020 The LiteDogecoin developers
+Copyright © 2014-2020 The BlackCoin developers</source>
+        <translation>Copyright © 2009-2020 Les développeurs Bitcoin
+Copyright © 2012-2020 Les développeurs LiteDogecoin
 Copyright © 2014 Les développeurs LiteDoge</translation>
     </message>
     <message>
