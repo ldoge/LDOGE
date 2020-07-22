@@ -47,6 +47,7 @@
         <file alias="globe">res/icons/globe.png</file>
         <file alias="link">res/icons/link.png</file>
         <file alias="irc">res/icons/irc_icon.png</file>
+        <file>res/icons/crypto-city.png</file>
     </qresource>
     <qresource prefix="/icons/black">
         <file alias="connect_0">res/icons/black/connect0_16.png</file>

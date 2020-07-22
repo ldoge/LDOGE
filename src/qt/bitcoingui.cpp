@@ -273,6 +273,9 @@ void BitcoinGUI::createActions()
     chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
     chatPageAction->setToolTip((tr("Join LDOGE Discord Channel")));
 
+    ccPageAction = new QAction(QIcon(":/icons/res/icons/crypto-city.png"),tr("&Crypto-City"), this);
+    ccPageAction->setToolTip((tr("Join LDOGE @ Crypto-City")));
+
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
@@ -288,6 +291,7 @@ void BitcoinGUI::createActions()
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
     connect(facebookAction, SIGNAL(triggered()), this, SLOT(openFacebook()));
     connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
+    connect(ccPageAction, SIGNAL(triggered()), this, SLOT(gotoCcPage()));
 
     quitAction = new QAction(tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -396,6 +400,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(websiteAction);
     toolbar->addAction(facebookAction);
     toolbar->addAction(chatPageAction);
+    toolbar->addAction(ccPageAction);
 
     toolbar->addWidget(makeToolBarSpacer());
 
@@ -850,6 +855,11 @@ void BitcoinGUI::openFacebook()
 void BitcoinGUI::gotoChatPage()
 {
     QDesktopServices::openUrl(QUrl("https://discord.gg/yvYVft6"));
+}
+
+void BitcoinGUI::gotoCcPage()
+{
+    QDesktopServices::openUrl(QUrl("https://www.crypto-city.com/index.php/lite-doge-ldoge/"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)

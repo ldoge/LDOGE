@@ -17,6 +17,8 @@ class SignVerifyMessageDialog;
 class Notificator;
 class RPCConsole;
 class ChatPage;
+class CcPage;
+
 
 QT_BEGIN_NAMESPACE
 class QLabel;
@@ -99,6 +101,8 @@ private:
     QAction *websiteAction;
     QAction *facebookAction;
     QAction *chatPageAction;
+    QAction *ccPageAction;
+
 
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
@@ -166,6 +170,7 @@ private slots:
     void openFacebook();
     /** Switch to IRC Chat Page */
     void gotoChatPage();
+    void gotoCcPage();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
