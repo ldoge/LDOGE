@@ -8,6 +8,10 @@ Latest Wallets: https://github.com/vashshawn/LDOGE/releases
 
 Wiki and Installation guides: https://github.com/vashshawn/LDOGE/wiki
 
+Block Explorer: http://explorer.litedogeofficial.org/ 
+
+Cryto-City: https://www.crypto-city.com/index.php/lite-doge-ldoge/
+
 # Development process
 
 Developers work in their own trees, then submit pull requests when they think their feature or bug fix is ready.
