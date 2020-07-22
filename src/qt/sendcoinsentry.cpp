@@ -10,6 +10,8 @@
 
 #include <QApplication>
 #include <QClipboard>
+#include <QPainter>
+
 
 SendCoinsEntry::SendCoinsEntry(QWidget *parent) :
     QFrame(parent),
