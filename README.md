@@ -2,7 +2,7 @@
 
 LiteDoge is a PoS-based cryptocurrency.
 
-Official Website: https://ldoge.tech
+Official Website: https://litedogeofficial.org
 
 Latest Wallets: https://github.com/vashshawn/LDOGE/releases
 
