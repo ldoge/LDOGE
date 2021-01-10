@@ -155,11 +155,11 @@ public:
     }
 
     void SetSecretBytes(const unsigned char vch[32]) {
-        BIGNUM bn;
-        BN_init(&bn);
-        assert(BN_bin2bn(vch, 32, &bn));
-        assert(EC_KEY_regenerate_key(pkey, &bn));
-        BN_clear_free(&bn);
+        BIGNUM *bn;
+	bn = BN_new();
+        assert(BN_bin2bn(vch, 32, bn));
+        assert(EC_KEY_regenerate_key(pkey, bn));
+        BN_clear_free(bn);
     }
 
     void GetPrivKey(CPrivKey &privkey, bool fCompressed) {
@@ -205,6 +205,8 @@ public:
 
     bool Sign(const uint256 &hash, std::vector<unsigned char>& vchSig) {
         vchSig.clear();
+        BIGNUM *s = 0;
+        BIGNUM *r = 0;
         ECDSA_SIG *sig = ECDSA_do_sign((unsigned char*)&hash, sizeof(hash), pkey);
         if (sig == NULL)
             return false;
@@ -215,9 +217,10 @@ public:
         BIGNUM *halforder = BN_CTX_get(ctx);
         EC_GROUP_get_order(group, order, ctx);
         BN_rshift1(halforder, order);
-        if (BN_cmp(sig->s, halforder) > 0) {
+	ECDSA_SIG_get0(sig, (const BIGNUM **)&r, (const BIGNUM **)&s);
+        if (BN_cmp(s, halforder) > 0) {
             // enforce low S values, by negating the value (modulo the order) if above order/2.
-            BN_sub(sig->s, order, sig->s);
+            BN_sub(s, order, s);
         }
         BN_CTX_end(ctx);
         BN_CTX_free(ctx);
@@ -275,8 +278,8 @@ public:
             }
             assert(fOk);
             ECDSA_SIG_get0(sig, (const BIGNUM **)&r, (const BIGNUM **)&s);
-            BN_bn2bin(r,&vchSig[33-(nBitsR+7)/8]);
-            BN_bn2bin(s,&vchSig[65-(nBitsS+7)/8]);
+            BN_bn2bin(r,&p64[32-(nBitsR+7)/8]);
+            BN_bn2bin(s,&p64[64-(nBitsS+7)/8]);
         }
         ECDSA_SIG_free(sig);
         return fOk;

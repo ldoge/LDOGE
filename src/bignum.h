@@ -102,12 +102,12 @@ public:
     CBigNum(short n)            { init(); if (n >= 0) setulong(n); else setint64(n); }
     CBigNum(int n)              { init(); if (n >= 0) setulong(n); else setint64(n); }
     CBigNum(long n)             { init(); if (n >= 0) setulong(n); else setint64(n); }
-    CBigNum(int64_t n)            { init(); setint64(n); }
+    //CBigNum(int64_t n)            { init(); setint64(n); }
     CBigNum(unsigned char n)    { init(); setulong(n); }
     CBigNum(unsigned short n)   { init(); setulong(n); }
     CBigNum(unsigned int n)     { init(); setulong(n); }
     CBigNum(unsigned long n)    { init(); setulong(n); }
-    CBigNum(uint64_t n)           { init(); setuint64(n); }
+    //CBigNum(uint64_t n)           { init(); setuint64(n); }
     CBigNum(long long int n)      { init(); setuint64(n); }
     explicit CBigNum(uint256 n) { init(); setuint256(n); }
 
@@ -397,13 +397,13 @@ public:
         BN_set_negative(&bn1, false);
         CBigNum dv;
         CBigNum rem;
-        if (BN_cmp(&bn, &bn0) == 0)
+        if (BN_cmp(&bn1, &bn0) == 0)
             return "0";
         while (BN_cmp(&bn1, &bn0) > 0)
         {
             if (!BN_div(&dv, &rem, &bn1, &bnBase, pctx))
                 throw bignum_error("CBigNum::ToString() : BN_div failed");
-            bn = dv;
+            bn1 = dv;
             unsigned int c = rem.getulong();
             str += "0123456789abcdef"[c];
         }
