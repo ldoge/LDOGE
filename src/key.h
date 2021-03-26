@@ -19,6 +19,10 @@
 //
 // see www.keylength.com
 // script supports up to 75 for single byte push
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#include <openssl/ecdsa.h>
+    void ECDSA_SIG_get0(const ECDSA_SIG *sig, const BIGNUM **pr, const BIGNUM **ps);
+#endif
 
 /** A reference to a CKey: the Hash160 of its serialized public key */
 class CKeyID : public uint160
