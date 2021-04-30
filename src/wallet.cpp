@@ -17,6 +17,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/range/algorithm.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
+#include <boost/bind.hpp>
 
 using namespace std;
 
