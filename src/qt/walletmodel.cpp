@@ -12,6 +12,7 @@
 #include <QSet>
 #include <QTimer>
 #include <QDebug>
+#include <boost/bind.hpp>
 
 WalletModel::WalletModel(CWallet *wallet, OptionsModel *optionsModel, QObject *parent) :
     QObject(parent), wallet(wallet), optionsModel(optionsModel), addressTableModel(0),
