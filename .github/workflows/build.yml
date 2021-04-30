@@ -1,0 +1,38 @@
+name: C/C++ CI
+
+on: [workflow_dispatch]
+
+jobs:
+  ubuntu-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+    - name: Dependencies
+      run: >
+       sudo apt-get install build-essential libboost-dev 
+       libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libssl-dev
+       libdb++-dev libminiupnpc-dev libleveldb-dev -y
+    # - name: leveldb
+    #   run:  |
+    #     sudo apt-get install libsnappy-dev
+    #     wget https://github.com/google/leveldb/archive/1.22.tar.gz leveldb.tar.gz
+    #     tar -zxvf leveldb.tar.gz
+    #     cd leveldb
+    #     mkdir -p build && cd build
+    #     cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
+    - name: Checkout
+      uses: actions/checkout@v2.0.0
+    - name: Compile
+      run: |
+        ls
+        qmake && make
+  
