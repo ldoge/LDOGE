@@ -844,7 +844,7 @@ void BitcoinGUI::openBlockExplorer()
 
 void BitcoinGUI::openWebsite()
 {
-    QDesktopServices::openUrl(QUrl("https://ldoge-wow.com/"));
+    QDesktopServices::openUrl(QUrl("http://litedogeofficial.org/"));
 }
 
 void BitcoinGUI::openFacebook()
