@@ -270,7 +270,7 @@ void BitcoinGUI::createActions()
     facebookAction = new QAction(QIcon(":/icons/instagramLOGO.png"), tr("&Such Instagram"), this);
     facebookAction->setToolTip(tr("LDOGE Instagram"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE"), this);
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
     chatPageAction->setToolTip((tr("Join Development Chat and Cross Platform Tip Bot Synced Staking Wallet")));
 
     ccPageAction = new QAction(QIcon(":/icons/res/icons/reddit.png"),tr("&Such Reddit"), this);
@@ -852,7 +852,7 @@ void BitcoinGUI::openInstagram()
     QDesktopServices::openUrl(QUrl("https://www.instagram.com/litedoge_ldoge/"));
 }
 
-void BitcoinGUI::gotoDiscordChat()
+void BitcoinGUI::gotoChatPage()
 {
     QDesktopServices::openUrl(QUrl("https://discord.gg/h6zjKn2wAu"));
 }
