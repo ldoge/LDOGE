@@ -267,14 +267,14 @@ void BitcoinGUI::createActions()
     websiteAction = new QAction(QIcon(":/icons/globe"), tr("&Wow Website"), this);
     websiteAction->setToolTip(tr("The Official LDOGE Website"));
 
-    facebookAction = new QAction(QIcon(":/icons/facebook"), tr("&Such Facebook"), this);
-    facebookAction->setToolTip(tr("LDOGE Facebook"));
+    facebookAction = new QAction(QIcon(":/icons/instagramLOGO.png"), tr("&Such Instagram"), this);
+    facebookAction->setToolTip(tr("LDOGE Instagram"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
-    chatPageAction->setToolTip((tr("Join LDOGE Discord Channel")));
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE"), this);
+    chatPageAction->setToolTip((tr("Join Development Chat and Cross Platform Tip Bot Synced Staking Wallet")));
 
-    ccPageAction = new QAction(QIcon(":/icons/res/icons/crypto-city.png"),tr("&Crypto-City"), this);
-    ccPageAction->setToolTip((tr("Join LDOGE @ Crypto-City")));
+    ccPageAction = new QAction(QIcon(":/icons/res/icons/reddit.png"),tr("&Such Reddit"), this);
+    ccPageAction->setToolTip((tr("Litedoge-LDOGE SubReddit with LDOGE Tipping Full Wallet Bot")));
 
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -847,19 +847,19 @@ void BitcoinGUI::openWebsite()
     QDesktopServices::openUrl(QUrl("http://litedogeofficial.org/"));
 }
 
-void BitcoinGUI::openFacebook()
+void BitcoinGUI::openInstagram()
 {
-    QDesktopServices::openUrl(QUrl("https://www.facebook.com/litedoge"));
+    QDesktopServices::openUrl(QUrl("https://www.instagram.com/litedoge_ldoge/"));
 }
 
-void BitcoinGUI::gotoChatPage()
+void BitcoinGUI::gotoDiscordChat()
 {
     QDesktopServices::openUrl(QUrl("https://discord.gg/h6zjKn2wAu"));
 }
 
-void BitcoinGUI::gotoCcPage()
+void BitcoinGUI::gotoReddit()
 {
-    QDesktopServices::openUrl(QUrl("https://www.crypto-city.com/index.php/lite-doge-ldoge/"));
+    QDesktopServices::openUrl(QUrl("https://www.reddit.com/r/litedoge/"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
