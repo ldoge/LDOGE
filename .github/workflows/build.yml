@@ -18,21 +18,12 @@ jobs:
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
     - name: Dependencies
       run: >
-       sudo apt-get install build-essential libboost-dev 
-       libboost-system-dev libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev libssl-dev
+       sudo apt-get install build-essential libboost-dev libboost-all-dev libssl-dev
        libdb++-dev libminiupnpc-dev libleveldb-dev -y
-    # - name: leveldb
-    #   run:  |
-    #     sudo apt-get install libsnappy-dev
-    #     wget https://github.com/google/leveldb/archive/1.22.tar.gz leveldb.tar.gz
-    #     tar -zxvf leveldb.tar.gz
-    #     cd leveldb
-    #     mkdir -p build && cd build
-    #     cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build .
     - name: Checkout
       uses: actions/checkout@v2.0.0
-    - name: Compile
-      run: |
-        ls
-        qmake && make
+    - name: QMake
+      run: qmake RELEASE=1
+    - name: Make
+      run: make
   
