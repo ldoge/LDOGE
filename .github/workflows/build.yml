@@ -26,4 +26,7 @@ jobs:
       run: qmake RELEASE=1
     - name: Make
       run: make
-  
+    - uses: actions/upload-artifact@v2
+      with:
+        name: litedoge-qt
+        path: litedoge-qt
