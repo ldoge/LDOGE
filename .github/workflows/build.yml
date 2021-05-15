@@ -4,18 +4,15 @@ on: [pull_request,workflow_dispatch]
 
 jobs:
   ubuntu-build:
+    strategy:
+      matrix:
+        qt-version: [5.12.8, 5.15.2]
     runs-on: ubuntu-latest
     steps:
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v1
-      with:
-        path: ../Qt
-        key: ${{ runner.os }}-QtCache
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+        version: ${{ matrix.qt-version }}
     - name: Dependencies
       run: >
        sudo apt-get install build-essential libboost-dev libboost-all-dev libssl-dev
