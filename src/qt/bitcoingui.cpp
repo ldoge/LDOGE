@@ -267,14 +267,14 @@ void BitcoinGUI::createActions()
     websiteAction = new QAction(QIcon(":/icons/globe"), tr("&Wow Website"), this);
     websiteAction->setToolTip(tr("The Official LDOGE Website"));
 
-    facebookAction = new QAction(QIcon(":/icons/instagramLOGO.png"), tr("&Such Instagram"), this);
-    facebookAction->setToolTip(tr("LDOGE Instagram"));
+    instagramAction = new QAction(QIcon(":/icons/instagram"), tr("&Such Instagram"), this);
+    instagramAction->setToolTip(tr("LDOGE Instagram"));
 
     chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
     chatPageAction->setToolTip((tr("Join Development Chat and Cross Platform Tip Bot Synced Staking Wallet")));
 
-    ccPageAction = new QAction(QIcon(":/icons/res/icons/reddit.png"),tr("&Such Reddit"), this);
-    ccPageAction->setToolTip((tr("Litedoge-LDOGE SubReddit with LDOGE Tipping Full Wallet Bot")));
+    redditPageAction = new QAction(QIcon(":/icons/reddit"),tr("&Such Reddit"), this);
+    redditPageAction->setToolTip((tr("Litedoge-LDOGE SubReddit with LDOGE Tipping Full Wallet Bot")));
 
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -289,9 +289,9 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
-    connect(facebookAction, SIGNAL(triggered()), this, SLOT(openFacebook()));
+    connect(instagramAction, SIGNAL(triggered()), this, SLOT(openInstagram()));
     connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
-    connect(ccPageAction, SIGNAL(triggered()), this, SLOT(gotoCcPage()));
+    connect(redditPageAction, SIGNAL(triggered()), this, SLOT(gotoReddit()));
 
     quitAction = new QAction(tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -398,9 +398,9 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(addressBookAction);
     toolbar->addAction(blockExplorerAction);
     toolbar->addAction(websiteAction);
-    toolbar->addAction(facebookAction);
+    toolbar->addAction(instagramAction);
     toolbar->addAction(chatPageAction);
-    toolbar->addAction(ccPageAction);
+    toolbar->addAction(redditPageAction);
 
     toolbar->addWidget(makeToolBarSpacer());
 
