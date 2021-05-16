@@ -99,10 +99,9 @@ private:
     QAction *openRPCConsoleAction;
     QAction *blockExplorerAction;
     QAction *websiteAction;
-    QAction *facebookAction;
+    QAction *instagramAction;
     QAction *chatPageAction;
-    QAction *ccPageAction;
-
+    QAction *redditPageAction;
 
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
@@ -167,10 +166,10 @@ private slots:
     void gotoSendCoinsPage();
     void openBlockExplorer();
     void openWebsite();
-    void openFacebook();
+    void openInstagram();
     /** Switch to IRC Chat Page */
     void gotoChatPage();
-    void gotoCcPage();
+    void gotoReddit();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
