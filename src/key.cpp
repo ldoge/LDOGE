@@ -165,9 +165,10 @@ public:
 
     void SetSecretBytes(const unsigned char vch[32]) {
         BIGNUM *bn;
-	bn = BN_new();
-        assert(BN_bin2bn(vch, 32, bn));
-        assert(EC_KEY_regenerate_key(pkey, bn));
+        bn = BN_bin2bn(vch, 32, NULL);
+        assert(bn);
+        int size = EC_KEY_regenerate_key(pkey, bn);
+        assert(size);
         BN_clear_free(bn);
     }
 
