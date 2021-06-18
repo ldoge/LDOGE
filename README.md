@@ -1,16 +1,18 @@
 # LiteDoge dev Repository
 
-LiteDoge is a PoS-based cryptocurrency.
+LiteDoge-LDOGE is a scrypt algorithm, proof of stake 2.0 based cryptocurrency.
 
 Official Website: https://litedogeofficial.org
 
-Latest Wallets: https://github.com/vashshawn/LDOGE/releases
+Latest Wallets: https://github.com/ldoge/LDOGE/releases
 
-Wiki and Installation guides: https://github.com/vashshawn/LDOGE/wiki
+Wiki and Installation guides: https://github.com/ldoge/LDOGE/wiki
 
-Block Explorer: http://explorer.litedogeofficial.org/ 
+Block Explorer: http://blocks.litedogeofficial.org/
 
-Cryto-City: https://www.crypto-city.com/index.php/lite-doge-ldoge/
+Bitcointalk: https://bitcointalk.org/index.php?topic=1308769.0
+
+Development Channel: https://discord.gg/h6zjKn2wAu
 
 # Development process
 
