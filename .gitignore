@@ -10,3 +10,4 @@ src/litedoged
 LiteDoge-Qt.dmg
 LiteDoge-qt
 qrc_bitcoin.cpp
+*.qm
