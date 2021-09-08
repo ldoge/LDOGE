@@ -245,6 +245,9 @@ static const CRPCCommand vRPCCommands[] =
     { "validateaddress",        &validateaddress,        true,      false,     false },
     { "validatepubkey",         &validatepubkey,         true,      false,     false },
     { "verifymessage",          &verifymessage,          false,     false,     false },
+    { "getnetworkinfo",         &getnetworkinfo,         false,     false,     false },
+    { "getblockchaininfo",      &getblockchaininfo,      false,     false,     false },
+    { "getaddressinfo",         &getaddressinfo,         false,     false,     true },
 
 #ifdef ENABLE_WALLET
     { "getmininginfo",          &getmininginfo,          true,      false,     false },
@@ -295,8 +298,9 @@ static const CRPCCommand vRPCCommands[] =
     { "repairwallet",           &repairwallet,           false,     true,      true },
     { "resendtx",               &resendtx,               false,     true,      true },
     { "makekeypair",            &makekeypair,            false,     true,      false },
-    { "getgenerate",            &getgenerate,            true,      false,      false },
-    { "setgenerate",            &setgenerate,            true,      true,       false },
+    { "getgenerate",            &getgenerate,            true,      false,     false },
+    { "setgenerate",            &setgenerate,            true,      true,      false },
+    { "getaddressinfo",         &getaddressinfo,         false,     false,     true },
 
 #endif
 };

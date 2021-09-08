@@ -1576,3 +1576,30 @@ Value settxfee(const Array& params, bool fHelp)
 
     return true;
 }
+
+Value getaddressinfo(const Array& params, bool fHelp)
+{
+    if (fHelp || params.size() < 1)
+        throw runtime_error(
+            "getaddressinfo <address>\n"
+            "Return information about the given LiteDoge address.\n"
+            "Some of the information will only be present if the address is in the active wallet.");
+
+    Object ret;
+
+    CBitcoinAddress address = CBitcoinAddress(params[0].get_str().c_str());
+
+    if(!address.IsValid()) {
+        throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid LiteDoge address");
+    }
+
+    ret.push_back(Pair("address", params[0].get_str().c_str()));
+
+    CScript scriptPubKey;
+    scriptPubKey.SetDestination(address.Get());
+
+    ret.push_back(Pair("scriptPubKey", HexStr(scriptPubKey.begin(), scriptPubKey.end())));
+    ret.push_back(Pair("ismine", IsMine(*pwalletMain, scriptPubKey)));
+
+    return ret;
+}
