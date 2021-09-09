@@ -312,3 +312,58 @@ Value getnettotals(const Array& params, bool fHelp)
     obj.push_back(Pair("timemillis", GetTimeMillis()));
     return obj;
 }
+
+static Array GetNetworksInfo()
+{
+    Array networks;
+    for(int n=0; n<NET_MAX; ++n)
+    {
+        enum Network network = static_cast<enum Network>(n);
+        if(network == NET_UNROUTABLE)
+            continue;
+        proxyType proxy;
+        Object obj;
+        GetProxy(network, proxy);
+        obj.push_back(Pair("name", proxy.first.ToString()));
+        obj.push_back(Pair("limited", !proxy.first.IsRoutable()));
+        obj.push_back(Pair("reachable", proxy.first.IsRoutable()));
+        obj.push_back(Pair("proxy", proxy.first.IsValid() ? proxy.first.ToStringIPPort() : std::string()));
+        networks.push_back(obj);
+    }
+    return networks;
+}
+
+Value getnetworkinfo(const Array& params, bool fHelp)
+{
+    if(fHelp || params.size() > 0)
+        throw runtime_error(
+                "getnetworkinfo\n"
+                "Returns an object containing various state info regarding P2P networking.");
+
+    Object obj;
+    obj.push_back(Pair("version", FormatFullVersion()));
+    obj.push_back(Pair("subversion", FormatSubVersion(CLIENT_NAME, CLIENT_VERSION, std::vector<std::string>{})));
+    obj.push_back(Pair("protocolversion", PROTOCOL_VERSION));
+    obj.push_back(Pair("localservices", "")); // TODO
+    obj.push_back(Pair("localservicesnames", ""));  // TODO
+    obj.push_back(Pair("localrelay", false)); // TODO: fix this, hardcoded to false
+    obj.push_back(Pair("timeoffset", GetTimeOffset()));
+    obj.push_back(Pair("networkactive", vNodes.size()));
+    obj.push_back(Pair("connections", vNodes.size()));
+    obj.push_back(Pair("networks",  GetNetworksInfo()));
+
+    vector<CNodeStats> vstats;
+    CopyNodeStats(vstats);
+
+    Array localAddresses;
+    BOOST_FOREACH(const CNodeStats& stats, vstats) {
+        Object obj;
+        obj.push_back(Pair("address", stats.addrName));
+        obj.push_back(Pair("score", stats.nMisbehavior));
+        localAddresses.push_back(obj);
+    }
+
+    obj.push_back(Pair("localaddresses", localAddresses));
+    obj.push_back(Pair("warnings", ""));
+    return obj;
+}

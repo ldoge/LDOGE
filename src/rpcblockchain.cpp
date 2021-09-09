@@ -302,3 +302,25 @@ Value getcheckpoint(const Array& params, bool fHelp)
 
     return result;
 }
+
+Value getblockchaininfo(const Array& params, bool fHelp)
+{
+    if(fHelp || params.size() != 0)
+        throw runtime_error(
+                "getblockchaininfo\n"
+                "Returns an object containing various state info regarding blockchain processing.");
+
+    Object obj;
+    const CBlockIndex* tip = FindBlockByHeight(std::max(0, nBestHeight));
+    obj.push_back(Pair("chain", Params().NetworkID()));
+    obj.push_back(Pair("blocks", nBestHeight));
+    obj.push_back(Pair("headers", pindexBest));
+    obj.push_back(Pair("bestblockhash", tip->GetBlockHash().GetHex()));
+    obj.push_back(Pair("difficulty", GetDifficulty(tip)));
+    obj.push_back(Pair("mediantime", tip->GetMedianTimePast()));
+    obj.push_back(Pair("initialblockdownload", IsInitialBlockDownload()));
+    obj.push_back(Pair("chainwork", tip->nChainTrust.GetHex()));
+    obj.push_back(Pair("size_on_disk", nMinDiskSpace));
+    obj.push_back(Pair("warnings", ""));
+    return obj;
+}
