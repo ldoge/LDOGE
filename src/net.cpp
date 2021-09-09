@@ -24,7 +24,7 @@
 using namespace std;
 using namespace boost;
 
-static const int MAX_OUTBOUND_CONNECTIONS = 16;
+static const int MAX_OUTBOUND_CONNECTIONS = 50;
 
 void ThreadMessageHandler2(void* parg);
 void ThreadSocketHandler2(void* parg);
@@ -45,9 +45,10 @@ struct LocalServiceInfo {
 //
 // Global state variables
 //
+bool fClient = false;
 bool fDiscover = true;
 bool fUseUPnP = true;
-uint64_t nLocalServices = NODE_NETWORK;
+uint64_t nLocalServices = (fClient ? 0 : NODE_NETWORK);
 static CCriticalSection cs_mapLocalHost;
 static map<CNetAddr, LocalServiceInfo> mapLocalHost;
 static bool vfReachable[NET_MAX] = {};
@@ -1229,24 +1230,26 @@ void MapPort(bool)
 // Each pair gives a source name and a seed name.
 // The first name is used as information source for addrman.
 // The second name should resolve to a list of seed addresses.
-
 static const char *strDNSSeed[][2] = {
-    {"cloud.litedoge.info", "cloud.litedoge.info},
-    {"192.52.167.140", "192.52.167.140"},
-    {"seed.corgicoin.co.uk", "seed.corgicoin.co.uk"},
-    {"seed.iminebits.com", "seed.iminebits.com"},
-    {"corgi.seed.fuzzbawls.pw", "corgi.seed.fuzzbawls.pw"},
-    {"drew-group.com", "drew-group.com"},
+    
+    {"cloud.litedoge.info", "cloud.litedoge.info"},
+    {"seed01", "seed01.litedogeofficial.org"},
+    {"seed02", "seed01.litedogeofficial.org"},
+    {"seed03", "seed01.litedogeofficial.org"},
+    {"seed01", "seed01.litedogeofficial.org"},
+    {"seed01", "seed01.litedogeofficial.org"},
+    {"seed01", "seed01.litedogeofficial.org"},
+    {"seed01", "seed01.litedogeofficial.org"},
+    {"seed01", "seed01.litedogeofficial.org"},
+    ("labs01", "ldoge.nerdlabs001.com"};
+    
 };
-
-
-
-
-
+     
 void ThreadDNSAddressSeed(void* parg)
 {
     // Make this thread recognisable as the DNS seeding thread
-    RenameThread("corgicoin-dnsseed");
+    RenameThread("litedoge-dnsseed");
+    
     try
     {
         vnThreadsRunning[THREAD_DNSSEED]++;
@@ -1266,9 +1269,11 @@ void ThreadDNSAddressSeed2(void* parg)
 {
     LogPrintf("ThreadDNSAddressSeed started\n");
     int found = 0;
+    
     if (!fTestNet)
     {
         LogPrintf("Loading addresses from DNS seeds (could take a while)\n");
+        
         for (unsigned int seed_idx = 0; seed_idx < ARRAYLEN(strDNSSeed); seed_idx++) {
             if (HaveNameProxy()) {
                 AddOneShot(strDNSSeed[seed_idx][1]);
@@ -1300,14 +1305,6 @@ unsigned int pnSeed[] =
     0xfd2c2c52, 0x353545b9,
 };
 
-
-
-
-
-
-
-
-
 void DumpAddresses()
 {
     int64_t nStart = GetTimeMillis();
@@ -1337,8 +1334,39 @@ void static ProcessOneShot()
     }
 }
 
+void ThreadDumpAddress2(void* parg)
+{
+    vnThreadsRunning[THREAD_DUMPADDRESS]++;
+    while (!fShutdown)
+    {
+        DumpAddresses();
+        vnThreadsRunning[THREAD_DUMPADDRESS]--;
+        MilliSleep(600000);
+        vnThreadsRunning[THREAD_DUMPADDRESS]++;
+    }
+    vnThreadsRunning[THREAD_DUMPADDRESS]--;
+}
+
+void ThreadDumpAddress(void* parg)
+{
+    // Make this thread recognisable as the address dumping thread
+    RenameThread("litedoge-adrdump");
+
+    try
+    {
+        ThreadDumpAddress2(parg);
+    }
+    catch (std::exception& e) {
+        PrintException(&e, "ThreadDumpAddress()");
+    }
+    printf("ThreadDumpAddress exited\n");
+}
+    
 void ThreadOpenConnections()
 {
+    // Make this thread recognisable as the connection opening thread
+    RenameThread("litedoge-opencon");
+    
     // Connect to specific addresses
     if (mapArgs.count("-connect") && mapMultiArgs["-connect"].size() > 0)
     {
