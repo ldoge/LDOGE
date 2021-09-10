@@ -21,12 +21,13 @@
 #include <miniupnpc/upnperrors.h>
 #endif
 
-
+// Dump addresses to peers.dat every 15 minutes (900s)
+#define DUMP_ADDRESSES_INTERVAL 900
 
 using namespace std;
 using namespace boost;
 
-static const int MAX_OUTBOUND_CONNECTIONS = 50;
+static const int MAX_OUTBOUND_CONNECTIONS = 16;
 
 bool OpenNetworkConnection(const CAddress& addrConnect, CSemaphoreGrant *grantOutbound = NULL, const char *strDest = NULL, bool fOneShot = false);
 
@@ -517,7 +518,7 @@ void CNode::copyStats(CNodeStats &stats)
     // Raw ping time is in microseconds, but show it to user as whole seconds (Bitcoin users should be well used to small numbers with many decimal places by now :)
     stats.dPingTime = (((double)nPingUsecTime) / 1e6);
     stats.dPingWait = (((double)nPingUsecWait) / 1e6);
-    
+
     // Leave string empty if addrLocal invalid (not filled in yet)
     stats.addrLocal = addrLocal.IsValid() ? addrLocal.ToString() : "";
 }
@@ -977,7 +978,7 @@ void ThreadMapPort()
 #else
     /* miniupnpc 1.9.20150730 */
     int error = 0;
-    devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0, 0, 2, &error);    
+    devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0, 0, 2, &error);
 #endif
 
     struct UPNPUrls urls;
@@ -1071,81 +1072,53 @@ void MapPort(bool)
 }
 #endif
 
-// DNS seeds
-// Each pair gives a source name and a seed name.
-// The first name is used as information source for addrman.
-// The second name should resolve to a list of seed addresses.
 
-static const char *strDNSSeed[][2] = {
-    {"cloud.litedoge.info", "cloud.litedoge.info"},
-    {"seed01", "seed01.litedogeofficial.org"},
-    {"seed02", "seed01.litedogeofficial.org"},
-    {"seed03", "seed01.litedogeofficial.org"},
-    {"seed01", "seed01.litedogeofficial.org"},
-    {"seed01", "seed01.litedogeofficial.org"},
-    {"seed01", "seed01.litedogeofficial.org"},
-    {"seed01", "seed01.litedogeofficial.org"},
-    {"seed01", "seed01.litedogeofficial.org"},
-    {"labs01", "ldoge.nerdlabs001.com"},
-};
 
-void ThreadDNSAddressSeed2(void* parg)
+
+
+
+void ThreadDNSAddressSeed()
 {
-    printf("ThreadDNSAddressSeed started\n");
-    int found = 0;
-    if (!TestNet())
-    {
-        printf("Loading addresses from DNS seeds (could take a while)\n");
-        for (unsigned int seed_idx = 0; seed_idx < ARRAYLEN(strDNSSeed); seed_idx++) {
-            if (HaveNameProxy()) {
-                AddOneShot(strDNSSeed[seed_idx][1]);
-            } else {
-                vector<CNetAddr> vaddr;
-                vector<CAddress> vAdd;
-                if (LookupHost(strDNSSeed[seed_idx][1], vaddr))
-                {
-                    BOOST_FOREACH(CNetAddr& ip, vaddr)
-                    {
-                        int nOneDay = 24*3600;
-                        CAddress addr = CAddress(CService(ip, GetListenPort()));
-                        addr.nTime = GetTime() - 3*nOneDay - GetRand(4*nOneDay); // use a random age between 3 and 7 days old
-                        vAdd.push_back(addr);
-                        found++;
-                    }
-                }
-                addrman.Add(vAdd, CNetAddr(strDNSSeed[seed_idx][0], true));
-            }
+    // goal: only query DNS seeds if address need is acute
+    if ((addrman.size() > 0) &&
+        (!GetBoolArg("-forcednsseed", false))) {
+        MilliSleep(11 * 1000);
+
+        LOCK(cs_vNodes);
+        if (vNodes.size() >= 2) {
+            LogPrintf("P2P peers available. Skipped DNS seeding.\n");
+            return;
         }
     }
-    printf("%d addresses found from DNS seeds\n", found);
-}
 
-void ThreadDNSAddressSeed(void* parg)
-{
-    // Make this thread recognisable as the DNS seeding thread
-    RenameThread("litedoge-dnsseed");
-    try
-    {
-        vnThreadsRunning[THREAD_DNSSEED]++;
-        ThreadDNSAddressSeed2(parg);
-        vnThreadsRunning[THREAD_DNSSEED]--;
-    }
-    catch (std::exception& e) {
-        vnThreadsRunning[THREAD_DNSSEED]--;
-        PrintException(&e, "ThreadDNSAddressSeed()");
-    } catch (...) {
-        vnThreadsRunning[THREAD_DNSSEED]--;
-        throw; // support pthread_cancel()
-    }
-    printf("ThreadDNSAddressSeed exited\n");
-}
+    const vector<CDNSSeedData> &vSeeds = Params().DNSSeeds();
+    int found = 0;
 
-unsigned int pnSeed[] =
-{
-    0x68836639,
-    0x6883665b,
-    0xfd2c2c52, 0x353545b9,
-};
+    LogPrintf("Loading addresses from DNS seeds (could take a while)\n");
+
+    BOOST_FOREACH(const CDNSSeedData &seed, vSeeds) {
+        if (HaveNameProxy()) {
+            AddOneShot(seed.host);
+        } else {
+            vector<CNetAddr> vIPs;
+            vector<CAddress> vAdd;
+            if (LookupHost(seed.host.c_str(), vIPs))
+            {
+                BOOST_FOREACH(CNetAddr& ip, vIPs)
+                {
+                    int nOneDay = 24*3600;
+                    CAddress addr = CAddress(CService(ip, Params().GetDefaultPort()));
+                    addr.nTime = GetTime() - 3*nOneDay - GetRand(4*nOneDay); // use a random age between 3 and 7 days old
+                    vAdd.push_back(addr);
+                    found++;
+                }
+            }
+            addrman.Add(vAdd, CNetAddr(seed.name, true));
+        }
+    }
+
+    LogPrintf("%d addresses found from DNS seeds\n", found);
+}
 
 void DumpAddresses()
 {
@@ -1688,7 +1661,7 @@ void StartNode(boost::thread_group& threadGroup)
     threadGroup.create_thread(boost::bind(&TraceThread<void (*)()>, "msghand", &ThreadMessageHandler));
 
     // Dump network addresses
-    threadGroup.create_thread(boost::bind(&LoopForever<void (*)()>, "dumpaddr", &DumpAddresses, 1000));
+    threadGroup.create_thread(boost::bind(&LoopForever<void (*)()>, "dumpaddr", &DumpAddresses, DUMP_ADDRESSES_INTERVAL * 1000));
 }
 
 bool StopNode()
