@@ -74,6 +74,8 @@ bool fPrintToDebugLog = true;
 bool fDaemon = false;
 bool fServer = false;
 bool fCommandLine = false;
+volatile bool fRequestShutdown = false;
+bool fShutdown = false;
 string strMiscWarning;
 bool fNoListen = false;
 bool fLogTimestamps = false;

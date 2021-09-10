@@ -681,4 +681,24 @@ public:
     bool Read(CAddrMan& addr);
 };
 
+
+/** Thread types */
+enum threadId
+{
+    THREAD_SOCKETHANDLER,
+    THREAD_OPENCONNECTIONS,
+    THREAD_MESSAGEHANDLER,
+    THREAD_RPCLISTENER,
+    THREAD_UPNP,
+    THREAD_DNSSEED,
+    THREAD_ADDEDCONNECTIONS,
+    THREAD_DUMPADDRESS,
+    THREAD_RPCHANDLER,
+    THREAD_STAKE_MINER,
+
+    THREAD_MAX
+};
+
+extern boost::array<int, THREAD_MAX> vnThreadsRunning;
+
 #endif
