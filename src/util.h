@@ -115,8 +115,6 @@ extern bool fPrintToDebugLog;
 extern bool fDaemon;
 extern bool fServer;
 extern bool fCommandLine;
-extern volatile bool fRequestShutdown;
-extern bool fShutdown;
 extern std::string strMiscWarning;
 extern bool fNoListen;
 extern bool fLogTimestamps;
