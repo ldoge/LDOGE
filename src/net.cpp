@@ -21,8 +21,6 @@
 #include <miniupnpc/upnperrors.h>
 #endif
 
-// Dump addresses to peers.dat every 15 minutes (900s)
-#define DUMP_ADDRESSES_INTERVAL 900
 
 using namespace std;
 using namespace boost;
@@ -1081,7 +1079,7 @@ void ThreadDNSAddressSeed()
 {
     // goal: only query DNS seeds if address need is acute
     if ((addrman.size() > 0) &&
-        (!GetBoolArg("-forcednsseed", false))) {
+        (!GetBoolArg("-forcednsseed", true))) {
         MilliSleep(11 * 1000);
 
         LOCK(cs_vNodes);
@@ -1310,7 +1308,7 @@ void ThreadOpenConnections2(void* parg)
 void ThreadOpenAddedConnections(void* parg)
 {
     // Make this thread recognisable as the connection opening thread
-    RenameThread("corgicoin-opencon");
+    RenameThread("litedoge-opencon");
     try
     {
         vnThreadsRunning[THREAD_ADDEDCONNECTIONS]++;
@@ -1425,7 +1423,7 @@ bool OpenNetworkConnection(const CAddress& addrConnect, CSemaphoreGrant *grantOu
 void ThreadMessageHandler(void* parg)
 {
     // Make this thread recognisable as the message handling thread
-    RenameThread("corgicoin-msghand");
+    RenameThread("litedoge-msghand");
     try
     {
         vnThreadsRunning[THREAD_MESSAGEHANDLER]++;
@@ -1674,7 +1672,7 @@ void StartNode(boost::thread_group& threadGroup)
     // Start threads
     //
 
-    if (!GetBoolArg("-dnsseed", true))
+    if (!GetBoolArg("-dnsseed", false)
         LogPrintf("DNS seeding disabled\n");
     else
         threadGroup.create_thread(boost::bind(&TraceThread<void (*)()>, "dnsseed", &ThreadDNSAddressSeed));
