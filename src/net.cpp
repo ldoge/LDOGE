@@ -1072,10 +1072,27 @@ void MapPort(bool)
 }
 #endif
 
+// DNS seeds
+// Each pair gives a source name and a seed name.
+// The first name is used as information source for addrman.
+// The second name should resolve to a list of seed addresses.
+static const char *strMainNetDNSSeed[][2] = {
+    {"seed00", "cloud.litedoge.info},
+    {"seed01", "seed01.litedogeofficial.org"},
+    {"seed02", "seed02.litedogeofficial.org"},
+    {"seed03", "seed03.litedogeofficial.org"},
+    {"seed04", "seed04.litedogeofficial.org"},
+    {"seed05", "seed05.litedogeofficial.org"},
+    {"seed06", "seed06.litedogeofficial.org"},
+    {"seed07", "seed07.litedogeofficial.org"},
+    {"seed08", "seed08.litedogeofficial.org"}
+   
+};
 
-
-
-
+static const char *strTestNetDNSSeed[][2] = {
+    {"cloud.litedoge.info", "cloud.litedoge.info"},
+    {NULL, NULL}
+};
 
 void ThreadDNSAddressSeed()
 {
