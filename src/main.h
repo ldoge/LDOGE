@@ -1040,6 +1040,7 @@ public:
     {
         nFlags |= BLOCK_PROOF_OF_STAKE;
     }
+  
     // ppcoin: entropy bit for stake modifier if chosen by modifier
     unsigned int GetStakeEntropyBit(unsigned int nHeight) const
       {
