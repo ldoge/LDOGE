@@ -27,7 +27,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        qt-version: [5.12.8, 5.15.2]
         name:
           - x86_64-linux
           - x86_64-macos
@@ -73,7 +72,7 @@ jobs:
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
-            version: ${{ matrix.qt-version }}
+            version: 5.12.8
       - name: Add architecture
         if: ${{ matrix.arch }}
         run: |
