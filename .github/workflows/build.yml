@@ -35,17 +35,14 @@ jobs:
           - name: x86_64-linux
             host: x86_64-unknown-linux-gnu
             os: ubuntu-18.04
-            packages: bc python3-zmq
+            packages: bc python3-zmq libboost-dev libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libleveldb-dev 
             run-tests: true
-            dep-opts: "DEBUG=1"
-            config-opts: "--enable-gui=qt5 --enable-zmq --enable-glibc-back-compat --enable-reduce-exports CPPFLAGS=-DDEBUG_LOCKORDER"
             goal: install
-            strip-cmd: "strip"
           - name: x86_64-win
             host: x86_64-w64-mingw32
             arch: "i386"
             os: ubuntu-20.04
-            packages: python3 nsis g++-mingw-w64-x86-64 wine64 bc wine-binfmt
+            packages: python3 nsis g++-mingw-w64-x86-64 wine64 bc wine-binfmt libboost-dev libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libleveldb-dev 
             postinstall: |
               sudo update-alternatives --set x86_64-w64-mingw32-gcc  /usr/bin/x86_64-w64-mingw32-gcc-posix
               sudo update-alternatives --set x86_64-w64-mingw32-g++  /usr/bin/x86_64-w64-mingw32-g++-posix
@@ -54,17 +51,15 @@ jobs:
             dep-opts: ""
             config-opts: "--enable-reduce-exports --enable-gui=qt5"
             goal: install
-            strip-cmd: "x86_64-w64-mingw32-strip"
           - name: x86_64-macos
             host: x86_64-apple-darwin11
             os: ubuntu-18.04
-            packages: cmake imagemagick libcap-dev librsvg2-bin libz-dev libtiff-tools libtinfo5 python3-setuptools xorriso libtinfo5
+            packages: cmake imagemagick libcap-dev librsvg2-bin libz-dev libtiff-tools libtinfo5 python3-setuptools xorriso libtinfo5 libboost-dev libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libleveldb-dev 
             run-tests: false
             dep-opts: ""
             config-opts: "--enable-gui=qt5 --enable-reduce-exports"
             goal: install
             sdk: 10.11
-            strip-cmd: "x86_64-apple-darwin11-strip"
 
     runs-on: ${{ matrix.os }}
 
