@@ -342,7 +342,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
                         if (porphan->setDependsOn.empty())
                         {
                             vecPriority.push_back(TxPriority(porphan->dPriority, porphan->dFeePerKb, porphan->ptx));
-                            std::push_heap(vecPriority.begin(), vecPriority.end(), comparer);
+                             std::push_heap(vecPriority.begin(), vecPriority.end(), comparer);
                         }
                     }
                 }
@@ -351,7 +351,8 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
 
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
-        printf("CreateNewBlock(): total size %"PRI64u"\n", nBlockSize);
+
+
             if (fDebug && GetBoolArg("-printpriority", false))
             LogPrintf("CreateNewBlock(): total size %u\n", nBlockSize);
 
@@ -363,8 +364,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
 
         // Fill in header
         pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
-        pblock->nBits          = GetNextTargetRequired(pindexPrev, fProofOfStake);
-        pblock->nBits          = GetNextWorkRequired(pindexPrev, pblock);
+        pblock->nTime          = max(pindexPrev->GetPastTimeLimit()+1, pblock->GetMaxTransactionTime());
         if (!fProofOfStake)
             pblock->UpdateTime(pindexPrev);
         pblock->nNonce         = 0;
