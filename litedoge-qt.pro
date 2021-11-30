@@ -525,9 +525,4 @@ linux-* {
     LIBS += -ldl
 }
 
-netbsd-*|freebsd-*|openbsd-* {
-    # libexecinfo is required for back trace
-    LIBS += -lexecinfo
-}
-
 system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
