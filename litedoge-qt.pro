@@ -406,14 +406,14 @@ isEmpty(BOOST_THREAD_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_LIB_PATH) {
-    macx:BDB_LIB_PATH = "/usr/local/lib
+    macx:BDB_LIB_PATH = "/usr/local/opt/berkeley-db@6/lib"
 
 isEmpty(BDB_LIB_SUFFIX) {
     macx:BDB_LIB_SUFFIX = -6.0
 }
 
 isEmpty(BDB_INCLUDE_PATH) {
-    macx:BDB_INCLUDE_PATH = "/usr/local/lib
+    macx:BDB_INCLUDE_PATH = /usr/local/opt/berkeley-db@6/lib"
 }
 
 isEmpty(BOOST_LIB_PATH) {
