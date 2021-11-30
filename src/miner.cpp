@@ -527,25 +527,21 @@ bool CheckStake(CBlock* pblock, CWallet& wallet)
 
 void ThreadStakeMiner(CWallet *pwallet)
 {
-    LogPrintf("StakeMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
 
     // Make this thread recognisable as the mining thread
     RenameThread("litedoge-miner");
+    
     CReserveKey reservekey(pwallet);
+    
     bool fTryToSync = true;
 
     while (true)
     {
-        if (fShutdown)
-            return;
-        
         while (pwallet->IsLocked())
         {
             nLastCoinStakeSearchInterval = 0;
             MilliSleep(1000);
-            if (fShutdown)
-                return;
         }
 
         while (vNodes.empty() || IsInitialBlockDownload())
@@ -553,14 +549,13 @@ void ThreadStakeMiner(CWallet *pwallet)
             nLastCoinStakeSearchInterval = 0;
             fTryToSync = true;
             MilliSleep(1000);
-            if (fShutdown)
                 return;
         }
 
         if (fTryToSync)
         {
             fTryToSync = false;
-            if (vNodes.size() < 3 || pindexBest->GetBlockTime() < GetNumBlocksOfPeers())
+            if (vNodes.size() < 3 || pindexBest->GetBlockTime() < GetTime() - 10 * 60)
             {
                 MilliSleep(60000);
                 continue;
