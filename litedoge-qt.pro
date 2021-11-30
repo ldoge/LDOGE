@@ -529,4 +529,4 @@ netbsd-*|freebsd-*|openbsd-* {
     LIBS += -lexecinfo
 }
 
-system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
+system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
