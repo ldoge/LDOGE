@@ -406,15 +406,14 @@ isEmpty(BOOST_THREAD_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_LIB_PATH) {
-    macx:BDB_LIB_PATH = "/opt/local/lib/db60
-}
+    macx:BDB_LIB_PATH = "/usr/local/lib
 
 isEmpty(BDB_LIB_SUFFIX) {
     macx:BDB_LIB_SUFFIX = -6.0
 }
 
 isEmpty(BDB_INCLUDE_PATH) {
-    macx:BDB_INCLUDE_PATH = "/opt/local/include/db60
+    macx:BDB_INCLUDE_PATH = "/usr/local/lib
 }
 
 isEmpty(BOOST_LIB_PATH) {
