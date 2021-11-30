@@ -39,12 +39,9 @@ UI_DIR = build
 
 # use: qmake "RELEASE=1"
 contains(RELEASE, 1) {
-    message(Building Release Version)
-    # Mac: compile for maximum compatibility (10.5, 32-bit)
-    macx:QMAKE_CXXFLAGS += -mmacosx-version-min=10.8 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/
-
+    # Mac: compile for maximum compatibility (10.6, 64-bit)
+    macx:QMAKE_MACOSX_DEPLOYMENT_TARGET=10.6
     !windows:!macx {
-        message(Static Link libraries enabled (linux only))
         # Linux: static link
         LIBS += -Wl,-Bstatic
     }
