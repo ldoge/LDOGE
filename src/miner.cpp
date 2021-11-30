@@ -363,18 +363,18 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
 
         // Fill in header
         pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
-        if (!fProofOfStake)
-            UpdateTime(*pblock, pindexPrev);
         pblock->nBits          = GetNextTargetRequired(pindexPrev, fProofOfStake);
         pblock->nBits          = GetNextWorkRequired(pindexPrev, pblock);
+        if (!fProofOfStake)
+            pblock->UpdateTime(pindexPrev);
         pblock->nNonce         = 0;
+    }
+
         pblock->vtx[0].vin[0].scriptSig = CScript() << OP_0 << OP_0;
         pblocktemplate->vTxSigOps[0] = pblock->vtx[0].GetLegacySigOpCount();
         CBlockIndex indexDummy(*pblock);
         indexDummy.pprev = pindexPrev;
         indexDummy.nHeight = pindexPrev->nHeight + 1;
-        CCoinsViewCache viewNew(*pcoinsTip, true);
-        CValidationState state;
         if (!pblock->ConnectBlock(state, &indexDummy, viewNew, true))
             throw std::runtime_error("CreateNewBlock() : ConnectBlock failed");
     }
@@ -576,7 +576,7 @@ void ThreadStakeMiner(CWallet *pwallet)
         if (pblock->SignBlock(*pwallet, nFees))
         {
             SetThreadPriority(THREAD_PRIORITY_NORMAL);
-            CheckStake(pblock, *pwallet, reservekey);
+            CheckStake(pblock, *pwallet);
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
             MilliSleep(500);
         }
@@ -587,7 +587,7 @@ void ThreadStakeMiner(CWallet *pwallet)
 
 void static BitcoinMiner(CWallet *pwallet)
 {
-    LogPrintf("BitcoinMiner started\n");
+    Printf("BitcoinMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("LiteDoge Miner");
 
@@ -605,13 +605,13 @@ void static BitcoinMiner(CWallet *pwallet)
         unsigned int nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
         CBlockIndex* pindexPrev = pindexBest;
 
-       unique_ptr<CBlock> pblock(CreateNewBlock(reservekey));
+       auto_ptr<CBlock> pblock(CreateNewBlock(reservekey));
         if (!pblock.get())
             return;
         
         IncrementExtraNonce(pblock.get(), pindexPrev, nExtraNonce);
 
-        LogPrintf("Running LitedogeMiner with %" PRIszu " transactions in block (%u bytes)\n", pblock->vtx.size(),
+        Printf("Running LitedogeMiner with %" PRIszu " transactions in block (%u bytes)\n", pblock->vtx.size(),
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
         //
@@ -624,7 +624,6 @@ void static BitcoinMiner(CWallet *pwallet)
         FormatHashBuffers(pblock.get(), pmidstate, pdata, phash1);
 
         unsigned int& nBlockTime = *(unsigned int*)(pdata + 64 + 4);
-        unsigned int& nBlockBits = *(unsigned int*)(pdata + 64 + 8);
         unsigned int& nBlockNonce = *(unsigned int*)(pdata + 64 + 12);
 
 
