@@ -127,7 +127,7 @@ QMAKE_EXTRA_TARGETS += genleveldb
 QMAKE_CLEAN += $$PWD/src/leveldb/db; cd $$PWD/src/leveldb ; $(MAKE) clean
 } else {
     message(Building with Berkeley DB transaction index)
-    SOURCES += src/txdb-leveldb.cpp
+    SOURCES += src/leveldb/helpers/memenv/memenv.h
 }
 
 
