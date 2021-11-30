@@ -26,8 +26,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 #BOOST_LIB_SUFFIX=-mgw49-mt-s-1_55
 #BOOST_INCLUDE_PATH=C:/deps/boost_1_55_0
 #BOOST_LIB_PATH=C:/deps/boost_1_55_0/stage/lib
-#BDB_INCLUDE_PATH=C:/deps/db-6.0.20/build_unix
-#BDB_LIB_PATH=C:/deps/db-6.0.20/build_unix
+#BDB_INCLUDE_PATH=C:/deps/db-4.8.30.NC/build_unix
+#BDB_LIB_PATH=C:/deps/db-4.8.30.NC/build_unix
 #OPENSSL_INCLUDE_PATH=C:/d1eps/openssl-1.0.2g/include
 #OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2g
 #QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
@@ -124,40 +124,35 @@ genleveldb.depends = FORCE
 PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
 QMAKE_EXTRA_TARGETS += genleveldb
 # Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
-QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
+QMAKE_CLEAN += $$PWD/src/leveldb/db; cd $$PWD/src/leveldb ; $(MAKE) clean
 } else {
     message(Building with Berkeley DB transaction index)
-    SOURCES += src/txdb-bdb.cpp
+    SOURCES += src/txdb-leveldb.cpp
 }
 
 
-# use: qmake "USE_ASM=1"
-contains(USE_ASM, 1) {
-    message(Using assembler scrypt implementations)
-    DEFINES += USE_ASM
-
-     contains(QMAKE_TARGET.arch, i386) | contains(QMAKE_TARGET.arch, i586) | contains(QMAKE_TARGET.arch, i686) {
-        message("x86 platform, setting -msse2 flag")
-
-        QMAKE_CXXFLAGS += -msse2
-        QMAKE_CFLAGS += -msse2
-    }
-
-    SOURCES += src/crypto/scrypt/asm/scrypt-arm.S src/crypto/scrypt/asm/scrypt-x86.S src/crypto/scrypt/asm/scrypt-x86_64.S src/crypto/scrypt/asm/asm-wrapper.cpp
-} else {
-    # use: qmake "USE_SSE2=1"
-    contains(USE_SSE2, 1) {
-        message(Using SSE2 intrinsic scrypt implementation & generic sha256 implementation)
-        SOURCES += src/crypto/scrypt/intrin/scrypt-sse2.cpp
-        DEFINES += USE_SSE2
-        QMAKE_CXXFLAGS += -msse2
-        QMAKE_CFLAGS += -msse2
-    } else {
-        message(Using generic scrypt implementations)
-        SOURCES += src/crypto/scrypt/generic/scrypt-generic.cpp
-    }
+#QMAKE_CXXFLAGS += -msse2 -w
+#QMAKE_CFLAGS += -msse2
+# If we have an arm device, we can't use sse2, so define as thumb
+# Because of scrypt_mine.cpp, we also have to add a compile
+#     flag that states we *really* don't have SSE
+# Otherwise, assume sse2 exists
+QMAKE_XCPUARCH = $$QMAKE_HOST.arch
+equals(QMAKE_XCPUARCH, armv7l) {
+    message(Building without SSE2 support)
+	QMAKE_CXXFLAGS += -DNOSSE
+    QMAKE_CFLAGS += -DNOSSE
 }
-
+else:equals(QMAKE_XCPUARCH, armv6l) {
+    message(Building without SSE2 support)
+	QMAKE_CXXFLAGS += -DNOSSE
+    QMAKE_CFLAGS += -DNOSSE
+}
+else {
+    message(Building with SSE2 support)
+    QMAKE_CXXFLAGS += -msse2 -w
+    QMAKE_CFLAGS += -msse2
+}
 # regenerate src/build.h
 !windows|contains(USE_BUILD_INFO, 1) {
     genbuild.depends = FORCE
@@ -175,7 +170,6 @@ contains(USE_O3, 1) {
     QMAKE_CXXFLAGS += -O3
     QMAKE_CFLAGS += -O3
 }
-
 
 QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector
 
@@ -372,6 +366,16 @@ contains(USE_QRCODE, 1) {
     FORMS += src/qt/forms/qrcodedialog.ui
 }
 
+contains(BITCOIN_QT_TEST, 1) {
+SOURCES += src/qt/test/test_main.cpp \
+    src/qt/test/uritests.cpp
+HEADERS += src/qt/test/uritests.h
+DEPENDPATH += src/qt/test
+QT += testlib
+TARGET = bitcoin-qt_test
+DEFINES += BITCOIN_QT_TEST
+}
+
 CODECFORTR = UTF-8
 
 # for lrelease/lupdate
@@ -382,6 +386,7 @@ isEmpty(QMAKE_LRELEASE) {
     win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\\lrelease.exe
     else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
 }
+
 isEmpty(QM_DIR):QM_DIR = $$PWD/src/qt/locale
 # automatically build translations, so they can be included in resource file
 TSQM.name = lrelease ${QMAKE_FILE_IN}
@@ -402,7 +407,7 @@ isEmpty(BOOST_LIB_SUFFIX) {
 }
 
 isEmpty(BOOST_THREAD_LIB_SUFFIX) {
-    win32:BOOST_THREAD_LIB_SUFFIX = $$BOOST_LIB_SUFFIX
+    win32:BOOST_THREAD_LIB_SUFFIX = _win32$$BOOST_LIB_SUFFIX
     else:BOOST_THREAD_LIB_SUFFIX = $$BOOST_LIB_SUFFIX
 }
 
@@ -440,10 +445,16 @@ windows:!contains(MINGW_THREAD_BUGFIX, 0) {
     QMAKE_LIBS_QT_ENTRY = -lmingwthrd $$QMAKE_LIBS_QT_ENTRY
 }
 
-!windows:!macx {
-    DEFINES += LINUX
-    LIBS += -lrt
-}
+macx:HEADERS += src/qt/macdockiconhandler.h
+macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm
+macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
+macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
+macx:ICON = src/qt/res/icons/bitcoin.icns
+macx:TARGET = "LiteDoge-Qt"
+macx:QMAKE_CFLAGS_THREAD += -pthread
+macx:QMAKE_LFLAGS_THREAD += -pthread
+macx:QMAKE_CXXFLAGS_THREAD += -pthread
+macx:QMAKE_INFO_PLIST = share/qt/Info.plist
 
 # Set libraries and includes at end, to use platform-defined defaults if not overridden
 INCLUDEPATH += $$BOOST_INCLUDE_PATH $$BDB_INCLUDE_PATH $$OPENSSL_INCLUDE_PATH $$QRENCODE_INCLUDE_PATH
@@ -459,6 +470,11 @@ contains(RELEASE, 1) {
         # Linux: turn dynamic linking back on for c/c++ runtime libraries
         LIBS += -Wl,-Bdynamic
     }
+}
+
+!windows:!macx {
+    DEFINES += LINUX
+    LIBS += -lrt -ldl
 }
 
 system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
