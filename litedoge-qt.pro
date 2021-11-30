@@ -531,4 +531,3 @@ netbsd-*|freebsd-*|openbsd-* {
 }
 
 system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
-}
