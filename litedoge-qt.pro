@@ -413,7 +413,7 @@ isEmpty(BDB_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_INCLUDE_PATH) {
-    macx:BDB_INCLUDE_PATH = "/usr/local/opt/berkeley-db@6/lib"
+    macx:BDB_INCLUDE_PATH = "/usr/local/opt/berkeley-db@6/lib/include/"
 }
 
 isEmpty(BOOST_LIB_PATH) {
