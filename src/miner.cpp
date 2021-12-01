@@ -102,17 +102,18 @@ public:
 // CreateNewBlock: create new block (without proof-of-work/proof-of-stake)
 CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFees)
 {
+    CBlockIndex* pindexPrev = pindexBest;
+    int height = pindexPrev->nHeight+1;
+
     // Create new block
     auto_ptr<CBlock> pblock(new CBlock());
-    unique_ptr<CBlock> pblock(new CBlock());
+
     if (!pblock.get())
         return NULL;
 
-    CBlockIndex* pindexPrev = pindexBest;
-    int nHeight = pindexPrev->nHeight + 1;
-
     // Create coinbase tx
     CTransaction txNew;
+
     txNew.vin.resize(1);
     txNew.vin[0].prevout.SetNull();
     txNew.vout.resize(1);
@@ -354,11 +355,12 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
         nLastBlockSize = nBlockSize;
 
 
-            if (fDebug && GetBoolArg("-printpriority", false))
+        if (fDebug && GetBoolArg("-printpriority", false))
             LogPrintf("CreateNewBlock(): total size %u\n", nBlockSize);
 
         if (!fProofOfStake)
-            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(nHeight, nFees);
+            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash());
+
 
         if (pFees)
             *pFees = nFees;
