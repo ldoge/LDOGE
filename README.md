@@ -1,3 +1,11 @@
+# Punch List
+
+Punch list of things to do
+make buldable on all operating systems
+Enable Proof of work again
+Make rewards up to 18 coins per P.O.W. Block  
+Electrum Wallet
+
 # LiteDoge dev Repository
 
 LiteDoge-LDOGE is a scrypt algorithm, proof of stake 2.0 based cryptocurrency.
@@ -28,11 +36,4 @@ From time to time a pull request will become outdated. If this occurs, and the p
 
 Issues with no commits will be given a similar warning, and closed after 15 days from their last activity. Issues closed in this manner will be labeled 'stale'.
 
-Build with qmake
-
-
-Punch list of things to do
-make buldable on all operating systems
-Enable Proof of work again
-Make rewards up to 18 coins per P.O.W. Block  
-Electrum Wallet
+When Building Litedoge use qmake
