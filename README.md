@@ -1,10 +1,7 @@
 # Punch List
 
-Punch list of things to do
-make buldable on all operating systems
-Enable Proof of work again
-Make rewards up to 18 coins per P.O.W. Block  
-Electrum Wallet
+
+make buldable on all operating systems,Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electrum Wallet
 
 # LiteDoge dev Repository
 
