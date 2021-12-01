@@ -104,6 +104,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
 {
     // Create new block
     auto_ptr<CBlock> pblock(new CBlock());
+    unique_ptr<CBlock> pblock(new CBlock());
     if (!pblock.get())
         return NULL;
 
@@ -364,18 +365,11 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
 
         // Fill in header
         pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
-        pblock->nTime          = max(pindexPrev->GetPastTimeLimit()+1, pblock->GetMaxTransactionTime());
+        pblock->nTime          = max(pindexPrev->GetPastTimeLimit()+1, GetAdjustedTime());
+        pblock->nTime          = max(pblock->GetBlockTime(), PastDrift(pindexPrev->GetBlockTime()));
         if (!fProofOfStake)
             pblock->UpdateTime(pindexPrev);
         pblock->nNonce         = 0;
-    }
-
-        pblock->vtx[0].vin[0].scriptSig = CScript() << OP_0 << OP_0;
-        pblock->vTxSigOps[0] = pblock->vtx[0]();
-        indexDummy.pprev = pindexPrev;
-        indexDummy.nHeight = pindexPrev->nHeight + 1;
-        if (!pblock->ConnectBlock(state, &indexDummy, viewNew, true))
-            throw std::runtime_error("CreateNewBlock() : ConnectBlock failed");
     }
 
     return pblock.release();
@@ -565,7 +559,7 @@ void ThreadStakeMiner(CWallet *pwallet)
         // Create new block
         //
         int64_t nFees;
-        auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
         if (!pblock.get())
             return;
         CBlock *pblock = &pblocktemplate->block;
