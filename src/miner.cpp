@@ -367,8 +367,8 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
 
         // Fill in header
         pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
-        pblock->nTime          = max(pindexPrev->GetPastTimeLimit()+1, GetAdjustedTime());
-        pblock->nTime          = max(pblock->GetBlockTime(), PastDrift(pindexPrev->GetBlockTime()));
+        pblock->nTime          = max(pindexPrev->GetPastTimeLimit()+1, pblock->GetMaxTransactionTime());
+        pblock->nTime          = max(pblock->GetBlockTime(), PastDrift(pindexPrev->GetBlockTime(), nHeight));
         if (!fProofOfStake)
             pblock->UpdateTime(pindexPrev);
         pblock->nNonce         = 0;
@@ -561,12 +561,10 @@ void ThreadStakeMiner(CWallet *pwallet)
         // Create new block
         //
         int64_t nFees;
-        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+        auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
         if (!pblock.get())
             return;
-        CBlock *pblock = &pblocktemplate->block;
-        int64 nFees = pblocktemplate->vTxFees[0] * -1;
-
+        
         // Trying to sign a block
         if (pblock->SignBlock(*pwallet, nFees))
         {
@@ -582,7 +580,7 @@ void ThreadStakeMiner(CWallet *pwallet)
 
 void static BitcoinMiner(CWallet *pwallet)
 {
-    Printf("BitcoinMiner started\n");
+    printf("BitcoinMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
     RenameThread("LiteDoge Miner");
 
@@ -606,7 +604,7 @@ void static BitcoinMiner(CWallet *pwallet)
         
         IncrementExtraNonce(pblock.get(), pindexPrev, nExtraNonce);
 
-        Printf("Running LitedogeMiner with %" PRIszu " transactions in block (%u bytes)\n", pblock->vtx.size(),
+        printf("Running LitedogeMiner with %" PRIszu " transactions in block (%u bytes)\n", pblock->vtx.size(),
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
         //
