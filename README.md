@@ -12,7 +12,7 @@ Block Explorer: http://blocks.litedogeofficial.org/
 
 Bitcointalk: https://bitcointalk.org/index.php?topic=1308769.0
 
-Development Channel: https://discord.gg/h6zjKn2wAu
+Development Channel: https://discord.gg/dVWy7MqE2J
 
 # Development process
 
@@ -28,4 +28,11 @@ From time to time a pull request will become outdated. If this occurs, and the p
 
 Issues with no commits will be given a similar warning, and closed after 15 days from their last activity. Issues closed in this manner will be labeled 'stale'.
 
-Build with qmake , make 
+Build with qmake
+
+
+Punch list of things to do
+make buldable on all operating systems
+Enable Proof of work again
+Make rewards up to 18 coins per P.O.W. Block  
+Electrum Wallet
