@@ -14,7 +14,7 @@ To Build
 --------
 
 cd src/
-make -f makefile.unix            # Headless litedoge
+qmake -f makefile.unix            # Headless litedoge
 
 See readme-qt.rst for instructions on building LiteDoge QT,
 the graphical litedoge.
@@ -77,7 +77,7 @@ emerge -av1 --noreplace boost openssl sys-libs/db
 
 Take the following steps to build (no UPnP support):
  cd ${LITEDOGE_DIR}/src
- make -f makefile.unix USE_UPNP=
+ qmake -f makefile.unix USE_UPNP=
  strip litedoged
 
 
@@ -91,7 +91,7 @@ miniupnpc
 ---------
 tar -xzvf miniupnpc-1.6.tar.gz
 cd miniupnpc-1.6
-make
+qmake
 sudo su
 make install
 
