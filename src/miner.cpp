@@ -7,6 +7,8 @@
 #include "txdb.h"
 #include "miner.h"
 #include "kernel.h"
+#include "util.h"
+#include <memory>
 
 using namespace std;
 double dHashesPerSec;
@@ -107,7 +109,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     if (!pblock.get())
         return NULL;
     
-    bool CBlockIndex* pindexPrev = pindexBest;
+    CBlockIndex* pindexPrev = pindexBest;
     int height = pindexPrev->nHeight+1;
 
     // Create coinbase tx
@@ -387,7 +389,7 @@ void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& 
     }
     ++nExtraNonce;
 
-    unsigned int nHeight = pindexPrev->height+1; // Height first in coinbase required for block.version=2
+    unsigned int nHeight = pindexPrev->nHeight+1; // Height first in coinbase required for block.version=2
     pblock->vtx[0].vin[0].scriptSig = (CScript() << height << CBigNum(nExtraNonce)) + COINBASE_FLAGS;
     assert(pblock->vtx[0].vin[0].scriptSig.size() <= 100);
 
@@ -559,7 +561,7 @@ void ThreadStakeMiner(CWallet *pwallet)
         // Create new block
         //
         int64_t nFees;
-        auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
         if (!pblock.get())
             return;
         
