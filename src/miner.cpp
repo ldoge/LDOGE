@@ -1,6 +1,5 @@
-// Copyright (c) 2009-2021 Satoshi Nakamoto
 // Copyright (c) 2009-2021 The Bitcoin developers
-// Copyright (c) 2013 The LiteDogecoin developers
+// Copyright (c) 2015-2021 The LiteDogecoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -389,7 +388,7 @@ void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& 
     }
     ++nExtraNonce;
 
-    unsigned int nHeight = pindexPrev->nHeight+1; // Height first in coinbase required for block.version=2
+    unsigned int height = pindexPrev->nHeight+1; // Height first in coinbase required for block.version=2
     pblock->vtx[0].vin[0].scriptSig = (CScript() << height << CBigNum(nExtraNonce)) + COINBASE_FLAGS;
     assert(pblock->vtx[0].vin[0].scriptSig.size() <= 100);
 
@@ -561,7 +560,7 @@ void ThreadStakeMiner(CWallet *pwallet)
         // Create new block
         //
         int64_t nFees;
-        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+        auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
         if (!pblock.get())
             return;
         
@@ -598,7 +597,7 @@ void static BitcoinMiner(CWallet *pwallet)
         unsigned int nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
         CBlockIndex* pindexPrev = pindexBest;
 
-       auto_ptr<CBlock> pblock(CreateNewBlock(reservekey));
+       unique_ptr<CBlock> pblock(CreateNewBlock(reservekey));
         if (!pblock.get())
             return;
         
