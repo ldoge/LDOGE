@@ -19,8 +19,8 @@
 Copyright © 2011-2022 PPCoin Developers
 Copyright © 2014-2022 The BlackCoin developers
 Copyright © 2015-2022 The LiteDogecoin developers</source>
-    <translation type="unfinished"></translation>
-     </message>
+         <translation type="unfinished"></translation>
+    </message>
     <message>
         <location line="+15"/>
         <source>
