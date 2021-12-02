@@ -36,5 +36,5 @@ void ChatPage::setModel(WalletModel *model)
 {
     this->walletModel = model;
 
-    ui->webView->load(QUrl("https://kiwiirc.com/client/irc.freenode.net/#litedoge"));
+    ui->webView->load(QUrl("https://web.libera.chat/#litedoge"));
 }
