@@ -104,7 +104,7 @@ public:
 CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFees)
 {
     // Create new block
-    unique_ptr<CBlock> pblock(new CBlock());
+    auto_ptr<CBlock> pblock(new CBlock());
     if (!pblock.get())
         return NULL;
     
@@ -597,7 +597,7 @@ void static BitcoinMiner(CWallet *pwallet)
         unsigned int nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
         CBlockIndex* pindexPrev = pindexBest;
 
-       unique_ptr<CBlock> pblock(CreateNewBlock(reservekey));
+       auto_ptr<CBlock> pblock(CreateNewBlock(reservekey));
         if (!pblock.get())
             return;
         
