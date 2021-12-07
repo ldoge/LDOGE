@@ -32,7 +32,7 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "ui_chatpage.h"
+#include "chatpage.h"
 #include "chatpage.h"
 #include "cookiejar.h"
 #include "webview.h"
