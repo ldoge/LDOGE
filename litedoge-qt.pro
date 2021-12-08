@@ -1,18 +1,21 @@
 TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
-CONFIG += qt
-QT += network
-QT += widgets
-QT += webkit
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS BOOST_ASIO_ENABLE_OLD_SERVICES
-INCLUDEPATH += src src/json src/qt /usr/include/libdb4
+DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES
+INCLUDEPATH += src src/json src/qt
 DEFINES += ENABLE_WALLET
 CONFIG += no_include_pwd
 CONFIG += thread
 CONFIG += static
+QT += core gui network widgets webkit webkitwidgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+lessThan(QT_MAJOR_VERSION, 5): CONFIG += static
+QMAKE_CXXFLAGS = -fpermissive
+
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets
+    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+}
 
 # QMAKE_CC=clang
 # QMAKE_CXX=clang++
@@ -93,6 +96,18 @@ contains(USE_DBUS, 1) {
     message(Building with DBUS (Freedesktop notifications) support)
     DEFINES += USE_DBUS
     QT += dbus
+}
+
+# use: qmake "USE_IPV6=1" ( enabled by default; default)
+#  or: qmake "USE_IPV6=0" (disabled by default)
+#  or: qmake "USE_IPV6=-" (not supported)
+contains(USE_IPV6, -) {
+    message(Building without IPv6 support)
+} else {
+    count(USE_IPV6, 0) {
+        USE_IPV6=1
+    }
+    DEFINES += USE_IPV6=$$USE_IPV6
 }
 
 contains(BITCOIN_NEED_QT_PLUGINS, 1) {
