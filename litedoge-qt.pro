@@ -13,7 +13,7 @@ QT += network
 QT += network webkit
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
+    QT += webkitwidgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 }
 
