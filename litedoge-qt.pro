@@ -165,7 +165,7 @@ DEBUGFLAGS-g++-32 {
     QMAKE_CFLAGS += -msse2
 }
 
-QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat-security -Wno-unused-parameter -Wstack-protector
+QMAKE_CXXFLAGS_WARN_ON = -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wno-unused-local-typedefs -Wno-missing-field-initializers -Wstack-protector
 
 # Input
 DEPENDPATH += src src/json src/qt
@@ -501,5 +501,3 @@ netbsd-*|freebsd-*|openbsd-* {
 }    
 
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
-
-}
