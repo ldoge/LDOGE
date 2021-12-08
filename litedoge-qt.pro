@@ -1,6 +1,8 @@
 TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
+CONFIG += qt
+QT += gui
 INCLUDEPATH += src src/json src/qt /usr/include/libdb4
 QT += network
 DEFINES += ENABLE_WALLET
@@ -468,3 +470,4 @@ contains(RELEASE, 1) {
 }
 
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
+}
