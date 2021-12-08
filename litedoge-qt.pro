@@ -7,7 +7,7 @@ DEFINES += ENABLE_WALLET
 CONFIG += no_include_pwd
 CONFIG += thread
 CONFIG += static
-QT += core gui network widgets webkit webkitwidgets
+QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 lessThan(QT_MAJOR_VERSION, 5): CONFIG += static
 QMAKE_CXXFLAGS = -fpermissive
@@ -161,7 +161,7 @@ DEBUGFLAGS-g++-32 {
     QMAKE_CFLAGS += -msse2
 }
 
-QMAKE_CXXFLAGS_WARN_ON = -O2 -msse2 -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protectorn 
+QMAKE_CXXFLAGS_WARN_ON = -O2 -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protectorn 
    $(EXT_OPTIONS) $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS) $(MAKE)
 
 # Input
