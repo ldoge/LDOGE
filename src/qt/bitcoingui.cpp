@@ -32,6 +32,7 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
+#include "ui_chatpage.h"
 #include "chatpage.h"
 #include "chatpage.h"
 #include "cookiejar.h"
@@ -85,7 +86,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     prevBlocks(0),
     nWeight(0)
 {
-    resize(850+95, 400);
+    resize(700, 500);
     setWindowTitle(tr("LiteDoge") + " - " + tr("Wallet"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
