@@ -469,4 +469,4 @@ contains(RELEASE, 1) {
     LIBS += -lrt -ldl
 }
 
-system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
+system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
