@@ -1,9 +1,9 @@
 # Copyright (c) 2009-2021 Bitcoin Developers
-# Copyright (c) 2015-2021 Litedogecoin Developers
+# Copyright (c) 2015-2021 LiteDogecoin Developers
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-USE_UPNP:=0
+USE_UPNP:=1
 USE_WALLET:=1
 USE_LEVELDB:=0
 USE_IPV6:=1
@@ -91,24 +91,18 @@ LIBS+= \
 
 DEBUGFLAGS=-g
 
-# CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
-# adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
-xCXXFLAGS=-rdynamic -O2 -pthread -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
-    $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS)
 
-ifeq (${ARCH}, i686)
-    EXT_OPTIONS=-msse2
+ifeq ($(xCPUARCH),i686)
+    xCXXFLAGS+=-msse2
 endif
 
-xOPT_LEVEL=-O2
-ifeq (${USE_O3}, 1)
-    xOPT_LEVEL=-O3
-endif
 
 # CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
 # adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
-xCXXFLAGS=$(xOPT_LEVEL) $(EXT_OPTIONS) -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter \
-    $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS)
+
+xCFLAGS= -O2 -std=c++11 -pthread -D_REENTRANT -Wall -W -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
+    $(DEBUGFLAGS) $(EXT_OPTIONS) $(DEFS) $(HARDENING) $(CFLAGS) $(LDHARDENING) $(LDFLAGS)
+
     
 # If we have an ARM device, we can't use SSE2 instructions, so don't try to use them
 # xCPUARCH is passed in as a define (xCPUARCH=armv7l, xCPUARCH=armv6l)
@@ -116,10 +110,7 @@ ifeq ($(xCPUARCH),armv7l)
     xCXXFLAGS+= -DNOSSE
 else ifeq ($(xCPUARCH),armv6l)
     xCXXFLAGS+= -DNOSSE
-else
-    xCXXFLAGS+=-msse2
-endif    
-    
+
 
 # LDFLAGS can be specified on the make command line, so we use xLDFLAGS that only
 # adds some defaults in front. Unfortunately, LDFLAGS=... $(LDFLAGS) does not work.
@@ -161,7 +152,7 @@ OBJS= \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
     obj/chainparams.o
-
+    
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
     OBJS += \
