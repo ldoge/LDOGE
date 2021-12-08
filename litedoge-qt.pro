@@ -1,7 +1,9 @@
 TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
-DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES
+CONFIG += qt
+QT += gui
+DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
 INCLUDEPATH += src src/json src/qt
 DEFINES += ENABLE_WALLET
 CONFIG += no_include_pwd
@@ -10,7 +12,6 @@ CONFIG += static
 QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 lessThan(QT_MAJOR_VERSION, 5): CONFIG += static
-QMAKE_CXXFLAGS = -fpermissive
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
@@ -43,13 +44,22 @@ UI_DIR = build
 
 # use: qmake "RELEASE=1"
 contains(RELEASE, 1) {
-    # Mac: compile for maximum compatibility (10.6, 64-bit)
-    macx:QMAKE_MACOSX_DEPLOYMENT_TARGET=10.6
-    
+    macx:QMAKE_CXXFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
+    macx:QMAKE_CFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
+    macx:QMAKE_OBJECTIVE_CFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
+
     !windows:!macx {
         # Linux: static link
         LIBS += -Wl,-Bstatic
     }
+}
+
+contains(DEBUG, 1) {
+    QMAKE_CXXFLAGS -= -O2
+    QMAKE_CFLAGS -= -O2
+
+    QMAKE_CFLAGS += -g -O0
+    QMAKE_CXXCFLAGS += -g -O0
 }
 
 !win32 {
@@ -161,7 +171,7 @@ DEBUGFLAGS-g++-32 {
     QMAKE_CFLAGS += -msse2
 }
 
-QMAKE_CXXFLAGS_WARN_ON = -O2 -std=c++11 -pthread -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector $(EXT_OPTIONS) $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS) $(MAKE)
+QMAKE_CXXFLAGS_WARN_ON = -O2 -std=c++11 -pthread -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector $$USE_IPV6 $(EXT_OPTIONS) $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS) $(MAKE)
 
 # Input
 DEPENDPATH += src src/json src/qt
