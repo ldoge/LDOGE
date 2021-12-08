@@ -7,19 +7,25 @@ DEFINES += ENABLE_WALLET
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES
 CONFIG += no_include_pwd
 CONFIG += thread
+CONFIG += static
+
 win32 {
     CONFIG += release
 } else {
     CONFIG += debug_and_release
 }
-CONFIG += static
+
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    QT += webkitwidgets
 }
-
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets
+    QT += webkit webkitwidgets
+}
+    QT += webkit
+    
 # for boost 1.55, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
 # for boost thread win32 with _win32 sufix
