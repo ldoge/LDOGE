@@ -501,5 +501,3 @@ netbsd-*|freebsd-*|openbsd-* {
 }    
 
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
-
-}
