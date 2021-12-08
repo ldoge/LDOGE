@@ -1,13 +1,15 @@
 .DS_Store
+.make.stash
 .qmake.stash
-LiteDoge-Qt.app/
+LiteDoge-qt.app/
 Makefile
 build/
 litedoge-qt.pro.user
 src/.qmake.stash
 src/Makefile
 src/litedoged
-LiteDoge-Qt.dmg
+src/litedoge-qt
+LiteDoge-qt.dmg
 LiteDoge-qt
 qrc_bitcoin.cpp
 *.qm
