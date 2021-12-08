@@ -9,13 +9,6 @@ CONFIG += no_include_pwd
 CONFIG += thread
 CONFIG += static
 
-win32 {
-    CONFIG += release
-} else {
-    CONFIG += debug_and_release
-}
-
-
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
@@ -25,7 +18,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT += webkit webkitwidgets
 }
     QT += webkit
-    
+
 # for boost 1.55, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
 # for boost thread win32 with _win32 sufix
@@ -140,14 +133,15 @@ contains(USE_O3, 1) {
     QMAKE_CFLAGS += -O3
 }
 
-*-g++-32 {
+DEBUGFLAGS-g++-32 {
     message("32 platform, adding -msse2 flag")
 
     QMAKE_CXXFLAGS += -msse2
     QMAKE_CFLAGS += -msse2
 }
 
-QMAKE_CXXFLAGS_WARN_ON = -O2 -Wl,--dynamicbase -Wl --nxcompat -std=c++11 -msse2 -pthread -fdiagnostics-show-option -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector $(EXT_OPTIONS) $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS) $(MAKE)
+QMAKE_CXXFLAGS_WARN_ON = -O2 -msse2 -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protectorn 
+   $(EXT_OPTIONS) $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS) $(MAKE)
 
 # Input
 DEPENDPATH += src src/json src/qt
@@ -342,6 +336,16 @@ SOURCES += src/qt/qrcodedialog.cpp
 FORMS += src/qt/forms/qrcodedialog.ui
 }
 
+contains(BITCOIN_QT_TEST, 1) {
+SOURCES += src/qt/test/test_main.cpp \
+    src/qt/test/uritests.cpp
+HEADERS += src/qt/test/uritests.h
+DEPENDPATH += src/qt/test
+QT += testlib
+TARGET = litedoge-qt_test
+DEFINES += LITEDOGE_QT_TEST
+}
+
 CODECFORTR = UTF-8
 
 # for lrelease/lupdate
@@ -351,7 +355,7 @@ TRANSLATIONS = $$files(src/qt/locale/bitcoin_*.ts)
 isEmpty(QMAKE_LRELEASE) {
     win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\\lrelease.exe
     else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
-}
+}    
 isEmpty(QM_DIR):QM_DIR = $$PWD/src/qt/locale
 # automatically build translations, so they can be included in resource file
 TSQM.name = lrelease ${QMAKE_FILE_IN}
@@ -424,26 +428,35 @@ windows:!contains(MINGW_THREAD_BUGFIX, 0) {
     DEFINES += _MT BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN
     QMAKE_LIBS_QT_ENTRY = -lmingwthrd $$QMAKE_LIBS_QT_ENTRY
 }
-
-macx:HEADERS += src/qt/macdockiconhandler.h \
-src/qt/macnotificationhandler.h
-macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm \
-src/qt/macnotificationhandler.mm
-macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
-macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
-macx:ICON = src/qt/res/icons/bitcoin.icns
+macx:HEADERS += src/qt/macdockiconhandler.h src/qt/macnotificationhandler.h \
+macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm src/qt/macnotificationhandler.mm
+macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit -framework CoreServices \
 macx:TARGET = "LiteDoge-Qt"
-macx:QMAKE_CFLAGS_THREAD += -pthread
-macx:QMAKE_LFLAGS_THREAD += -pthread
-macx:QMAKE_CXXFLAGS_THREAD += -pthread
-macx:QMAKE_INFO_PLIST = share/qt/Info.plist
+        $$BDB_LIB_PATH/libdb_cxx.a \
+        $$BOOST_LIB_PATH/libboost_system-mt.a \
+        $$BOOST_LIB_PATH/libboost_filesystem-mt.a \
+        $$BOOST_LIB_PATH/libboost_program_options-mt.a \
+        $$BOOST_LIB_PATH/libboost_thread-mt.a \
+        $$BOOST_LIB_PATH/libboost_chrono-mt.a
+    DEFINES += MAC_OSX MSG_NOSIGNAL=0
+    ICON = src/qt/res/icons/bitcoin.icns
+    QMAKE_INFO_PLIST=src/mac/Info.plist
+    # osx 10.9 has changed the stdlib default to libc++. To prevent some link error, you may need to use libstdc++
+    QMAKE_CXXFLAGS += -stdlib=libstdc++
+    QMAKE_CFLAGS_THREAD += -pthread
+    QMAKE_CXXFLAGS_THREAD += -pthread
+}
+
+INCLUDEPATH += src/leveldb/include src/leveldb/helpers
+LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
+SOURCES += src/txdb-leveldb.cpp
 
 # Set libraries and includes at end, to use platform-defined defaults if not overridden
 INCLUDEPATH += $$BOOST_INCLUDE_PATH $$BDB_INCLUDE_PATH $$OPENSSL_INCLUDE_PATH $$QRENCODE_INCLUDE_PATH $$DEBUGFLAGS $$DEFS $$HARDENING $$CXXFLAGS
 LIBS += $$join(BOOST_LIB_PATH,,-L,) $$join(BDB_LIB_PATH,,-L,) $$join(OPENSSL_LIB_PATH,,-L,) $$join(QRENCODE_LIB_PATH,,-L,)
 LIBS += -lssl -lcrypto -ldb_cxx$$BDB_LIB_SUFFIX
 # -lgdi32 has to happen after -lcrypto (see  #681)
-windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32
+windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32 -see2
 LIBS += -lboost_system$$BOOST_LIB_SUFFIX -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX
 windows:LIBS += -lboost_chrono$$BOOST_LIB_SUFFIX
 
@@ -454,10 +467,4 @@ contains(RELEASE, 1) {
     }
 }
 
-!windows:!macx {
-    DEFINES += LINUX
-    LIBS += -lrt -ldl
-}
-
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
-}
