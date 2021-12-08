@@ -161,7 +161,7 @@ DEBUGFLAGS-g++-32 {
     QMAKE_CFLAGS += -msse2
 }
 
-QMAKE_CXXFLAGS_WARN_ON = -O2  -std=c++11 -pthread -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector $(EXT_OPTIONS) $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS) $(MAKE)
+QMAKE_CXXFLAGS_WARN_ON = -O2 -std=c++11 -pthread -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector $(EXT_OPTIONS) $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS) $(MAKE)
 
 # Input
 DEPENDPATH += src src/json src/qt
@@ -447,11 +447,12 @@ windows:!contains(MINGW_THREAD_BUGFIX, 0) {
     # any problems on some untested qmake profile now or in the future.
     DEFINES += _MT BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN
     QMAKE_LIBS_QT_ENTRY = -lmingwthrd $$QMAKE_LIBS_QT_ENTRY
+}
 
 macx:HEADERS += src/qt/macdockiconhandler.h \
-src/qt/macnotificationhandler.h
+src/qt/macnotificationhandler.h \
 macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm \
-src/qt/macnotificationhandler.mm
+src/qt/macnotificationhandler.mm 
 macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
 macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
 macx:ICON = src/qt/res/icons/bitcoin.icns
@@ -460,10 +461,9 @@ macx:QMAKE_CFLAGS_THREAD += -pthread
 macx:QMAKE_LFLAGS_THREAD += -pthread
 macx:QMAKE_CXXFLAGS_THREAD += -pthread
 macx:QMAKE_INFO_PLIST = share/qt/Info.plist
-
-INCLUDEPATH += src/leveldb/include src/leveldb/helpers
-LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
-SOURCES += src/txdb-leveldb.cpp
+macx:INCLUDEPATH += src/leveldb/include src/leveldb/helpers
+macx:LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
+macx:SOURCES += src/txdb-leveldb.cpp
 
 # Set libraries and includes at end, to use platform-defined defaults if not overridden
 INCLUDEPATH += $$BOOST_INCLUDE_PATH $$BDB_INCLUDE_PATH $$OPENSSL_INCLUDE_PATH $$QRENCODE_INCLUDE_PATH $$DEBUGFLAGS $$DEFS $$HARDENING $$CXXFLAGS
