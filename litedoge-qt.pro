@@ -1,10 +1,18 @@
 TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
+INCLUDEPATH += src src/json src/qt
+QT += network webkit
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
 CONFIG += thread
+win32 {
+    CONFIG += release
+} else {
+    CONFIG += debug_and_release
+}
+CONFIG += static
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
