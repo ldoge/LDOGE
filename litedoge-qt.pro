@@ -2,21 +2,13 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
 CONFIG += qt
-QT += gui
+QT += core gui network
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
 INCLUDEPATH += src src/json src/qt
 DEFINES += ENABLE_WALLET
 CONFIG += no_include_pwd
 CONFIG += thread -w
 CONFIG += static
-QT += network
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-lessThan(QT_MAJOR_VERSION, 5): CONFIG += static
-
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-}
 
 # QMAKE_CC=clang
 # QMAKE_CXX=clang++
@@ -48,9 +40,11 @@ contains(RELEASE, 1) {
     macx:QMAKE_CFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
     macx:QMAKE_OBJECTIVE_CFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
 
-    !windows:!macx {
+    !windows:!macx {greaterThan(QT_MAJOR_VERSION, 4) {
         # Linux: static link
         LIBS += -Wl,-Bstatic
+        QT += widgets
+        DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
     }
 }
 
