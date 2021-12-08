@@ -2,24 +2,29 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
 CONFIG += qt
-QT += gui
-INCLUDEPATH += src src/json src/qt /usr/include/libdb4
 QT += network
+QT += widgets
+QT += webkit
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS BOOST_ASIO_ENABLE_OLD_SERVICES
+INCLUDEPATH += src src/json src/qt /usr/include/libdb4
 DEFINES += ENABLE_WALLET
-DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES
 CONFIG += no_include_pwd
 CONFIG += thread
 CONFIG += static
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-}
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    QT += webkit webkitwidgets
-}
-    QT += webkit
+
+
+# QMAKE_CC=clang
+# QMAKE_CXX=clang++
+# QMAKE_LINK=clang++
+
+freebsd-g++: QMAKE_TARGET.arch = $$QMAKE_HOST.arch
+linux-g++: QMAKE_TARGET.arch = $$QMAKE_HOST.arch
+linux-g++-32: QMAKE_TARGET.arch = i686
+linux-g++-64: QMAKE_TARGET.arch = x86_64
+win32-g++-cross: QMAKE_TARGET.arch = $$TARGET_PLATFORM
 
 # for boost 1.55, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
@@ -39,6 +44,7 @@ UI_DIR = build
 contains(RELEASE, 1) {
     # Mac: compile for maximum compatibility (10.6, 64-bit)
     macx:QMAKE_MACOSX_DEPLOYMENT_TARGET=10.6
+    
     !windows:!macx {
         # Linux: static link
         LIBS += -Wl,-Bstatic
@@ -469,4 +475,4 @@ contains(RELEASE, 1) {
     LIBS += -lrt -ldl
 }
 
-system($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
+system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
