@@ -430,24 +430,19 @@ windows:!contains(MINGW_THREAD_BUGFIX, 0) {
     DEFINES += _MT BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN
     QMAKE_LIBS_QT_ENTRY = -lmingwthrd $$QMAKE_LIBS_QT_ENTRY
 }
-macx:HEADERS += src/qt/macdockiconhandler.h src/qt/macnotificationhandler.h \
-macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm src/qt/macnotificationhandler.mm
-macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit -framework CoreServices \
+
+macx:HEADERS += src/qt/macdockiconhandler.h \
+src/qt/macnotificationhandler.h
+macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm \
+src/qt/macnotificationhandler.mm
+macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
+macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
+macx:ICON = src/qt/res/icons/bitcoin.icns
 macx:TARGET = "LiteDoge-Qt"
-        $$BDB_LIB_PATH/libdb_cxx.a \
-        $$BOOST_LIB_PATH/libboost_system-mt.a \
-        $$BOOST_LIB_PATH/libboost_filesystem-mt.a \
-        $$BOOST_LIB_PATH/libboost_program_options-mt.a \
-        $$BOOST_LIB_PATH/libboost_thread-mt.a \
-        $$BOOST_LIB_PATH/libboost_chrono-mt.a
-    DEFINES += MAC_OSX MSG_NOSIGNAL=0
-    ICON = src/qt/res/icons/bitcoin.icns
-    QMAKE_INFO_PLIST=src/mac/Info.plist
-    # osx 10.9 has changed the stdlib default to libc++. To prevent some link error, you may need to use libstdc++
-    QMAKE_CXXFLAGS += -stdlib=libstdc++
-    QMAKE_CFLAGS_THREAD += -pthread
-    QMAKE_CXXFLAGS_THREAD += -pthread
-}
+macx:QMAKE_CFLAGS_THREAD += -pthread
+macx:QMAKE_LFLAGS_THREAD += -pthread
+macx:QMAKE_CXXFLAGS_THREAD += -pthread
+macx:QMAKE_INFO_PLIST = share/qt/Info.plist
 
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
@@ -467,6 +462,11 @@ contains(RELEASE, 1) {
         # Linux: turn dynamic linking back on for c/c++ runtime libraries
         LIBS += -Wl,-Bdynamic
     }
+}
+
+!windows:!macx {
+    DEFINES += LINUX
+    LIBS += -lrt -ldl
 }
 
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
