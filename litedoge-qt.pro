@@ -5,7 +5,7 @@ DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE
 INCLUDEPATH += src src/json src/qt
 DEFINES += ENABLE_WALLET
 CONFIG += no_include_pwd
-CONFIG += thread
+CONFIG += thread -w
 CONFIG += static
 QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -161,8 +161,7 @@ DEBUGFLAGS-g++-32 {
     QMAKE_CFLAGS += -msse2
 }
 
-QMAKE_CXXFLAGS_WARN_ON = -O2 -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protectorn 
-   $(EXT_OPTIONS) $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS) $(MAKE)
+QMAKE_CXXFLAGS_WARN_ON = -O2  -std=c++11 -pthread -fdiagnostics-show-option -Wall -Wextra -Wformat -Wformat-security -Wno-unused-parameter -Wstack-protector $(EXT_OPTIONS) $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS) $(MAKE)
 
 # Input
 DEPENDPATH += src src/json src/qt
@@ -448,12 +447,6 @@ windows:!contains(MINGW_THREAD_BUGFIX, 0) {
     # any problems on some untested qmake profile now or in the future.
     DEFINES += _MT BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN
     QMAKE_LIBS_QT_ENTRY = -lmingwthrd $$QMAKE_LIBS_QT_ENTRY
-}
-
-!windows:!macx {
-    DEFINES += LINUX
-    LIBS += -lrt
-}
 
 macx:HEADERS += src/qt/macdockiconhandler.h \
 src/qt/macnotificationhandler.h
