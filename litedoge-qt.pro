@@ -1,7 +1,5 @@
 TEMPLATE = app
 TARGET = litedoge-qt
-CONFIG += qt
-QT += gui
 VERSION = 3.5.0.0
 INCLUDEPATH += src src/json src/qt /usr/include/libdb4
 QT += network
@@ -10,6 +8,9 @@ DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE
 CONFIG += no_include_pwd
 CONFIG += thread-w
 CONFIG += static
+QT += gui
+CONFIG += qt
+
 win32 {
     CONFIG += release
 } else {
@@ -17,11 +18,10 @@ win32 {
 }
 
 greaterThan(QT_MAJOR_VERSION, 4) {
- QT += widgets
-    QT += webkit webkitwidgets
+     QT += widgets
+     QT += webkit webkitwidgets
 }
-    QT += webkit
-}
+     QT += webkit
 
 # for boost 1.55, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
