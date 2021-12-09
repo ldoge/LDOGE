@@ -174,7 +174,7 @@ contains(USE_ASM, 1) {
         QMAKE_CFLAGS += -msse2
     } else {
         message(Using generic scrypt implementations)
-        SOURCES += src/crypto/scrypt/generic/scrypt-generic.cpp
+        SOURCES += src/crypto/scrypt/generic/scrypt.cpp
     }
 }
 
@@ -504,7 +504,7 @@ macx:QMAKE_CFLAGS_THREAD += -pthread
 macx:QMAKE_LFLAGS_THREAD += -pthread
 macx:QMAKE_CXXFLAGS_THREAD += -pthread
 macx:QMAKE_INFO_PLIST = share/qt/Info.plist
-macx:INCLUDEPATH += src/leveldb/include src/leveldb/helpers src/txdb-leveldb.cpp
+macx:INCLUDEPATH += src/leveldb/include src/leveldb/helpers 
 macx:LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 
 # Set libraries and includes at end, to use platform-defined defaults if not overridden
