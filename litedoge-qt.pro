@@ -484,19 +484,15 @@ contains(RELEASE, 1) {
     }
 }
 
-!windows:!macx {
+linux-* {
     DEFINES += LINUX
     LIBS += -lrt -ldl
-}
-
-linux-* {
-    # We may need some linuxism here
-    LIBS += -ldl
 }
 
 netbsd-*|freebsd-*|openbsd-* {
     # libexecinfo is required for back trace
     LIBS += -lexecinfo
-} 
- 
+   
+}
+
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
