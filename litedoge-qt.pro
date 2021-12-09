@@ -1,20 +1,18 @@
 TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
-DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
-INCLUDEPATH += src src/json src/qt
+DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES
+INCLUDEPATH += src src/json src/qt /usr/include/libdb4
 DEFINES += ENABLE_WALLET
 CONFIG += no_include_pwd
 CONFIG += thread -w
 CONFIG += static
-QT += network widgets webkit webkitwidgets
+QT += network
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-lessThan(QT_MAJOR_VERSION, 5):
-QMAKE_CXXFLAGS = -fpermissive
-QT += widgets
-CONFIG += static
-DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+    QT += widgets
+    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+    QT += webkitwidgets
 }
 
 # QMAKE_CC=clang
@@ -505,4 +503,7 @@ netbsd-*|freebsd-*|openbsd-* {
     LIBS += -lexecinfo
 }    
 
+{
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
+
+}
