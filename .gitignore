@@ -1,15 +1,29 @@
-.DS_Store
-.make.stash
-.qmake.stash
-LiteDoge-qt.app/
-Makefile
-build/
-litedoge-qt.pro.user
-src/.qmake.stash
-src/Makefile
+src/*.exe
 src/litedoged
+src/build.h
+src/test_litedoge
 src/litedoge-qt
-LiteDoge-qt.dmg
-LiteDoge-qt
-qrc_bitcoin.cpp
+.*.swp
+*.*~*
+*.bak
+*.rej
+*.orig
+*.o
+*.patch
+*.P
+*opalcoin
+*.directory
+#compilation and Qt preprocessor part
 *.qm
+Makefile
+novacoin-qt
+#resources cpp
+qrc_*.cpp
+#qt creator
+*.pro.user
+#mac specific
+build
+.DS_Store
+build
+
+!src/leveldb/Makefile
