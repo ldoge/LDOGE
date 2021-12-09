@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
 QT += network
-DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
+DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES
 INCLUDEPATH += src src/json src/qt
 DEFINES += ENABLE_WALLET
 CONFIG += no_include_pwd
@@ -497,7 +497,6 @@ linux-* {
 netbsd-*|freebsd-*|openbsd-* {
     # libexecinfo is required for back trace
     LIBS += -lexecinfo
+} 
  
- }
-
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
