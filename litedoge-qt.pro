@@ -147,7 +147,7 @@ contains(USE_LEVELDB, 1) {
     QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
 } else {
     message(Building with Berkeley DB transaction index)
-    SOURCES += src/txdb-bdb.cpp
+    SOURCES += src/txdb-leveldb.cpp
 }
 
 
@@ -504,7 +504,7 @@ macx:QMAKE_CFLAGS_THREAD += -pthread
 macx:QMAKE_LFLAGS_THREAD += -pthread
 macx:QMAKE_CXXFLAGS_THREAD += -pthread
 macx:QMAKE_INFO_PLIST = share/qt/Info.plist
-macx:INCLUDEPATH += src/leveldb/include src/leveldb/helpers 
+macx:INCLUDEPATH += src/leveldb/include src/leveldb/helpers src/txdb-leveldb.cpp
 macx:LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 
 # Set libraries and includes at end, to use platform-defined defaults if not overridden
