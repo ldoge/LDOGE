@@ -2,6 +2,7 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
 QT += network
+greaterThan(QT_MAJOR_VERSION, 4):QT += widgets
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_ASIO_ENABLE_OLD_SERVICES
 INCLUDEPATH += src src/json src/qt
 DEFINES += ENABLE_WALLET
@@ -19,7 +20,7 @@ linux-g++-32: QMAKE_TARGET.arch = i686
 linux-g++-64: QMAKE_TARGET.arch = x86_64
 win32-g++-cross: QMAKE_TARGET.arch = $$TARGET_PLATFORM
 
-# for boost 1.55, add -mt to the boost libraries
+# for boost 1.37, add -mt to the boost libraries
 # use: qmake BOOST_LIB_SUFFIX=-mt
 # for boost thread win32 with _win32 sufix
 # use: BOOST_THREAD_LIB_SUFFIX=_win32-...
@@ -39,7 +40,7 @@ contains(RELEASE, 1) {
     macx:QMAKE_CFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
     macx:QMAKE_OBJECTIVE_CFLAGS += -isysroot /Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk -mmacosx-version-min=10.7
 
-    !windows:!macx {greaterThan(QT_MAJOR_VERSION, 4) {
+        !windows:!macx {
         # Linux: static link
         LIBS += -Wl,-Bstatic
         QT += widgets
@@ -47,13 +48,6 @@ contains(RELEASE, 1) {
     }
 }
 
-contains(DEBUG, 1) {
-    QMAKE_CXXFLAGS -= -O2
-    QMAKE_CFLAGS -= -O2
-
-    QMAKE_CFLAGS += -g -O0
-    QMAKE_CXXCFLAGS += -g -O0
-}
 
 !win32 {
 # for extra security against potential buffer overflows: enable GCCs Stack Smashing Protection
@@ -63,6 +57,7 @@ QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
 # This can be enabled for Windows, when we switch to MinGW >= 4.4.x.
 }
 # for extra security on Windows: enable ASLR and DEP via GCC linker flags
+
 win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 win32:QMAKE_LFLAGS += -static-libgcc -static-libstdc++
 
@@ -101,6 +96,14 @@ contains(USE_DBUS, 1) {
     QT += dbus
 }
 
+contains(DEBUG, 1) {
+    QMAKE_CXXFLAGS -= -O2
+    QMAKE_CFLAGS -= -O2
+
+    QMAKE_CFLAGS += -g -O0
+    QMAKE_CXXCFLAGS += -g -O0
+}
+
 # use: qmake "USE_IPV6=1" ( enabled by default; default)
 #  or: qmake "USE_IPV6=0" (disabled by default)
 #  or: qmake "USE_IPV6=-" (not supported)
@@ -118,26 +121,62 @@ contains(BITCOIN_NEED_QT_PLUGINS, 1) {
     QTPLUGIN += qcncodecs qjpcodecs qtwcodecs qkrcodecs qtaccessiblewidgets
 }
 
-INCLUDEPATH += src/leveldb/include src/leveldb/helpers
-LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
-SOURCES += src/txdb-leveldb.cpp
-!win32 {
-    # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
-    genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
-} else {
-    # make an educated guess about what the ranlib command is called
-    isEmpty(QMAKE_RANLIB) {
-        QMAKE_RANLIB = $$replace(QMAKE_STRIP, strip, ranlib)
+contains(USE_LEVELDB, 1) {
+    message(Building with LevelDB transaction index)
+    DEFINES += USE_LEVELDB
+
+    INCLUDEPATH += src/leveldb/include src/leveldb/helpers
+    LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
+    SOURCES += src/txdb-leveldb.cpp
+    !win32 {
+        # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
+        genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
+    } else {
+        # make an educated guess about what the ranlib command is called
+        isEmpty(QMAKE_RANLIB) {
+            QMAKE_RANLIB = $$replace(QMAKE_STRIP, strip, ranlib)
+        }
+        LIBS += -lshlwapi
+        genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
     }
-    LIBS += -lshlwapi
-    genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
+    genleveldb.target = $$PWD/src/leveldb/libleveldb.a
+    genleveldb.depends = FORCE
+    PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
+    QMAKE_EXTRA_TARGETS += genleveldb
+    # Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
+    QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
+} else {
+    message(Building with Berkeley DB transaction index)
+    SOURCES += src/txdb-bdb.cpp
 }
-genleveldb.target = $$PWD/src/leveldb/libleveldb.a
-genleveldb.depends = FORCE
-PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
-QMAKE_EXTRA_TARGETS += genleveldb
-# Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
-QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
+
+
+# use: qmake "USE_ASM=1"
+contains(USE_ASM, 1) {
+    message(Using assembler scrypt implementations)
+    DEFINES += USE_ASM
+
+     contains(QMAKE_TARGET.arch, i386) | contains(QMAKE_TARGET.arch, i586) | contains(QMAKE_TARGET.arch, i686) {
+        message("x86 platform, setting -msse2 flag")
+
+        QMAKE_CXXFLAGS += -msse2
+        QMAKE_CFLAGS += -msse2
+    }
+
+    SOURCES += src/crypto/scrypt/asm/scrypt-arm.S src/crypto/scrypt/asm/scrypt-x86.S src/crypto/scrypt/asm/scrypt-x86_64.S src/crypto/scrypt/asm/asm-wrapper.cpp
+} else {
+    # use: qmake "USE_SSE2=1"
+    contains(USE_SSE2, 1) {
+        message(Using SSE2 intrinsic scrypt implementation & generic sha256 implementation)
+        SOURCES += src/crypto/scrypt/intrin/scrypt-sse2.cpp
+        DEFINES += USE_SSE2
+        QMAKE_CXXFLAGS += -msse2
+        QMAKE_CFLAGS += -msse2
+    } else {
+        message(Using generic scrypt implementations)
+        SOURCES += src/crypto/scrypt/generic/scrypt-generic.cpp
+    }
+}
 
 # regenerate src/build.h
 !windows|contains(USE_BUILD_INFO, 1) {
@@ -157,7 +196,7 @@ contains(USE_O3, 1) {
     QMAKE_CFLAGS += -O3
 }
 
-DEBUGFLAGS-g++-32 {
+*-g++-32 {
     message("32 platform, adding -msse2 flag")
 
     QMAKE_CXXFLAGS += -msse2
@@ -394,11 +433,11 @@ OTHER_FILES += \
 
 # platform specific defaults, if not overridden on command line
 isEmpty(BOOST_LIB_SUFFIX) {
-    macx:BOOST_LIB_SUFFIX = -mt
-    windows:BOOST_LIB_SUFFIX = -mt
+    macx:BOOST_LIB_SUFFIX =  -mt
+    windows:BOOST_LIB_SUFFIX = -mgw10-mt-s-x64-1_73
 
 isEmpty(BOOST_THREAD_LIB_SUFFIX) {
-    win32:BOOST_THREAD_LIB_SUFFIX = $$BOOST_LIB_SUFFIX
+    windows:BOOST_THREAD_LIB_SUFFIX = $$BOOST_LIB_SUFFIX
     else:BOOST_THREAD_LIB_SUFFIX = $$BOOST_LIB_SUFFIX
 }
 
@@ -415,11 +454,11 @@ isEmpty(BDB_INCLUDE_PATH) {
 }
 
 isEmpty(BOOST_LIB_PATH) {
-    macx:BOOST_LIB_PATH = /usr/local/lib
+    macx:BOOST_LIB_PATH = /usr/local/opt/boost@1.55/lib
 }
 
 isEmpty(BOOST_INCLUDE_PATH) {
-    macx:BOOST_INCLUDE_PATH = /usr/local/include
+    macx:BOOST_INCLUDE_PATH = /usr/local/opt/boost@1.55/include
 }
 
 isEmpty(OPENSSL_LIB_PATH) {
@@ -430,6 +469,7 @@ isEmpty(OPENSSL_INCLUDE_PATH) {
     macx:OPENSSL_INCLUDE_PATH = /usr/local/include
 
 }
+
 isEmpty(MINIUPNPC_LIB_PATH) {
     macx:MINIUPNPC_LIB_PATH = /usr/local/lib
 }
@@ -484,17 +524,20 @@ contains(RELEASE, 1) {
     }
 }
 
-linux-* {
+!windows:!macx {
     DEFINES += LINUX
     LIBS += -lrt -ldl
+}
+
+linux-* {
+    # We may need some linuxism here
+    LIBS += -ldl
 }
 
 netbsd-*|freebsd-*|openbsd-* {
     # libexecinfo is required for back trace
     LIBS += -lexecinfo
-   
+ 
 }
 
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
-
-}
