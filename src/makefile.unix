@@ -167,15 +167,21 @@ endif
 
 all: litedoged
 
-litedoged:: leveldb/libleveldb.a
-
+#
+# LevelDB support
+#
+ifeq (${USE_LEVELDB}, 1)
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
-DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
-DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
+DEFS += $(addprefix -I,$(CURDIR)src/leveldb/include/leveldb)
+DEFS += $(addprefix -I,$(CURDIR)src/leveldb/helpers/memenv)
 OBJS += obj/txdb-leveldb.o
 leveldb/libleveldb.a:
 	@echo "Building LevelDB ..."; cd leveldb; qmake libleveldb.a libmemenv.a; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
+endif
+ifneq (${USE_LEVELDB}, 1)
+OBJS += obj/txdb-bdb.o
+endif
 
 # auto-generated dependencies:
 -include obj/*.P
