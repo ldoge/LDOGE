@@ -130,14 +130,14 @@ contains(USE_LEVELDB, 1) {
     SOURCES += src/txdb-leveldb.cpp
     !windows {
         # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
-       genleveldb.commands = cd $$PWD/src/leveldb ; make libleveldb.a libmemenv.a
+       genleveldb.commands = cd $$PWD/src/leveldb $$PWD/src/leveldb/helpers; make libleveldb.a libmemenv.a 
     } else {
         # make an educated guess about what the ranlib command is called
         isEmpty(QMAKE_RANLIB) {
             QMAKE_RANLIB = $$replace(QMAKE_STRIP, strip, ranlib)
         }
         LIBS += -lshlwapi
-        genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
+        genleveldb.commands = cd $$PWD/src/leveldb $$PWD/src/leveldb/helpers/memenv/ && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
     }
     
     genleveldb.target = $$PWD/src/leveldb/libleveldb.a
@@ -145,12 +145,7 @@ contains(USE_LEVELDB, 1) {
     PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
     QMAKE_EXTRA_TARGETS += genleveldb
     # Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
-    QMAKE_CLEAN +=  $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(QMAKE) clean
-} else {
-    message(Building with Berkeley DB transaction index)
-    SOURCES += src/txdb-leveldb.cpp
-}
-
+    QMAKE_CLEAN += $$PWD/src/leveldb/helpers/memenv/memenv.h $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(QMAKE) clean
 
 # use: qmake "USE_ASM=1"
 contains(USE_ASM, 1) {
