@@ -81,10 +81,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     prevBlocks(0),
     nWeight(0)
 {
-    resize(850, 550);
-    setMinimumWidth(850);
-	setMinimumHeight(550);
-        
+    resize(850+95, 400);
     setWindowTitle(tr("LiteDoge") + " - " + tr("Wallet"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
@@ -234,48 +231,51 @@ void BitcoinGUI::createActions()
 {
     QActionGroup *tabGroup = new QActionGroup(this);
 
-    overviewAction = new QAction(QIcon(":/icons/overview"), tr("&&My Home"), this);
+    overviewAction = new QAction(QIcon(":/icons/overview"), tr("&My Home"), this);
     overviewAction->setToolTip(tr("Show general overview of wallet"));
     overviewAction->setCheckable(true);
     overviewAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
     tabGroup->addAction(overviewAction);
 
-    receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&&Much Receive"), this);
+    receiveCoinsAction = new QAction(QIcon(":/icons/receiving_addresses"), tr("&Much Receive"), this);
     receiveCoinsAction->setToolTip(tr("Show the list of addresses for receiving payments"));
     receiveCoinsAction->setCheckable(true);
     receiveCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_2));
     tabGroup->addAction(receiveCoinsAction);
 
-    sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&&Please Send"), this);
-    sendCoinsAction->setToolTip(tr("Send coins to a LiteDoge address"));
+    sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Please Send"), this);
+    sendCoinsAction->setToolTip(tr("Send coins to a LDOGE address"));
     sendCoinsAction->setCheckable(true);
     sendCoinsAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_3));
     tabGroup->addAction(sendCoinsAction);
 
-    historyAction = new QAction(QIcon(":/icons/history"), tr("&&Many History"), this);
+    historyAction = new QAction(QIcon(":/icons/history"), tr("&Many History"), this);
     historyAction->setToolTip(tr("Browse transaction history"));
     historyAction->setCheckable(true);
     historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
     tabGroup->addAction(historyAction);
 
-    addressBookAction = new QAction(QIcon(":/icons/address-book"), tr("&&Very Address"), this);
+    addressBookAction = new QAction(QIcon(":/icons/address-book"), tr("&Very Address"), this);
     addressBookAction->setToolTip(tr("Edit the list of stored addresses and labels"));
     addressBookAction->setCheckable(true);
     addressBookAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_5));
     tabGroup->addAction(addressBookAction);
 
-    blockExplorerAction = new QAction(QIcon(":/icons/link"), tr("&&Such Block Explorer"), this);
-    blockExplorerAction->setToolTip(tr("Go to the BlockExperts LiteDoge Block Explorer"));
+    blockExplorerAction = new QAction(QIcon(":/icons/link"), tr("&Such Explorer"), this);
+    blockExplorerAction->setToolTip(tr("LDOGE Block Explorer"));
 
-    websiteAction = new QAction(QIcon(":/icons/globe"), tr("&&Wow Website"), this);
-    websiteAction->setToolTip(tr("Go to the Official LiteDoge Website"));
+    websiteAction = new QAction(QIcon(":/icons/globe"), tr("&Wow Website"), this);
+    websiteAction->setToolTip(tr("The Official LDOGE Website"));
 
-    twitterAction = new QAction(QIcon(":/icons/twitter"), tr("&&Such Twitter"), this);
-    twitterAction->setToolTip(tr("Visit us on Twitter"));
+    facebookAction = new QAction(QIcon(":/icons/facebook"), tr("&Such Facebook"), this);
+    facebookAction->setToolTip(tr("LDOGE Facebook"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&&DISCORD CHAT"), this);
-    chatPageAction->setToolTip((tr("Join LiteDoge CHAT")));
-    
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
+    chatPageAction->setToolTip((tr("Join LDOGE Discord Channel")));
+
+    ccPageAction = new QAction(QIcon(":/icons/res/icons/crypto-city.png"),tr("&Crypto-City"), this);
+    ccPageAction->setToolTip((tr("Join LDOGE @ Crypto-City")));
+
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
@@ -289,8 +289,9 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
-    connect(websiteAction, SIGNAL(triggered()), this, SLOT(openTwitter()));
+    connect(facebookAction, SIGNAL(triggered()), this, SLOT(openFacebook()));
     connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
+    connect(ccPageAction, SIGNAL(triggered()), this, SLOT(gotoCcPage()));
 
     quitAction = new QAction(tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -386,8 +387,8 @@ void BitcoinGUI::createToolBars()
         header->setMinimumSize(160, 120);
         header->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         header->setStyleSheet("QWidget { background-color: rgb(30,32,36); background-repeat: no-repeat; background-image: url(:/images/header); background-position: top center; }");
-        toolbar->addWidget(header);
-        toolbar->addWidget(makeToolBarSpacer());
+        //toolbar->addWidget(header);
+        //toolbar->addWidget(makeToolBarSpacer());
     }
 
     toolbar->addAction(overviewAction);
@@ -397,8 +398,9 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(addressBookAction);
     toolbar->addAction(blockExplorerAction);
     toolbar->addAction(websiteAction);
-    toolbar->addAction(twitterAction);
-    
+    toolbar->addAction(facebookAction);
+    toolbar->addAction(chatPageAction);
+    toolbar->addAction(ccPageAction);
 
     toolbar->addWidget(makeToolBarSpacer());
 
@@ -475,7 +477,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
-        
+
         setEncryptionStatus(walletModel->getEncryptionStatus());
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
 
@@ -626,7 +628,7 @@ void BitcoinGUI::setNumBlocks(int count)
             timeBehindText = tr("%1 and %2").arg(tr("%n year(s)", "", years)).arg(tr("%n week(s)","", remainder/WEEK_IN_SECONDS));
         }
 
-        progressBarLabel->setText(tr(clientModel->isImporting() ? "Importing blocks..." : "Synchronizing with network..."));
+        progressBarLabel->setText(tr(clientModel->isImporting() ? "Importing blocks..." : "Synchronizing litedoge..."));
         progressBarLabel->setVisible(true);
         progressBar->setFormat(tr("%1 behind").arg(timeBehindText));
         progressBar->setMaximum(totalSecs);
@@ -837,22 +839,27 @@ void BitcoinGUI::gotoSendCoinsPage()
 
 void BitcoinGUI::openBlockExplorer()
 {
-    QDesktopServices::openUrl(QUrl("https://blocks.litedogeofficial.org"));
+    QDesktopServices::openUrl(QUrl("http://blocks.litedogeofficial.org/"));
 }
 
 void BitcoinGUI::openWebsite()
 {
-    QDesktopServices::openUrl(QUrl("https://www.litedogeofficial.org"));
+    QDesktopServices::openUrl(QUrl("https://litedogeofficial.wordpress.com/"));
 }
 
-void BitcoinGUI::openTwitter()
+void BitcoinGUI::openFacebook()
 {
-    QDesktopServices::openUrl(QUrl("https://www.twitter.com/litedoge2018"));
+    QDesktopServices::openUrl(QUrl("https://www.facebook.com/litedoge"));
 }
 
-void BitcoinGUI::openChatPage()
+void BitcoinGUI::gotoChatPage()
 {
-   QDesktopServices::openUrl(QUrl("https://discord.gg/dVWy7MqE2J"))
+    QDesktopServices::openUrl(QUrl("https://discord.gg/yvYVft6"));
+}
+
+void BitcoinGUI::gotoCcPage()
+{
+    QDesktopServices::openUrl(QUrl("https://www.crypto-city.com/index.php/lite-doge-ldoge/"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
