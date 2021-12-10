@@ -847,9 +847,9 @@ void BitcoinGUI::openWebsite()
     QDesktopServices::openUrl(QUrl("https://litedogeofficial.wordpress.com/"));
 }
 
-void BitcoinGUI::openFacebook()
+void BitcoinGUI::openInstagram()
 {
-    QDesktopServices::openUrl(QUrl("https://www.facebook.com/litedoge"));
+    QDesktopServices::openUrl(QUrl("https://www.instagram.com/litedoge_ldoge"));
 }
 
 void BitcoinGUI::gotoChatPage()
@@ -857,9 +857,9 @@ void BitcoinGUI::gotoChatPage()
     QDesktopServices::openUrl(QUrl("https://discord.gg/yvYVft6"));
 }
 
-void BitcoinGUI::gotoCcPage()
+void BitcoinGUI::gotoReddit()
 {
-    QDesktopServices::openUrl(QUrl("https://www.crypto-city.com/index.php/lite-doge-ldoge/"));
+    QDesktopServices::openUrl(QUrl("https:/"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
