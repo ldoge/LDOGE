@@ -289,7 +289,7 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
-    connect(twitterAction, SIGNAL(triggered()), this, SLOT(openTwitter()));
+    connect(websiteAction, SIGNAL(triggered()), this, SLOT(openTwitter()));
     connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
 
     quitAction = new QAction(tr("E&xit"), this);
@@ -398,7 +398,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(blockExplorerAction);
     toolbar->addAction(websiteAction);
     toolbar->addAction(twitterAction);
-    toolbar->addAction(chatPageAction);
+    
 
     toolbar->addWidget(makeToolBarSpacer());
 
@@ -837,20 +837,20 @@ void BitcoinGUI::gotoSendCoinsPage()
 
 void BitcoinGUI::openBlockExplorer()
 {
-    QDesktopServices::openUrl(QUrl("http://blockexperts.com/ldoge"));
+    QDesktopServices::openUrl(QUrl("https://blocks.litedogeofficial.org"));
 }
 
 void BitcoinGUI::openWebsite()
 {
-    QDesktopServices::openUrl(QUrl("http://www.litedoge.org"));
+    QDesktopServices::openUrl(QUrl("https://www.litedogeofficial.org"));
 }
 
 void BitcoinGUI::openTwitter()
 {
-    QDesktopServices::openUrl(QUrl("https://www.twitter.com/litedoge"));
+    QDesktopServices::openUrl(QUrl("https://www.twitter.com/litedoge2018"));
 }
 
-void BitcoinGUI::openWebsite()
+void BitcoinGUI::openChatPage()
 {
    QDesktopServices::openUrl(QUrl("https://discord.gg/dVWy7MqE2J"))
 }
