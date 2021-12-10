@@ -145,7 +145,7 @@ contains(USE_LEVELDB, 1) {
     PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
     QMAKE_EXTRA_TARGETS += genleveldb
     # Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
-    QMAKE_CLEAN += $$PWD/src/leveldb/helpers/memenv/memenv.h $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(QMAKE) clean
+    QMAKE_CLEAN +=  cd $$PWD/src/leveldb $$PWD/src/leveldb/helpers/memenv/ $$PWD/src/leveldb.a; cd $$PWD/src/leveldb ; $(QMAKE) clean
 
 # use: qmake "USE_ASM=1"
 contains(USE_ASM, 1) {
@@ -159,7 +159,7 @@ contains(USE_ASM, 1) {
         QMAKE_CFLAGS += -msse2
     }
 
-    SOURCES += src/crypto/scrypt/asm/scrypt-arm.S src/crypto/scrypt/asm/scrypt-x86.S src/crypto/scrypt/asm/scrypt-x86_64.S src/crypto/scrypt/asm/asm-wrapper.cpp
+    SOURCES += src/scrypt-arm.S src/scrypt-x86.S src/scrypt-x86_64.S 
 } else {
     # use: qmake "USE_SSE2=1"
     contains(USE_SSE2, 1) {
@@ -292,6 +292,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/threadsafety.h \
     src/tinyformat.h \
     src/qt/autosaver.h \
+    src/txdb-leveldb.h \
     src/leveldb/helpers/memenv/memenv.h
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
@@ -370,7 +371,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
     src/pbkdf2.cpp \
-    src/txdb-leveldb.cpp
+    src/txdb-leveldb.cpp \
     src/qt/autosaver.cpp
 
 RESOURCES += \
