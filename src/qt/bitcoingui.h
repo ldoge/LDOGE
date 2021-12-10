@@ -16,8 +16,6 @@ class SendCoinsDialog;
 class SignVerifyMessageDialog;
 class Notificator;
 class RPCConsole;
-class ChatPage;
-class CcPage;
 
 
 QT_BEGIN_NAMESPACE
