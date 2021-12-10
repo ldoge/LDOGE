@@ -168,13 +168,13 @@ contains(USE_ASM, 1) {
     # use: qmake "USE_SSE2=1"
     contains(USE_SSE2, 1) {
         message(Using SSE2 intrinsic scrypt implementation & generic sha256 implementation)
-        SOURCES += src/crypto/scrypt/intrin/scrypt-sse2.cpp
+        SOURCES += src/scrypt.cpp
         DEFINES += USE_SSE2
         QMAKE_CXXFLAGS += -msse2
         QMAKE_CFLAGS += -msse2
     } else {
         message(Using generic scrypt implementations)
-        SOURCES += src/crypto/scrypt/generic/scrypt.cpp
+        SOURCES += src/scrypt.cpp
     }
 }
 
@@ -492,6 +492,11 @@ windows:!contains(MINGW_THREAD_BUGFIX, 0) {
     QMAKE_LIBS_QT_ENTRY = -lmingwthrd $$QMAKE_LIBS_QT_ENTRY
 }
 
+!windows:!macx {
+    DEFINES += LINUX
+    LIBS += -lrt -ldl
+}
+
 macx:HEADERS += src/qt/macdockiconhandler.h \
 src/qt/macnotificationhandler.h \
 macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm \
@@ -523,11 +528,6 @@ contains(RELEASE, 1) {
     }
 }
 
-!windows:!macx {
-    DEFINES += LINUX
-    LIBS += -lrt -ldl
-}
-
 linux-* {
     # We may need some linuxism here
     LIBS += -ldl
@@ -539,6 +539,5 @@ netbsd-*|freebsd-*|openbsd-* {
  
    }
 }
-
 
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
