@@ -129,6 +129,7 @@ OBJS= \
     obj/keystore.o \
     obj/core.o \
     obj/main.o \
+    obj/miner.o
     obj/net.o \
     obj/protocol.o \
     obj/rpcclient.o \
@@ -151,7 +152,8 @@ OBJS= \
     obj/scrypt-arm.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
-    obj/chainparams.o 
+    obj/chainparams.o
+    
     
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
