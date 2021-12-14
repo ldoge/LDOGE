@@ -10,13 +10,14 @@
 #include <memory>
 
 using namespace std;
-double dHashesPerSec;
-int64_t nHPSTimerStart;
+
 //////////////////////////////////////////////////////////////////////////////
 //
 // BitcoinMiner
 //
 
+string strMintMessage = "Info: Minting suspended due to locked wallet.";
+string strMintWarning;
 extern unsigned int nMinerSleep;
 
 int static FormatHashBlocks(void* pbuffer, unsigned int len)
@@ -104,7 +105,7 @@ public:
 CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFees)
 {
     // Create new block
-    unique_ptr<CBlock> pblock(new CBlock());
+    auto_ptr<CBlock> pblock(new CBlock());
     if (!pblock.get())
         return NULL;
     
@@ -353,13 +354,11 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
 
-
         if (fDebug && GetBoolArg("-printpriority", false))
             LogPrintf("CreateNewBlock(): total size %u\n", nBlockSize);
 
         if (!fProofOfStake)
-            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash());
-
+            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash));
 
         if (pFees)
             *pFees = nFees;
@@ -560,7 +559,7 @@ void ThreadStakeMiner(CWallet *pwallet)
         // Create new block
         //
         int64_t nFees;
-        auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
         if (!pblock.get())
             return;
         
@@ -597,7 +596,7 @@ void static BitcoinMiner(CWallet *pwallet)
         unsigned int nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
         CBlockIndex* pindexPrev = pindexBest;
 
-       unique_ptr<CBlock> pblock(CreateNewBlock(reservekey));
+       auto_ptr<CBlock> pblock(CreateNewBlock(reservekey));
         if (!pblock.get())
             return;
         
