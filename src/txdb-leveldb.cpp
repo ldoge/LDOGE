@@ -21,7 +21,6 @@
 #include "util.h"
 #include "main.h"
 #include "chainparams.h"
-#include "memenv.h"
 
 using namespace std;
 using namespace boost;
