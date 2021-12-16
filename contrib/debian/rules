@@ -12,7 +12,7 @@ DEB_INSTALL_MANPAGES_litedoged += debian/manpages/*
 	dh --with bash-completion $@
 
 override_dh_auto_build:
-	cd src; $(MAKE) -f makefile.unix litedoged
+	cd src; $(MAKE) -f makefile.unix litedoged USE_ASM=1 USE_LEVELDB=1
 	$(MAKE)
 
 override_dh_auto_clean:
@@ -20,7 +20,7 @@ override_dh_auto_clean:
 	cd src; $(MAKE) -f makefile.unix clean
 
 override_dh_auto_configure:
-	qmake litedoge-qt.pro USE_QRCODE=1
+	qmake litedoge-qt.pro USE_ASM=1 USE_LEVELDB=1
 
 override_dh_auto_test:
 	cd src; $(MAKE) -f makefile.unix test_litedoge
