@@ -10,14 +10,14 @@
 #include <memory>
 
 using namespace std;
-
+double dHashesPerSec;
+int64_t nHPSTimerStart;
 //////////////////////////////////////////////////////////////////////////////
 //
 // BitcoinMiner
 //
 
-string strMintMessage = "Info: Minting suspended due to locked wallet.";
-string strMintWarning;
+
 extern unsigned int nMinerSleep;
 
 int static FormatHashBlocks(void* pbuffer, unsigned int len)
@@ -119,7 +119,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     txNew.vout.resize(1);
 
     if (!fProofOfStake)
-    {
+   {
         CPubKey pubkey;
         if (!reservekey.GetReservedKey(pubkey))
             return NULL;
@@ -183,7 +183,6 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
                 continue;
 
             COrphan* porphan = NULL;
-            double dPriority = 0;
             int64_t nTotalIn = 0;
             bool fMissingInputs = false;
             BOOST_FOREACH(const CTxIn& txin, tx.vin)
@@ -524,14 +523,35 @@ void ThreadStakeMiner(CWallet *pwallet)
 
     // Make this thread recognisable as the mining thread
     RenameThread("litedoge-miner");
-    
     CReserveKey reservekey(pwallet);
+    CWallet* pwallet = (CWallet*)parg
+        
+    
+    MidstateMap inputsMap;
+    if (!FillMap(pwallet, GetAdjustedTime(), inputsMap))
+        return;
     
     bool fTryToSync = true;
 
-    while (true)
+         CBlockIndex* pindexPrev = pindexBest;
+    uint32_t nBits = GetNextTargetRequired(pindexPrev, true);
+
+    printf("ThreadStakeMinter started\n");
+        
+    try
     {
-        while (pwallet->IsLocked())
+        vnThreadsRunning[THREAD_MINTER]++;
+
+        MidstateMap::key_type LuckyInput;
+        std::pair<uint256, uint32_t> solution;
+
+        // Main miner loop
+        do
+        {
+            if (fShutdown)
+                goto _endloop;
+
+            while (pwallet->IsLocked())
         {
             nLastCoinStakeSearchInterval = 0;
             MilliSleep(1000);
@@ -542,7 +562,6 @@ void ThreadStakeMiner(CWallet *pwallet)
             nLastCoinStakeSearchInterval = 0;
             fTryToSync = true;
             MilliSleep(1000);
-                return;
         }
 
         if (fTryToSync)
@@ -554,12 +573,11 @@ void ThreadStakeMiner(CWallet *pwallet)
                 continue;
             }
         }
-
+        //
         //
         // Create new block
-        //
         int64_t nFees;
-        unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
+        CBlock* pblock(CreateNewBlock(reservekey, true, &nFees));
         if (!pblock.get())
             return;
         
@@ -596,7 +614,7 @@ void static BitcoinMiner(CWallet *pwallet)
         unsigned int nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
         CBlockIndex* pindexPrev = pindexBest;
 
-       auto_ptr<CBlock> pblock(CreateNewBlock(reservekey));
+      CBlock* pblock(CreateNewBlock(reservekey));
         if (!pblock.get())
             return;
         
