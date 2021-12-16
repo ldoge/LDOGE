@@ -103,6 +103,13 @@ FreeDesktop notification interface through DBUS using the following qmake option
 Generation of QR codes
 -----------------------
 
+- cd novacoin
+ qmake USE_UPNP=1 USE_O3=1 USE_ASM=1 (если хотите LevelDB, то USE_LEVELDB=1) 
+ make
+
+- cd src
+ make -f makefile.unix USE_UPNP=1  USE_O3=1 USE_ASM=1 (если хотите LevelDB, то USE_LEVELDB=1) 
+
 libqrencode may be used to generate QRCode images for payment requests. 
 It can be downloaded from http://fukuchi.org/works/qrencode/index.html.en, or installed via your package manager. Pass the USE_QRCODE 
 flag to qmake to control this:
