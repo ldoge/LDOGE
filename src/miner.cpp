@@ -1,13 +1,12 @@
-// Copyright (c) 2009-2021 The Bitcoin developers
-// Copyright (c) 2015-2021 The LiteDogecoin developers
+// Copyright (c) 2009-2010 Satoshi Nakamoto
+// Copyright (c) 2009-2012 The Bitcoin developers
+// Copyright (c) 2013 The NovaCoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "txdb.h"
 #include "miner.h"
 #include "kernel.h"
-#include "util.h"
-#include <memory>
 
 using namespace std;
 double dHashesPerSec;
@@ -16,7 +15,6 @@ int64_t nHPSTimerStart;
 //
 // BitcoinMiner
 //
-
 
 extern unsigned int nMinerSleep;
 
@@ -108,9 +106,9 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     auto_ptr<CBlock> pblock(new CBlock());
     if (!pblock.get())
         return NULL;
-    
+
     CBlockIndex* pindexPrev = pindexBest;
-    int height = pindexPrev->nHeight+1;
+    int nHeight = pindexPrev->nHeight + 1;
 
     // Create coinbase tx
     CTransaction txNew;
@@ -119,7 +117,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     txNew.vout.resize(1);
 
     if (!fProofOfStake)
-   {
+    {
         CPubKey pubkey;
         if (!reservekey.GetReservedKey(pubkey))
             return NULL;
@@ -128,7 +126,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
     else
     {
         // Height first in coinbase required for block.version=2
-        txNew.vin[0].scriptSig = (CScript() << height) + COINBASE_FLAGS;
+        txNew.vin[0].scriptSig = (CScript() << nHeight) + COINBASE_FLAGS;
         assert(txNew.vin[0].scriptSig.size() <= 100);
 
         txNew.vout[0].SetEmpty();
@@ -179,10 +177,11 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
         for (map<uint256, CTransaction>::iterator mi = mempool.mapTx.begin(); mi != mempool.mapTx.end(); ++mi)
         {
             CTransaction& tx = (*mi).second;
-            if (tx.IsCoinBase() || tx.IsCoinStake() || !IsFinalTx(tx, height))
+            if (tx.IsCoinBase() || tx.IsCoinStake() || !IsFinalTx(tx, nHeight))
                 continue;
 
             COrphan* porphan = NULL;
+            double dPriority = 0;
             int64_t nTotalIn = 0;
             bool fMissingInputs = false;
             BOOST_FOREACH(const CTxIn& txin, tx.vin)
@@ -343,7 +342,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
                         if (porphan->setDependsOn.empty())
                         {
                             vecPriority.push_back(TxPriority(porphan->dPriority, porphan->dFeePerKb, porphan->ptx));
-                             std::push_heap(vecPriority.begin(), vecPriority.end(), comparer);
+                            std::push_heap(vecPriority.begin(), vecPriority.end(), comparer);
                         }
                     }
                 }
@@ -357,7 +356,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
             LogPrintf("CreateNewBlock(): total size %u\n", nBlockSize);
 
         if (!fProofOfStake)
-            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash));
+            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(nHeight, nFees);
 
         if (pFees)
             *pFees = nFees;
@@ -365,7 +364,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
         // Fill in header
         pblock->hashPrevBlock  = pindexPrev->GetBlockHash();
         pblock->nTime          = max(pindexPrev->GetPastTimeLimit()+1, pblock->GetMaxTransactionTime());
-        pblock->nTime          = max(pblock->GetBlockTime(), PastDrift(pindexPrev->GetBlockTime(), height));
+        pblock->nTime          = max(pblock->GetBlockTime(), PastDrift(pindexPrev->GetBlockTime(), nHeight));
         if (!fProofOfStake)
             pblock->UpdateTime(pindexPrev);
         pblock->nNonce         = 0;
@@ -386,8 +385,8 @@ void IncrementExtraNonce(CBlock* pblock, CBlockIndex* pindexPrev, unsigned int& 
     }
     ++nExtraNonce;
 
-    unsigned int height = pindexPrev->nHeight+1; // Height first in coinbase required for block.version=2
-    pblock->vtx[0].vin[0].scriptSig = (CScript() << height << CBigNum(nExtraNonce)) + COINBASE_FLAGS;
+    unsigned int nHeight = pindexPrev->nHeight+1; // Height first in coinbase required for block.version=2
+    pblock->vtx[0].vin[0].scriptSig = (CScript() << nHeight << CBigNum(nExtraNonce)) + COINBASE_FLAGS;
     assert(pblock->vtx[0].vin[0].scriptSig.size() <= 100);
 
     pblock->hashMerkleRoot = pblock->BuildMerkleTree();
@@ -523,35 +522,14 @@ void ThreadStakeMiner(CWallet *pwallet)
 
     // Make this thread recognisable as the mining thread
     RenameThread("litedoge-miner");
+
     CReserveKey reservekey(pwallet);
-    CWallet* pwallet = (CWallet*)parg
-        
-    
-    MidstateMap inputsMap;
-    if (!FillMap(pwallet, GetAdjustedTime(), inputsMap))
-        return;
-    
+
     bool fTryToSync = true;
 
-         CBlockIndex* pindexPrev = pindexBest;
-    uint32_t nBits = GetNextTargetRequired(pindexPrev, true);
-
-    printf("ThreadStakeMinter started\n");
-        
-    try
+    while (true)
     {
-        vnThreadsRunning[THREAD_MINTER]++;
-
-        MidstateMap::key_type LuckyInput;
-        std::pair<uint256, uint32_t> solution;
-
-        // Main miner loop
-        do
-        {
-            if (fShutdown)
-                goto _endloop;
-
-            while (pwallet->IsLocked())
+        while (pwallet->IsLocked())
         {
             nLastCoinStakeSearchInterval = 0;
             MilliSleep(1000);
@@ -573,19 +551,20 @@ void ThreadStakeMiner(CWallet *pwallet)
                 continue;
             }
         }
-        //
+
         //
         // Create new block
+        //
         int64_t nFees;
-        CBlock* pblock(CreateNewBlock(reservekey, true, &nFees));
+        auto_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
         if (!pblock.get())
             return;
-        
+
         // Trying to sign a block
         if (pblock->SignBlock(*pwallet, nFees))
         {
             SetThreadPriority(THREAD_PRIORITY_NORMAL);
-            CheckStake(pblock, *pwallet);
+            CheckStake(pblock.get(), *pwallet);
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
             MilliSleep(500);
         }
@@ -598,7 +577,7 @@ void static BitcoinMiner(CWallet *pwallet)
 {
     printf("BitcoinMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
-    RenameThread("LiteDoge Miner");
+    RenameThread("bitcoin-miner");
 
     // Each thread has its own key and counter
     CReserveKey reservekey(pwallet);
@@ -614,13 +593,13 @@ void static BitcoinMiner(CWallet *pwallet)
         unsigned int nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
         CBlockIndex* pindexPrev = pindexBest;
 
-      CBlock* pblock(CreateNewBlock(reservekey));
+       auto_ptr<CBlock> pblock(CreateNewBlock(reservekey));
         if (!pblock.get())
             return;
         
         IncrementExtraNonce(pblock.get(), pindexPrev, nExtraNonce);
 
-        printf("Running LitedogeMiner with %" PRIszu " transactions in block (%u bytes)\n", pblock->vtx.size(),
+        printf("Running BitcoinMiner with %"PRIszu" transactions in block (%u bytes)\n", pblock->vtx.size(),
                ::GetSerializeSize(*pblock, SER_NETWORK, PROTOCOL_VERSION));
 
         //
@@ -633,6 +612,7 @@ void static BitcoinMiner(CWallet *pwallet)
         FormatHashBuffers(pblock.get(), pmidstate, pdata, phash1);
 
         unsigned int& nBlockTime = *(unsigned int*)(pdata + 64 + 4);
+        unsigned int& nBlockBits = *(unsigned int*)(pdata + 64 + 8);
         unsigned int& nBlockNonce = *(unsigned int*)(pdata + 64 + 12);
 
 
@@ -715,7 +695,7 @@ void static BitcoinMiner(CWallet *pwallet)
     } }
     catch (boost::thread_interrupted)
     {
-        printf("LitedogeMiner terminated\n");
+        printf("BitcoinMiner terminated\n");
         throw;
     }
 }
