@@ -1,20 +1,15 @@
-# Copyright (c) 2009-2021 Bitcoin Developers
-# Copyright (c) 2015-2021 LiteDogecoin Developers
+# Copyright (c) 2009-2010 Satoshi Nakamoto
+# Copyright (c) 2021 LiteDoge Core Devs
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-USE_UPNP:=1
+USE_UPNP:=0
 USE_WALLET:=1
-USE_LEVELDB:=0
-USE_IPV6:=1
-
-# CC=clang
-# CXX=clang++
 
 LINK:=$(CXX)
-ARCH:=$(shell uname -m)
+ARCH:=$(system lscpu | head -n 1 | awk '{print $2}')
 
-DEFS=-DBOOST_SPIRIT_THREADSAFE -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
+DEFS=-DBOOST_SPIRIT_THREADSAFE
 
 DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/obj $(BOOST_INCLUDE_PATH) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH))
 LIBS = $(addprefix -L,$(BOOST_LIB_PATH) $(BDB_LIB_PATH) $(OPENSSL_LIB_PATH))
@@ -28,13 +23,12 @@ ifdef STATIC
 	endif
 endif
 
-# for boost 1.55, add -mt to the boost libraries
+# for boost 1.37, add -mt to the boost libraries
 LIBS += \
  -Wl,-B$(LMODE) \
    -l boost_system$(BOOST_LIB_SUFFIX) \
    -l boost_filesystem$(BOOST_LIB_SUFFIX) \
    -l boost_program_options$(BOOST_LIB_SUFFIX) \
-   -l boost_chrono$(BOOST_LIB_SUFFIX) \
    -l boost_thread$(BOOST_LIB_SUFFIX) \
    -l db_cxx$(BDB_LIB_SUFFIX) \
    -l ssl \
@@ -92,25 +86,15 @@ LIBS+= \
 DEBUGFLAGS=-g
 
 
-ifeq ($(xCPUARCH),i686)
-    xCXXFLAGS+=-msse2
+ifeq (${ARCH}, i686)
+    EXT_OPTIONS=-msse2
 endif
 
 
 # CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
 # adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
-
-xCFLAGS= -O2 -std=c++11 -pthread -D_REENTRANT -Wall -W -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
-    $(DEBUGFLAGS) $(EXT_OPTIONS) $(DEFS) $(HARDENING) $(CFLAGS) $(LDHARDENING) $(LDFLAGS)
-
-    
-# If we have an ARM device, we can't use SSE2 instructions, so don't try to use them
-# xCPUARCH is passed in as a define (xCPUARCH=armv7l, xCPUARCH=armv6l)
-ifeq ($(xCPUARCH),armv7l)
-    xCXXFLAGS+= -DNOSSE
-else ifeq ($(xCPUARCH),armv6l)
-    xCXXFLAGS+= -DNOSSE
-
+xCXXFLAGS=-O2 $(EXT_OPTIONS) -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter \
+    $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS)
 
 # LDFLAGS can be specified on the make command line, so we use xLDFLAGS that only
 # adds some defaults in front. Unfortunately, LDFLAGS=... $(LDFLAGS) does not work.
@@ -129,7 +113,6 @@ OBJS= \
     obj/keystore.o \
     obj/core.o \
     obj/main.o \
-    obj/miner.o \
     obj/net.o \
     obj/protocol.o \
     obj/rpcclient.o \
@@ -153,8 +136,7 @@ OBJS= \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
     obj/chainparams.o
-    
-    
+
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
     OBJS += \
@@ -169,21 +151,13 @@ endif
 
 all: litedoged
 
-#
-# LevelDB support
-#
-ifeq (${USE_LEVELDB}, 1)
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
-DEFS += $(addprefix -I,$(CURDIR)src/leveldb/include/leveldb)
-DEFS += $(addprefix -I,$(CURDIR)src/leveldb/helpers/memenv)
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
 OBJS += obj/txdb-leveldb.o
 leveldb/libleveldb.a:
-	@echo "Building LevelDB ..."; cd leveldb; qmake libleveldb.a libmemenv.a; cd ..;
+	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
-endif
-ifneq (${USE_LEVELDB}, 1)
-OBJS += obj/txdb-bdb.o
-endif
 
 # auto-generated dependencies:
 -include obj/*.P
@@ -211,23 +185,11 @@ obj/%.o: %.cpp
 
 litedoged: $(OBJS:obj/%=obj/%)
 	$(LINK) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
-	
-TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
-
-obj-test/%.o: test/%.cpp
-	$(CXX) -c $(TESTDEFS) $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
-	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
-	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
-	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
-	  rm -f $(@:%.o=%.d)
-
-test_litedoge: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
-	$(CXX) $(xCXXFLAGS) -o $@ $(LIBPATHS) $^ -Wl,-B$(LMODE) -lboost_unit_test_framework $(xLDFLAGS) $(LIBS)	
 
 clean:
-	-rm -f litedoged test_litedoge
+	-rm -f litedoged
 	-rm -f obj/*.o
-	-rm -f obj-test/*.o
 	-rm -f obj/*.P
-	-rm -f obj-test/*.P
-	-rm -f src/build.h
+	-rm -f obj/build.h
+
+FORCE:
