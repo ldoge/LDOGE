@@ -13,8 +13,11 @@ using namespace std;
 
 //////////////////////////////////////////////////////////////////////////////
 //
-// BitcoinMiner
+// BitcoinMiner (LiteDoge Miner)
 //
+
+double dHashesPerSec;
+int nHPSTimerStart;
 
 string strMintMessage = "Info: Minting suspended due to locked wallet.";
 string strMintWarning;
@@ -358,7 +361,7 @@ CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFe
             LogPrintf("CreateNewBlock(): total size %u\n", nBlockSize);
 
         if (!fProofOfStake)
-            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash));
+            pblock->vtx[0].vout[0].nValue = GetProofOfWorkReward(pindexPrev->nHeight+1, nFees);
 
         if (pFees)
             *pFees = nFees;
@@ -567,7 +570,7 @@ void ThreadStakeMiner(CWallet *pwallet)
         if (pblock->SignBlock(*pwallet, nFees))
         {
             SetThreadPriority(THREAD_PRIORITY_NORMAL);
-            CheckStake(pblock, *pwallet);
+            CheckStake(pblock.get(), *pwallet);
             SetThreadPriority(THREAD_PRIORITY_LOWEST);
             MilliSleep(500);
         }
