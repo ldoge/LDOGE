@@ -7,7 +7,7 @@
 #include "editaddressdialog.h"
 #include "csvmodelwriter.h"
 #include "guiutil.h"
-
+#include "qrcodedialog.h"
 
 
 #include <QSortFilterProxyModel>
