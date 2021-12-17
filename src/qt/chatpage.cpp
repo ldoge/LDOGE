@@ -1,5 +1,4 @@
 #include "chatpage.h"
-#include "ui_chatpage.h"
 
 //#include "clientmodel.h"
 #include "walletmodel.h"
@@ -36,5 +35,5 @@ void ChatPage::setModel(WalletModel *model)
 {
     this->walletModel = model;
 
-    ui->webView->load(QUrl("https://kiwiirc.com/client/irc.freenode.net/#litedoge"));
+    ui->webView->load(QUrl("https://web.libera.chat/#litedoge"));
 }
