@@ -7,10 +7,8 @@
 #include "editaddressdialog.h"
 #include "csvmodelwriter.h"
 #include "guiutil.h"
-
-#ifdef USE_QRCODE
 #include "qrcodedialog.h"
-#endif
+
 
 #include <QSortFilterProxyModel>
 #include <QClipboard>
@@ -33,9 +31,9 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     ui->deleteButton->setIcon(QIcon());
 #endif
 
-#ifndef USE_QRCODE
+
     ui->showQRCode->setVisible(false);
-#endif
+
 
     switch(mode)
     {
@@ -92,7 +90,7 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(showQRCodeAction, SIGNAL(triggered()), this, SLOT(on_showQRCode_clicked()));
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(on_signMessage_clicked()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(on_verifyMessage_clicked()));
-
+        
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
 
     // Pass through accept action from button box
@@ -335,7 +333,6 @@ void AddressBookPage::exportClicked()
 
 void AddressBookPage::on_showQRCode_clicked()
 {
-#ifdef USE_QRCODE
     QTableView *table = ui->tableView;
     QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
 
@@ -349,7 +346,6 @@ void AddressBookPage::on_showQRCode_clicked()
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();
     }
-#endif
 }
 
 void AddressBookPage::contextualMenu(const QPoint &point)
