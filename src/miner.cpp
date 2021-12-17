@@ -17,7 +17,7 @@ using namespace std;
 //
 
 double dHashesPerSec;
-int nHPSTimerStart;
+int64_t nHPSTimerStart;
 
 string strMintMessage = "Info: Minting suspended due to locked wallet.";
 string strMintWarning;
