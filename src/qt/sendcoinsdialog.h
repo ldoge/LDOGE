@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include <QString>
-#include <QWidget>
 
 namespace Ui {
     class SendCoinsDialog;
@@ -17,7 +16,7 @@ class QUrl;
 QT_END_NAMESPACE
 
 /** Dialog for sending bitcoins */
-class SendCoinsDialog : public Qwidget
+class SendCoinsDialog : public QDialog
 {
     Q_OBJECT
 
@@ -26,11 +25,6 @@ public:
     ~SendCoinsDialog();
 
     void setModel(WalletModel *model);
-    void setAddress(QString address);
-
-protected:
-    bool eventFilter(QObject *object, QEvent *event);
-    void keyPressEvent(QKeyEvent *);    
 
     /** Set up the tab chain manually, as Qt messes up the tab chain by default in some cases (issue https://bugreports.qt-project.org/browse/QTBUG-10907).
      */
@@ -66,7 +60,6 @@ private slots:
     void coinControlClipboardFee();
     void coinControlClipboardAfterFee();
     void coinControlClipboardBytes();
-    void coinControlClipboardPriority();
     void coinControlClipboardLowOutput();
     void coinControlClipboardChange();
 };
