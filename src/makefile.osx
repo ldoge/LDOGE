@@ -19,8 +19,10 @@ LIBPATHS= \
  -L"$(DEPSDIR)/lib" \
  -L"$(DEPSDIR)/lib/db48"
 
-USE_UPNP:=1
+USE_UPNP:=0
 USE_WALLET:=1
+USE_LEVELDB:=0
+USE_IPV6:=1
 
 LIBS= -dead_strip
 
@@ -122,16 +124,56 @@ else
 endif
 endif
 
+ifneq (${USE_IPV6}, -)
+	DEFS += -DUSE_IPV6=$(USE_IPV6)
+endif
+
 all: litedoged
 
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
-DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/include) -DUSE_LEVELDB
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
 OBJS += obj/txdb-leveldb.o
 leveldb/libleveldb.a:
-	@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..
+	@echo "Building LevelDB ..."; cd leveldb; make; cd ..
 obj/txdb-leveldb.o: leveldb/libleveldb.a
+else
+OBJS += obj/txdb-bdb.o
+endif
+	  
+ifeq (${USE_ASM}, 1)
+# Assembler implementation
+OBJS += src/scrypt-arm.o src/scrypt-x86.o src/scrypt-x86_64.o src/asm-wrapper.o	  
+	  
+src/scrypt-x86.o: src/scrypt-x86.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
+src/scrypt-x86_64.o: src/scrypt-x86_64.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+
+src/scrypt-arm.o: src/scrypt-arm.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+
+src/asm-wrapper.o: src/asm-wrapper.cpp
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+else
+ifeq  (${USE_SSE2}, 1)
+# Intrinsic implementation
+DEFS += -DUSE_SSE2
+OBJS += crypto/scrypt/intrin/obj/scrypt-sse2.o
+
+crypto/scrypt/intrin/obj/scrypt-sse2.o: crypto/scrypt/intrin/scrypt-sse2.cpp
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+else
+# Generic implementation
+OBJS += crypto/scrypt/generic/obj/scrypt-generic.o
+
+crypto/scrypt/generic/obj/scrypt-generic.o: crypto/scrypt/generic/scrypt-generic.cpp
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+endif
+endif
+	
+	
 # auto-generated dependencies:
 -include obj/*.P
 
@@ -145,13 +187,7 @@ obj/%.o: %.cpp
 	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
 	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
-	  rm -f $(@:%.o=%.d)
-
-obj/scrypt-x86.o: scrypt-x86.S
-	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
-
-obj/scrypt-x86_64.o: scrypt-x86_64.S
-	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+	  rm -f $(@:%.o=%.d)	
 
 litedoged: $(OBJS:obj/%=obj/%)
 	$(CXX) $(CFLAGS) -o $@ $(LIBPATHS) $^ $(LIBS)
@@ -160,6 +196,7 @@ clean:
 	-rm -f litedoged
 	-rm -f obj/*.o
 	-rm -f obj/*.P
+	-rm -f obj/*.d
 	-rm -f obj/build.h
 
 FORCE:
