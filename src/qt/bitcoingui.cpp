@@ -32,7 +32,7 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "ui_chatpage.h"
+#include "chatpage.h"
 #include "qrcodedialog.h"
 #include "chatpage.h"
 #include "cookiejar.h"
@@ -46,6 +46,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QIcon>
+#include <QTabWidget>
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QStatusBar>
@@ -63,7 +64,6 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QStyle>
-#include <QWebview>
 
 #include <iostream>
 
