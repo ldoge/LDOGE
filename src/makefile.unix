@@ -185,6 +185,39 @@ ifneq (${USE_LEVELDB}, 1)
 OBJS += obj/txdb-bdb.o
 endif
 
+ifeq (${USE_ASM}, 1)
+# Assembler implementation
+OBJS += src/scrypt-arm.o src/scrypt-x86.o src/scrypt-x86_64.o src/asm-wrapper.o
+
+src/scrypt-x86.o: src/scrypt-x86.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+
+src/scrypt-x86_64.o: src/scrypt-x86_64.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+
+src/scrypt-arm.o: src/scrypt-arm.S
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+
+src/asm-wrapper.o: src/asm-wrapper.cpp
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<	
+else
+ifeq  (${USE_SSE2}, 1)
+# Intrinsic implementation
+DEFS += -DUSE_SSE2
+OBJS += crypto/scrypt/intrin/obj/scrypt-sse2.o
+
+crypto/scrypt/intrin/obj/scrypt-sse2.o: src/scrypt-sse2.cpp
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+else
+# Generic implementation
+OBJS += crypto/scrypt/generic/obj/scrypt-generic.o
+
+src/scrypt-generic.o: src/scrypt-generic.cpp
+	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
+endif
+endif
+
+
 # auto-generated dependencies:
 -include obj/*.P
 
@@ -193,14 +226,6 @@ obj/build.h: FORCE
 version.cpp: obj/build.h
 DEFS += -DHAVE_BUILD_INFO
 
-obj/scrypt-x86.o: scrypt-x86.S
-	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
-
-obj/scrypt-x86_64.o: scrypt-x86_64.S
-	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
-
-obj/scrypt-arm.o: scrypt-arm.S
-	$(CXX) -c $(xCXXFLAGS) -MMD -o $@ $<
 
 obj/%.o: %.cpp
 	$(CXX) -c $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
@@ -230,6 +255,7 @@ clean:
 	-rm -f obj-test/*.o
 	-rm -f obj/*.P
 	-rm -f obj-test/*.P
+	-rm -f obj/*.d
 	-rm -f src/build.h
-
+	
 FORCE:
