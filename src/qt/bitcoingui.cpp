@@ -33,7 +33,7 @@
 #include "init.h"
 #include "ui_interface.h"
 #include "ui_chatpage.h"
-#include "chatpage.h"
+#include "qrcodedialog.h"
 #include "chatpage.h"
 #include "cookiejar.h"
 #include "webview.h"
@@ -870,12 +870,13 @@ void BitcoinGUI::openReddit()
 
 void BitcoinGUI::gotoChatPage()
 {
- chatPageAction->setChecked(true);
--    centralStackedWidget->setCurrentWidget(chatPage);
--
--    exportAction->setEnabled(false);
--    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
--    connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
+    chatPageAction->setChecked(true);
+    centralStackedWidget->setCurrentWidget(chatPage);
+
+    exportAction->setEnabled(false);
+    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+    connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
+    QDesktopServices::openUrl(QUrl("https://web.libera.chat/#litedoge"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
