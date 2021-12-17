@@ -207,8 +207,10 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/autosaver.h \
     src/qt/chatpage.h \
     src/qt/cookiejar.h \
-    src/qt/qrcodedialog.h \
-    src/qt/webview.h
+    src/qt/webview.h \
+    src/qt/qrcodedialog.h \ 
+    src/qt/serveur.cpp 
+    
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -290,6 +292,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/qrcodedialog.cpp \
     src/qt/chatpage.cpp \
     src/qt/cookiejar.cpp \
+    src/qt/serveur.cpp \
     src/qt/webview.cpp \
     src/qt/autosaver.cpp
 
@@ -308,6 +311,7 @@ FORMS += \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
+    src/qt/forms/ircchat.ui \
     src/qt/forms/chatpage.ui \
     src/qt/forms/qrcodedialog.ui \
     src/qt/forms/optionsdialog.ui 
