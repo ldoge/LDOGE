@@ -12,7 +12,7 @@
 #include <leveldb/env.h>
 #include <leveldb/cache.h>
 #include <leveldb/filter_policy.h>
-#include <leveldb/export.h>
+#include <leveldb/db.h>
 
 #include "kernel.h"
 #include "checkpoints.h"
