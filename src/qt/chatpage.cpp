@@ -1,5 +1,4 @@
 #include "chatpage.h"
-#include "ui_chatpage.h"
 
 //#include "clientmodel.h"
 #include "walletmodel.h"
