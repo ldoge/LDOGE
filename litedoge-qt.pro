@@ -301,9 +301,6 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/autosaver.h \
     src/txdb-leveldb.h \
     src/leveldb/helpers/memenv/memenv.h
-    src/qt/multisigaddressentry.h \
-    src/qt/multisiginputentry.h \
-    src/qt/multisigdialog.h \
     src/qt/sendcoinsdialog.h \
     src/qt/qrcodedialog.h
 
@@ -406,12 +403,6 @@ FORMS += \
     src/qt/forms/optionsdialog.ui
     src/qt/forms/sendcoinsdialog.ui \
     src/qt/forms/qrcodedialog.ui
-
-contains(USE_QRCODE, 1) {
-HEADERS += src/qt/qrcodedialog.h
-SOURCES += src/qt/qrcodedialog.cpp
-FORMS += src/qt/forms/qrcodedialog.ui
-}
 
 contains(BITCOIN_QT_TEST, 1) {
 SOURCES += src/qt/test/test_main.cpp \
