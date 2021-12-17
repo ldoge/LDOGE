@@ -231,5 +231,3 @@ clean:
 	-rm -f obj/*.P
 	-rm -f obj-test/*.P
 	-rm -f src/build.h
-
-FORCE:
