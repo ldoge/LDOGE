@@ -63,6 +63,7 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QStyle>
+#include <QWebview>
 
 #include <iostream>
 
@@ -126,6 +127,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     sendCoinsPage = new SendCoinsDialog(this);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+        
     chatPage = new ChatPage(this);    
 
 
@@ -276,15 +278,17 @@ void BitcoinGUI::createActions()
 
     websiteAction = new QAction(QIcon(":/icons/irc"), tr("&Such Discord"), this);
     websiteAction->setToolTip(tr("Join LDOGE Discord Channel"));
+    
+    websiteAction = new QAction(QIcon(":/icons/reddit"),tr("&Such Reddit"), this);
+    websiteAction->setToolTip((tr("LDOGE SubReddit")));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such IRC LDOGE Chat"), this);
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such Bridge Chat"), this);
     chatPageAction->setToolTip((tr("Join LDOGE IRC Channel")));
     chatPageAction->setCheckable(true);
     chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(chatPageAction);
 
-    websiteAction = new QAction(QIcon(":/icons/reddit"),tr("&Such Reddit"), this);
-    websiteAction->setToolTip((tr("LDOGE SubReddit")));
+    
 
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -299,9 +303,9 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
-    connect(instagramAction, SIGNAL(triggered()), this, SLOT(openInstagram()));
-    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
     connect(redditPageAction, SIGNAL(triggered()), this, SLOT(gotoReddit()));
+    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
+    
 
     quitAction = new QAction(tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -408,9 +412,9 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(addressBookAction);
     toolbar->addAction(blockExplorerAction);
     toolbar->addAction(websiteAction);
-    toolbar->addAction(instagramAction);
-    toolbar->addAction(chatPageAction);
     toolbar->addAction(redditPageAction);
+    toolbar->addAction(chatPageAction);
+    
 
     toolbar->addWidget(makeToolBarSpacer());
 
