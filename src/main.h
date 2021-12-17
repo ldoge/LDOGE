@@ -25,7 +25,6 @@ class CReserveKey;
 class CWallet;
 
 static const int LAST_POW_BLOCK = 8000;
-static const int POW_RESTART_BLOCK = 4000000;
 
 /** The maximum allowed size for a serialized block, in bytes (network rule) */
 static const unsigned int MAX_BLOCK_SIZE = 1000000;
