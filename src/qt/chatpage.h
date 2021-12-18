@@ -2,6 +2,7 @@
 #define CHATPAGE_H
 
 #include <QWidget>
+#include <QWebView>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QByteArray>
