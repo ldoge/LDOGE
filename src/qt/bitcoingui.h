@@ -17,7 +17,6 @@ class SignVerifyMessageDialog;
 class Notificator;
 class RPCConsole;
 class ChatPage;
-class CcPage;
 
 
 QT_BEGIN_NAMESPACE
@@ -100,9 +99,9 @@ private:
     QAction *openRPCConsoleAction;
     QAction *blockExplorerAction;
     QAction *websiteAction;
-    QAction *instagramAction;
-    QAction *chatPageAction;
     QAction *redditPageAction;
+    QAction *chatPageAction;
+   
 
     QSystemTrayIcon *trayIcon;
     Notificator *notificator;
@@ -167,11 +166,10 @@ private slots:
     void gotoSendCoinsPage();
     void openBlockExplorer();
     void openWebsite();
-    void openInstagram();
+    void gotoReddit();
     /** Switch to IRC Chat Page */
     void gotoChatPage();
-    void gotoReddit();
-
+    
     /** Show Sign/Verify Message dialog and switch to sign message tab */
     void gotoSignMessageTab(QString addr = "");
     /** Show Sign/Verify Message dialog and switch to verify message tab */
