@@ -14,6 +14,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 }
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
+    QT += webkitwidgets
 } else {
     QT += webkit
 }
@@ -209,12 +210,13 @@ HEADERS += src/qt/bitcoingui.h \
     src/clientversion.h \
     src/threadsafety.h \
     src/tinyformat.h \
+    src/qt/ircchat.h \
+    src/qt/serveur.h \
     src/qt/autosaver.h \
     src/qt/chatpage.h \
     src/qt/cookiejar.h \
     src/qt/webview.h \
-    src/qt/qrcodedialog.h \ 
-    src/qt/serveur.cpp 
+    src/qt/qrcodedialog.h 
     
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
@@ -293,6 +295,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
     src/pbkdf2.cpp \
+    src/qt/ircchat.cpp \
     src/qt/autosaver.cpp \
     src/qt/qrcodedialog.cpp \
     src/qt/chatpage.cpp \
@@ -316,12 +319,9 @@ FORMS += \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
-    src/qt/forms/ircchat.ui \
     src/qt/forms/chatpage.ui \
     src/qt/forms/qrcodedialog.ui \
     src/qt/forms/optionsdialog.ui 
-    
-    
 
 contains(USE_QRCODE, 1) {
     HEADERS += src/qt/qrcodedialog.h
