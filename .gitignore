@@ -3,6 +3,7 @@ src/litedoged
 src/build.h
 src/test_litedoge
 src/litedoge-qt
+litedoge-qt
 .*.swp
 *.*~*
 *.bak
@@ -15,8 +16,8 @@ src/litedoge-qt
 *.directory
 #compilation and Qt preprocessor part
 *.qm
+.qmake.stash
 Makefile
-novacoin-qt
 #resources cpp
 qrc_*.cpp
 #qt creator

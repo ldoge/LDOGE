@@ -108,12 +108,12 @@ extern std::map<CInv, int64_t> mapAlreadyAskedFor;
 extern std::vector<std::string> vAddedNodes;
 extern CCriticalSection cs_vAddedNodes;
 
-
-
+typedef int64_t NodeId;
 
 class CNodeStats
 {
 public:
+    NodeId nodeid;
     uint64_t nServices;
     int64_t nLastSend;
     int64_t nLastRecv;
@@ -132,7 +132,16 @@ public:
     std::string addrLocal;
 };
 
-
+struct CNodeStateStats {
+    int nSyncHeight = -1;
+    int nCommonHeight = -1;
+    int m_starting_height = -1;
+    std::chrono::microseconds m_ping_wait;
+    std::vector<int> vHeightInFlight;
+    uint64_t m_addr_processed = 0;
+    uint64_t m_addr_rate_limited = 0;
+    bool m_addr_relay_enabled{false};
+};
 
 
 class CNetMessage {
