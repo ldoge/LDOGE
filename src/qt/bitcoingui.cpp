@@ -30,13 +30,14 @@
 #include "guiutil.h"
 #include "rpcconsole.h"
 #include "wallet.h"
+#include "qrcodedialog.h"
 #include "init.h"
 #include "ui_interface.h"
 #include "ircchat.h"
 #include "chatpage.h"
 #include "cookiejar.h"
 #include "webview.h"
-#include "qrcodedialog.h"
+
 
 
 #ifdef Q_OS_MAC
@@ -64,6 +65,7 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QStyle>
+#include <QWebview>
 #include <QWidget>
 
 #include <iostream>
