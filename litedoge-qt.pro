@@ -12,7 +12,7 @@ CONFIG += thread
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    QT += webkitwidgets
+    QT += webkit
 }
 
 # for boost 1.37, add -mt to the boost libraries
@@ -314,10 +314,11 @@ FORMS += \
     src/qt/forms/overviewpage.ui \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
-    src/qt/forms/rpcconsole.ui \
-    src/qt/forms/chatpage.ui \
     src/qt/forms/qrcodedialog.ui \
     src/qt/forms/optionsdialog.ui 
+    src/qt/forms/rpcconsole.ui \
+    src/qt/forms/chatpage.ui \
+ 
 
 contains(USE_QRCODE, 1) {
     HEADERS += src/qt/qrcodedialog.h
