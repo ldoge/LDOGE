@@ -32,7 +32,6 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "chatpage.h"
 #include "qrcodedialog.h"
 #include "chatpage.h"
 #include "cookiejar.h"
@@ -64,6 +63,7 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QStyle>
+#include <QWidget>
 
 #include <iostream>
 
@@ -86,6 +86,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     rpcConsole(0),
     prevBlocks(0),
     nWeight(0)
+    webkit
 {
     resize(700, 500);
     setWindowTitle(tr("LiteDoge") + " - " + tr("Wallet"));
@@ -127,7 +128,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     sendCoinsPage = new SendCoinsDialog(this);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
-        
     chatPage = new ChatPage(this);    
 
 
@@ -289,7 +289,6 @@ void BitcoinGUI::createActions()
     tabGroup->addAction(chatPageAction);
 
     
-
 
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
@@ -472,7 +471,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
         rpcConsole->setClientModel(clientModel);
         addressBookPage->setOptionsModel(clientModel->getOptionsModel());
         receiveCoinsPage->setOptionsModel(clientModel->getOptionsModel());
-
+           
     }
 }
 
@@ -880,7 +879,6 @@ void BitcoinGUI::gotoChatPage()
     exportAction->setEnabled(false);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
     connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
-    QDesktopServices::openUrl(QUrl("https://web.libera.chat/#litedoge"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
