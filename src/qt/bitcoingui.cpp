@@ -32,10 +32,11 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "qrcodedialog.h"
+#include "ircchat.h"
 #include "chatpage.h"
 #include "cookiejar.h"
 #include "webview.h"
+#include "qrcodedialog.h"
 
 
 #ifdef Q_OS_MAC
@@ -490,7 +491,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
-        chatPage->setModel(walletModel);
+        chatPage->setModel(clientModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
