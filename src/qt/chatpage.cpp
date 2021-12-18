@@ -1,5 +1,5 @@
 #include "chatpage.h"
-#include ui_chatpage.h"
+#include "ircchat.h"
 
 //#include "clientmodel.h"
 #include "walletmodel.h"
