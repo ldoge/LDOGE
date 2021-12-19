@@ -6,6 +6,7 @@
 #define BITCOIN_NET_H
 
 #include <deque>
+#include <chrono>
 
 #ifndef Q_MOC_RUN
 #include <boost/array.hpp>
