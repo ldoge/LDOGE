@@ -2,17 +2,46 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
 INCLUDEPATH += src src/json src/qt
-QT += network webkit
-QT += widgets
+QT += network
+QT += widget
+QT += sql
 DEFINES += ENABLE_WALLET
-DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS BOOST_ASIO_ENABLE_OLD_SERVICES
+DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
 CONFIG += no_include_pwd
 CONFIG += thread
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+greaterThan(QT_MAJOR_VERSION, 4) { 
     QT += webkit
+
+TARGET = ChatPage
+TEMPLATE = app
+
+
+SOURCES += chatpage.cpp\
+         
+
+HEADERS  +=  chatpage.h \
+         +=  serveur.h \
+         +=  autosaver.h \
+         +=  cookiejar.h \
+         +=   webview.h
+   
+
+FORMS    += chatpage.ui
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/ -lcryptlib
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/ -lcryptlibd
+else:unix: LIBS += -L$$PWD/ -lcryptlib
+
+INCLUDEPATH += $$PWD/
+DEPENDPATH += $$PWD/
+
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libcryptlib.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libcryptlibd.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/cryptlib.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/cryptlibd.lib
+else:unix: PRE_TARGETDEPS += $$PWD/libcryptlib.a
+
 }
 
 # for boost 1.37, add -mt to the boost libraries
