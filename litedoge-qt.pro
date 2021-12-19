@@ -2,74 +2,17 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
 INCLUDEPATH += src src/json src/qt
-QT += network
-QT += widget
-QT += sql
+QT += network sql widgets
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
 CONFIG += no_include_pwd
 CONFIG += thread
 
-greaterThan(QT_MAJOR_VERSION, 4) { 
-    QT += webkit
-
-TARGET = ChatPage
-TEMPLATE = app
-
-
-SOURCES += chatpage.cpp\
-         
-
-HEADERS  +=  chatpage.h \
-         +=  serveur.h \
-         +=  autosaver.h \
-         +=  cookiejar.h \
-         +=   webview.h
-   
-
-FORMS    += chatpage.ui
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/ -lcryptlib
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/ -lcryptlibd
-else:unix: LIBS += -L$$PWD/ -lcryptlib
-
-INCLUDEPATH += $$PWD/
-DEPENDPATH += $$PWD/
-
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/libcryptlib.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/libcryptlibd.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/cryptlib.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/cryptlibd.lib
-else:unix: PRE_TARGETDEPS += $$PWD/libcryptlib.a
-
-}
-
-# for boost 1.37, add -mt to the boost libraries
-# use: qmake BOOST_LIB_SUFFIX=-mt
-# for boost thread win32 with _win32 sufix
-# use: BOOST_THREAD_LIB_SUFFIX=_win32-...
-# or when linking against a specific BerkelyDB version: BDB_LIB_SUFFIX=-4.8
-
-# Dependency library locations can be customized with:
-#    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
-#    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
-
-OBJECTS_DIR = build
-MOC_DIR = build
-UI_DIR = build
-
-# use: qmake "RELEASE=1"
-contains(RELEASE, 1) {
-    message(Building Release Version)
-    # Mac: compile for maximum compatibility (10.5, 32-bit)
-    macx:QMAKE_CXXFLAGS += -mmacosx-version-min=10.8 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/
-
-    !windows:!macx {
-        message(Static Link libraries enabled (linux only))
-        # Linux: static link
-        LIBS += -Wl,-Bstatic
-    }
-}
+ greaterThan(QT_MAJOR_VERSION, 4) {
+     QT += widgets
+     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+     QT += webkitwidgets
+ }
 
 !win32 {
 # for extra security against potential buffer overflows: enable GCCs Stack Smashing Protection
