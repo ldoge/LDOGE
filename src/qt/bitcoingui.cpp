@@ -33,10 +33,11 @@
 #include "qrcodedialog.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "ircchat.h"
+#include "autosaver.h"
 #include "chatpage.h"
 #include "cookiejar.h"
 #include "webview.h"
+
 
 
 
@@ -65,7 +66,6 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QStyle>
-#include <QWebview>
 #include <QWidget>
 
 #include <iostream>
