@@ -11,7 +11,7 @@ CONFIG += thread
  greaterThan(QT_MAJOR_VERSION, 4) {
      QT += widgets
      DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-     QT += webkit
+     QT += webkitwidget
  }
 
 !win32 {
@@ -289,7 +289,7 @@ FORMS += \
     src/qt/forms/qrcodedialog.ui \
     src/qt/forms/optionsdialog.ui 
     src/qt/forms/rpcconsole.ui \
-    src/qt/forms/chatpage.ui \
+    src/qt/forms/chatpage.ui 
  
 
 contains(USE_QRCODE, 1) {
