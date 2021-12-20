@@ -66,6 +66,7 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QStyle>
+#include <QtWebView>
 #include <QWidget>
 
 #include <iostream>
