@@ -12,7 +12,7 @@ litedoge-qt
 *.o
 *.patch
 *.P
-*opalcoin
+*.litedoge
 *.directory
 #compilation and Qt preprocessor part
 *.qm
