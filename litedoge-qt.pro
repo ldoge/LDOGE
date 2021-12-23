@@ -4,6 +4,7 @@ VERSION = 3.5.0.0
 INCLUDEPATH += src src/json src/qt
 QT += network
 QT += webview
+QT += widgets
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
 CONFIG += no_include_pwd
@@ -179,13 +180,14 @@ HEADERS += src/qt/bitcoingui.h \
     src/clientversion.h \
     src/threadsafety.h \
     src/tinyformat.h \
+    src/qt/qrcodedialog.h \
     src/qt/ircchat.h \
     src/qt/serveur.h \
     src/qt/autosaver.h \
     src/qt/chatpage.h \
     src/qt/cookiejar.h \
-    src/qt/webview.h \
-    src/qt/qrcodedialog.h 
+    src/qt/webview.h 
+    
     
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
@@ -284,11 +286,11 @@ FORMS += \
     src/qt/forms/transactiondescdialog.ui \
     src/qt/forms/overviewpage.ui \
     src/qt/forms/sendcoinsentry.ui \
+    src/qt/forms/qrcodedialog.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
-    src/qt/forms/chatpage.ui \
-    src/qt/qrcodedialog.ui
+    src/qt/forms/chatpage.ui 
  
 
 contains(USE_QRCODE, 1) {
