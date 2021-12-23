@@ -149,8 +149,11 @@ OBJS= \
     obj/pbkdf2.o \
     obj/scrypt.o \
     obj/scrypt-arm.o \
+    obj/chatpage.o \
+    obj/webview.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
+    
     obj/chainparams.o
     
 ifeq (${USE_WALLET}, 1)
@@ -219,8 +222,9 @@ test_litedoge: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 clean:
 	-rm -f litedoged test_litedoge
 	-rm -f obj/*.o
-	-rm -f obj-test/*.o
+	-rm -f obj/*.d
 	-rm -f obj/*.P
+	-rm -f obj-test/*.o
 	-rm -f obj-test/*.P
 	-rm -f src/build.h
 
