@@ -4,11 +4,7 @@
  * W.J. van der Laan 2011-2012
  * The Bitcoin Developers 2011-2021
  */
-
-#include <QApplication>
-
 #include "bitcoingui.h"
-
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
 #include "sendcoinsdialog.h"
@@ -33,18 +29,19 @@
 #include "qrcodedialog.h"
 #include "init.h"
 #include "ui_interface.h"
+#include "ui_chatpage.h"
+#include "ircchat.h"
+#include "serveur.h"
 #include "autosaver.h"
 #include "chatpage.h"
 #include "cookiejar.h"
 #include "webview.h"
 
-
-
-
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
 #endif
 
+#include <QApplication>
 #include <QMenuBar>
 #include <QMenu>
 #include <QIcon>
@@ -67,13 +64,19 @@
 #include <QMimeData>
 #include <QStyle>
 #include <QtWebView>
+#include <QStackedWidget>
 #include <QWidget>
 
 #include <iostream>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 extern CWallet* pwalletMain;
-extern int64_t nLastCoinStakeSearchInterval;
-double GetPoSKernelPS();
+extern int64 nLastCoinStakeSearchInterval;
+extern double GetPoSKernelPS();
+extern unsigned int nStakeTargetSpacing;
+extern BitcoinGUI *guiref;
+extern Splash *stwref;
 
 BitcoinGUI::BitcoinGUI(QWidget *parent):
     QMainWindow(parent),
@@ -89,11 +92,16 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     notificator(0),
     rpcConsole(0),
     prevBlocks(0),
-    nWeight(0)
-    webkit
+    nWeight(0),
+    webkit(0)
 {
-    resize(700, 500);
-    setWindowTitle(tr("LiteDoge") + " - " + tr("Wallet"));
+    resize(850, 550);
+	setMinimumWidth(850);
+	setMinimumHeight(550);
+        
+    setWindowTitle(tr("LiteDoges - Wallet  ")+QString::fromStdString(CLIENT_BUILD));
+//  setStyleSheet("");
+//    statusBar()->setStyleSheet("QToolTip {background-color:rgb(255,233,142); color:black; border: 2px solid grey;}");        
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
     setWindowIcon(QIcon(":icons/bitcoin"));
@@ -141,6 +149,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(addressBookPage);
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
+    centralStackedWidget->addWidget(webkit);    
     centralStackedWidget->addWidget(chatPage);    
 
     QWidget *centralWidget = new QWidget();
