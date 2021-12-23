@@ -46,8 +46,3 @@ elif [ -n "$SUFFIX" ]; then
 else
     NEWINFO="// No build information available"
 fi
-
-# only update build.h if necessary
-if [ "$INFO" != "$NEWINFO" ]; then
-    echo "$NEWINFO" >"$FILE"
-fi
