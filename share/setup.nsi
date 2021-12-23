@@ -1,4 +1,4 @@
-Name NovaCoin
+Name LiteDoge
 
 RequestExecutionLevel highest
 SetCompressor /SOLID lzma
