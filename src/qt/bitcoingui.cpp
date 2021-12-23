@@ -64,12 +64,12 @@
 #include <QTimer>
 #include <QDragEnterEvent>
 #include <QUrl>
-#include <QQrcodeDialog>
+#include <QQRcodeDialog>
 #include <QMimeData>
 #include <QStyle>
-#include <QtWebView>
-#include <QStackedWidget>
+#include <QWebView>
 #include <QWidget>
+#include <QStackedWidget>
 
 #include <iostream>
 #include <boost/filesystem.hpp>
@@ -146,7 +146,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     sendCoinsPage = new SendCoinsDialog(this);
 
-    qrcodedialog = new QrcodeDialog(this);	    
+    qrcodedialog = new QRcodeDialog(this);	    
    
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 	    
@@ -159,9 +159,8 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(addressBookPage);
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
-    centralStackedWidget->addWidget(qrcodedialog);	   
-    centralStackedWidget->addWidget(webkit);    
-    centralStackedWidget->addWidget(chatPage);
+    centralStackedWidget->addWidget(qrcodedialogPage);	      
+    centralStackedWidget->addWidget(chatPagePage);
 	   
 
     QWidget *centralWidget = new QWidget();
