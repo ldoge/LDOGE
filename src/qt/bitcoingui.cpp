@@ -42,6 +42,9 @@
 #endif
 
 #include <QApplication>
+#if QT_VERSION < 0x050000
+#include <QMainWindow>
+#endif
 #include <QMenuBar>
 #include <QMenu>
 #include <QIcon>
@@ -61,6 +64,7 @@
 #include <QTimer>
 #include <QDragEnterEvent>
 #include <QUrl>
+#include <QQrcodeDialog>
 #include <QMimeData>
 #include <QStyle>
 #include <QtWebView>
@@ -92,14 +96,17 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     notificator(0),
     rpcConsole(0),
     prevBlocks(0),
+    chatpage(0),
+    qrcodedialog(0),
     nWeight(0),
     webkit(0)
+	    
 {
     resize(850, 550);
 	setMinimumWidth(850);
 	setMinimumHeight(550);
         
-    setWindowTitle(tr("LiteDoges - Wallet  ")+QString::fromStdString(CLIENT_BUILD));
+    setWindowTitle(tr("LiteDoge") + " - " + tr("Wallet"));
 //  setStyleSheet("");
 //    statusBar()->setStyleSheet("QToolTip {background-color:rgb(255,233,142); color:black; border: 2px solid grey;}");        
 #ifndef Q_OS_MAC
@@ -139,7 +146,10 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     sendCoinsPage = new SendCoinsDialog(this);
 
+    qrcodedialog = new QrcodeDialog(this);	    
+   
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+	    
     chatPage = new ChatPage(this);    
 
 
@@ -149,8 +159,10 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(addressBookPage);
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
+    centralStackedWidget->addWidget(qrcodedialog);	   
     centralStackedWidget->addWidget(webkit);    
-    centralStackedWidget->addWidget(chatPage);    
+    centralStackedWidget->addWidget(chatPage);
+	   
 
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
@@ -299,7 +311,7 @@ void BitcoinGUI::createActions()
     chatPageAction->setToolTip((tr("Join LDOGE IRC Channel")));
     chatPageAction->setCheckable(true);
     chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
-    tabGroup->addAction(chatPageAction);
+    tabGroup->addAction(ChatPageAction);
 
     
 
@@ -316,7 +328,7 @@ void BitcoinGUI::createActions()
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
     connect(redditPageAction, SIGNAL(triggered()), this, SLOT(gotoReddit()));
-    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
+    connect(ChatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
     
 
     quitAction = new QAction(tr("E&xit"), this);
@@ -864,6 +876,16 @@ void BitcoinGUI::gotoSendCoinsPage()
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }
 
+void BitcoinGUI::gotoQrcodeDialog()
+{
+    QrcodeDialogAction->setChecked(true);
+    centralStackedWidget->setCurrentWidget(QrcodeDialogPage);
+
+    exportAction->setEnabled(false);
+    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+}
+
+
 void BitcoinGUI::openBlockExplorer()
 {
     QDesktopServices::openUrl(QUrl("https://blocks.litedogeofficial.org/"));
@@ -886,12 +908,12 @@ void BitcoinGUI::openReddit()
 
 void BitcoinGUI::gotoChatPage()
 {
-    chatPageAction->setChecked(true);
-    centralStackedWidget->setCurrentWidget(chatPage);
+    ChatPageAction->setChecked(true);
+    centralStackedWidget->setCurrentWidget(ChatPage);
 
     exportAction->setEnabled(false);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
-    connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
+    connect(exportAction, SIGNAL(triggered()), ChatPage, SLOT(exportClicked()));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
