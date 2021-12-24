@@ -24,7 +24,6 @@
 
 #include <ui_interface.h>
 
-#include <QWebView>
 #include <QWebFrame>
 #include <QWebHistory>
 #include <QWidget>
