@@ -4,8 +4,9 @@
  * Developed by OnsightIT 2014-2015
  * onsightit@gmail.com
  */
-#include <qt/webview.h
-#include <qt/util.h
+#include "<qt/webview.h"
+#include "<qt/util.h"
+
 #include <qt/overviewpage.h>
 #include <qt/platformstyle.h>
 #include <qt/receivecoinsdialog.h>
