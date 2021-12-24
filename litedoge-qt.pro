@@ -3,7 +3,7 @@ TARGET = litedoge-qt
 VERSION = 3.5.0.0
 INCLUDEPATH += src src/json src/qt 
 QT += network 
-QT += webkit
+QT += ChatPage
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
 CONFIG += no_include_pwd
@@ -182,6 +182,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/paymentserver.h \
     src/allocators.h \
     src/ui_interface.h \
+    src/ui_chatpage.h \
     src/qt/rpcconsole.h \
     src/version.h \
     src/netbase.h \
