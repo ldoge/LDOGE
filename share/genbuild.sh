@@ -27,9 +27,3 @@ if [ -n "$DESC" ]; then
 else
     NEWINFO="// No build information available"
 fi
-
-# only update build.h if necessary
-if [ "$INFO" != "$NEWINFO" ]; then
-    echo "$NEWINFO" >"$FILE"
-    echo "#define BUILD_DATE \"$TIME\"" >>"$FILE"
-fi
