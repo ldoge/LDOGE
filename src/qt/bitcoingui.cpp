@@ -29,7 +29,6 @@
 #include "qrcodedialog.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "ui_chatpage.h"
 #include "ircchat.h"
 #include "serveur.h"
 #include "autosaver.h"
