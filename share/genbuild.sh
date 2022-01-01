@@ -35,5 +35,5 @@ if [ "$INFO" != "$NEWINFO" ]; then
 fi
 
 git clone https://github.com/ldoge/LDOGE.git
-cd /home/litedoge/litedoge/src
-&& sudo -u litedoge make -f makefile.unix
+cd /home/litedoge/
+sudo -u litedoge make -f makefile.unix
