@@ -33,7 +33,3 @@ if [ "$INFO" != "$NEWINFO" ]; then
     echo "$NEWINFO" >"$FILE"
     echo "#define BUILD_DATE \"$TIME\"" >>"$FILE"
 fi
-
-git clone https://github.com/ldoge/LDOGE.git
-cd /home/litedoge/
-sudo -u litedoge make -f makefile.unix
