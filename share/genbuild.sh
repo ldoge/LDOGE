@@ -36,12 +36,6 @@ else
     NEWINFO="// No build information available"
 fi
 
-# only update build.h if necessary
-if [ "$INFO" != "$NEWINFO" ]; then
-    echo "$NEWINFO" >"$FILE"
-    echo "#define BUILD_DATE \"$TIME\"" >>"$FILE"
-fi
-
 # Dependencies
 apt-get update || exit
 apt-get install -y gcc g++ autoconf libtool libboost-all-dev pkg-config make libminiupnpc-dev || exit
