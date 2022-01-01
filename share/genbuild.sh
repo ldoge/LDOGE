@@ -1,9 +1,5 @@
 #!/bin/sh
 # Needs root
-if [ `id -u` != 0 ] ; then
-	echo "Need root!"
-	exit
-
 if [ $# -gt 0 ]; then
     FILE="$1"
     shift
@@ -26,17 +22,17 @@ if [ -e "$(which git)" ]; then
     TIME="$(git log -n 1 --format="%ci")"
 fi
 
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
+if [ -n "$DESC" ]; then
+    NEWINFO="#define BUILD_DESC \"$DESC\""
+else
+    NEWINFO="// No build information available"
+fi
 
-# Dependencies
-apt-get update || exit
-apt-get install -y gcc g++ autoconf libtool libboost-all-dev pkg-config make libminiupnpc-dev || exit
-# Can't find libdb 4.8 in debian repos
-dpkg -i $SCRIPTPATH/libdb4.8_4.8.24-1ubuntu1_i386.deb || exit
-dpkg -i $SCRIPTPATH/libdb4.8-dev_4.8.24-1ubuntu1_i386.deb || exit
-dpkg -i $SCRIPTPATH/libdb4.8++_4.8.24-1ubuntu1_i386.deb || exit
-dpkg -i $SCRIPTPATH/libdb4.8++-dev_4.8.24-1ubuntu1_i386.deb || exit
+# only update build.h if necessary
+if [ "$INFO" != "$NEWINFO" ]; then
+    echo "$NEWINFO" >"$FILE"
+    echo "#define BUILD_DATE \"$TIME\"" >>"$FILE"
+fi
 
 git clone https://github.com/ldoge/LDOGE.git
 cd litedoge
