@@ -29,6 +29,7 @@
 #include "qrcodedialog.h"
 #include "init.h"
 #include "ui_interface.h"
+#include "ui_chatpage.h"
 #include "ircchat.h"
 #include "serveur.h"
 #include "autosaver.h"
@@ -147,7 +148,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     qrcodedialog = new QRcodeDialog(this);	    
    
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
-	    
     chatPage = new ChatPage(this);    
 
 
@@ -311,7 +311,6 @@ void BitcoinGUI::createActions()
     tabGroup->addAction(ChatPageAction);
 
     
-
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -325,7 +324,7 @@ void BitcoinGUI::createActions()
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
     connect(redditPageAction, SIGNAL(triggered()), this, SLOT(gotoReddit()));
-    connect(ChatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
+    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
     
 
     quitAction = new QAction(tr("E&xit"), this);
@@ -512,7 +511,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
-        chatPage->setModel(clientModel);
+        chatPage->setModel(walletModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
@@ -556,6 +555,9 @@ void BitcoinGUI::createTrayIcon()
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(optionsAction);
     trayIconMenu->addAction(openRPCConsoleAction);
+    rayIconMenu->addSeparator();
+    trayIconMenu->addAction(optionsAction);
+    trayIconMenu->addAction(openChatPage);	
 #ifndef Q_OS_MAC // This is built-in on Mac
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
