@@ -67,6 +67,7 @@
 #include <QMimeData>
 #include <QStyle>
 #include <QWidget>
+#include <QWebView>
 
 #include <iostream>
 #include <boost/filesystem.hpp>
