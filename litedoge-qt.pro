@@ -2,12 +2,16 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.5.0.0
 INCLUDEPATH += src src/json src/qt 
-QT += network 
-QT += ChatPage
+QT += network webkit
 DEFINES += ENABLE_WALLET
-DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
+DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
 CONFIG += no_include_pwd
 CONFIG += thread
+CONFIG += static
+
+# QMAKE_CC=clang
+# QMAKE_CXX=clang++
+# QMAKE_LINK=clang++
 
  greaterThan(QT_MAJOR_VERSION, 4) {
      QT += widgets
@@ -456,6 +460,16 @@ contains(RELEASE, 1) {
 !windows:!macx {
     DEFINES += LINUX
     LIBS += -lrt -ldl
+}
+
+linux-* {
+    # We may need some linuxism here
+    LIBS += -ldl
+}
+
+netbsd-*|freebsd-*|openbsd-* {
+    # libexecinfo is required for back trace
+    LIBS += -lexecinfo
 }
 
 system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
