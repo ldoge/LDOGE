@@ -66,6 +66,7 @@
 #include <QQRcodeDialog>
 #include <QMimeData>
 #include <QStyle>
+#include <QWebView>
 #include <QWidget>
 
 #include <iostream>
