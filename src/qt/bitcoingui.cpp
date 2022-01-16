@@ -1,5 +1,5 @@
 /*
- * Qt4 bitcoin GUI.
+ * Qt5 bitcoin GUI.
  *
  * W.J. van der Laan 2011-2012
  * The Bitcoin Developers 2011-2021
@@ -66,7 +66,6 @@
 #include <QQRcodeDialog>
 #include <QMimeData>
 #include <QStyle>
-#include <QWebView>
 #include <QWidget>
 
 #include <iostream>
@@ -144,7 +143,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     qrcodedialog = new QRcodeDialog(this);	    
    
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
-	    
     chatPage = new ChatPage(this);    
 
 
