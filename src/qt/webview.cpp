@@ -4,46 +4,22 @@
  * Developed by OnsightIT 2014-2015
  * onsightit@gmail.com
  */
-#include "<qt/webview.h"
-#include "<qt/util.h"
+#include "webview.h"
+#include "util.h"
 
-#include <qt/overviewpage.h>
-#include <qt/platformstyle.h>
-#include <qt/receivecoinsdialog.h>
-#include <qt/sendcoinsdialog.h>
-#include <qt/signverifymessagedialog.h>
-#include <qt/transactiontablemodel.h>
-#include <qt/transactionview.h>
-#include <qt/walletmodel.h>
-#include <qt/addressbookpage.h>
-#include <qt/askpassphrasedialog.h>
-#include <qt/bitcoingui.h>
-#include <qt/clientmodel.h>
-#include <qt/guiutil.h>
-#include <qt/optionsmodel.h>
-
-#include <ui_interface.h>
-
-#include <QWebFrame>
-#include <QWebHistory>
-#include <QWidget>
-#include <QWebkit>
-#include <QDesktopServices>
 #include <QPushButton>
-#include <QList>
-#include <QUrl>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/join.hpp>
-
+#include <stdarg.h>
 
 using namespace std;
 
 WebView::WebView(QWidget *parent) :
     QWebView(parent)
 {
-    trustedUrls << "www.litedogeofficial.org" << "litedogeofficial.org";  // These will get appended to by the values in VERSION.json
-    fTrustedUrlsSet = true;
+    trustedUrls << "www.litedoge.org" << "litedoge.org";  // These will get appended to by the values in VERSION.json
+    fTrustedUrlsSet = false;
 }
 
 WebView::~WebView()
