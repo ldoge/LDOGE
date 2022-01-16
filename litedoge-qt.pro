@@ -182,7 +182,6 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/paymentserver.h \
     src/allocators.h \
     src/ui_interface.h \
-    src/ui_chatpage.h \
     src/qt/rpcconsole.h \
     src/version.h \
     src/netbase.h \
@@ -275,6 +274,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
     src/pbkdf2.cpp \
+    src/qt/serveur.cpp \
     src/qt/autosaver.cpp \
     src/qt/qrcodedialog.cpp \
     src/qt/autosaver.cpp \
