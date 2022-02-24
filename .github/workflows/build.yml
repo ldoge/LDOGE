@@ -98,9 +98,12 @@ jobs:
         run: qmake RELEASE=1
       - name: Make
         run: make
-      - uses: actions/upload-artifact@v2
+      - name: Upload
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          name: litedoge-${{ github.sha }}-${{ matrix.name }}
-          path: |
-            litedoge-qt
-            litedoge.exe
+         upload_url: ${{ github.event.release.upload_url }}
+         asset_path: ./bin/netcoin*
+         asset_name: netcoin-${{ github.event.release.tag_name }}
+         asset_content_type: binary/octet-stream
