@@ -29,6 +29,7 @@ elif cmd == "getaccount":
 	except:
 		print "\n---An error occurred---\n"
 
+		
 elif cmd == "getaccountaddress":
 	try:
 		acct = raw_input("Enter an account name: ")
