@@ -111,7 +111,7 @@ jobs:
       - uses: octokit/request-action@v2.x
         id: get_latest_release
         with:
-            route: GET /repos/:repository/releases/latest
+            route: GET /repos/:route/releases/latest
             repository: ${{ github.repository }}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
