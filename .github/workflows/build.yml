@@ -1,5 +1,5 @@
 name: Continuous Integration
-
+ 
 on:
   push:
     paths-ignore:
