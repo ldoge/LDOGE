@@ -98,7 +98,7 @@ jobs:
       - name: Make
         run: make && ls
       - name: Upload Files to a GitHub Release (u)
-        if: ${{ matrix.host == ' x86_64-unknown-linux-gnu' }}
+        if: ${{ matrix.host == 'x86_64-unknown-linux-gnu' }}
         id: upload-release-assetu
         uses: actions/create-release@v1
         env:
@@ -121,7 +121,7 @@ jobs:
           prerelease: false
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-apple-darwin11' }}
-        id: create_release
+        id: create_releasemac
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
@@ -133,28 +133,28 @@ jobs:
 
           
       - name: Upload Files to a GitHub Release (Ubuntu)
-        if: ${{ matrix.host == ' x86_64-unknown-linux-gnu' }}
-        id: upload-release-asseWIN 
+        if: ${{ matrix.host == 'x86_64-unknown-linux-gnu' }}
+        id: upload-release-asseunix 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_name: litedoge.exe
-          asset_path: ./litedoge.EXE
+          upload_url: ${{ steps.upload-release-assetu.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_name: litedoge-qt
+          asset_path: ./litedoge-qt
           asset_content_type: application/zip
 
       - name: Upload Files to a GitHub Release (Windows)
          echo "::notice ${{ steps.create_release.outputs.upload_url }}"
         if: ${{ matrix.host == 'x86_64-w64-mingw32' }}
-        id: upload-release-assetMACLINUX
+        id: upload-release-assetwin
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_name: litedoge-qt
-          asset_path: ./litedoge-qt
+          upload_url: ${{ steps.create_releasewin.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_name: litedoge-qt.exe
+          asset_path: ./litedoge-qt.exe
           asset_content_type: application/zip
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-apple-darwin11' }}
@@ -163,7 +163,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.create_releasemac.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_name: litedoge-qt
           asset_path: ./litedoge-qt
           asset_content_type: application/zip
