@@ -103,11 +103,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{ github.ref }}v4
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ matrix.platform }}v4
+          release_name: Release ${{ matrix.sdk }}
           draft: false
           prerelease: false
-          overwrite: true
+          run: echo outputs.upload_url
       - name: Upload Files to a GitHub Release (Ubuntu)
         if: ${{ matrix.platform == 'ubuntu-latest' }}
         id: upload-release-asseWIN 
