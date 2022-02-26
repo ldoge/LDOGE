@@ -103,8 +103,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{ matrix.platform }}v5
-          release_name: Release ${{ matrix.sdk }}v5
+          tag_name: ${ matrix.name }v6
+          release_name: Release ${ matrix.name }v6
           draft: false
           prerelease: false
           
