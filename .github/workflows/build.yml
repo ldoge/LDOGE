@@ -107,20 +107,28 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-asset 
+          overwrite: true
+      - name: Upload Files to a GitHub Release (Ubuntu)
+        if: ${{ matrix.platform == 'ubuntu-latest' }}
+        id: upload-release-asset WIN 
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_name: |
-            litedoge-qt
-            litedoge.exe
-          asset_path: |
-            litedoge-qt
-            litedoge.exe
+          asset_name: litedoge.exe
+          asset_path: ../release/litedoge.EXE
           asset_content_type: application/zip
 
-        
-  
+      - name: Upload Files to a GitHub Release (Windows)
+        if: ${{ matrix.platform == 'windows-latest' }}
+        id: upload-release-asset MAC/LINUX
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.mysecret }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_name: litedoge-qt
+          asset_path: ../release/litedoge-qt
+          asset_content_type: application/zip
+   
