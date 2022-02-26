@@ -97,16 +97,40 @@ jobs:
         run: qmake RELEASE=1
       - name: Make
         run: make
-      - name: Create Release
+      - name: Upload Files to a GitHub Release (u)
+        if: ${{ matrix.platform == 'ubuntu-latest' }}
+        id: upload-release-assetu
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.mysecret }}
+        with:
+          tag_name: v6999
+          release_name: Release ${{matrix.host}}v6999
+          draft: false
+          prerelease: false
+      - name: Upload Files to a GitHub Release (mac)
+        if: ${{ matrix.platform == 'windows-latest' }}
+        id: create_releasewin
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.mysecret }}
+        with:
+          tag_name: v6999
+          release_name: Release ${{matrix.host}}v6999
+          draft: false
+          prerelease: false
+      - name: Upload Files to a GitHub Release (mac)
+        if: ${{ matrix.host == 'x86_64-apple-darwin11' }}
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
           tag_name: v6999
-          release_name: Release v6999
+          release_name: Release ${{matrix.host}}v6999
           draft: false
           prerelease: false
+
           
       - name: Upload Files to a GitHub Release (Ubuntu)
         if: ${{ matrix.platform == 'ubuntu-latest' }}
