@@ -104,30 +104,30 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{matrix.host}}v69999999
-          release_name: Release ${{matrix.host}}v69999999
+          tag_name: ${{matrix.host}}v699999999
+          release_name: Release ${{matrix.host}}v699999999
           draft: false
           prerelease: false
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-w64-mingw32' }}
-        id: create_releasewin
+        id: upload-release-assetWIn
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{matrix.host}}v69999999
-          release_name: Release ${{matrix.host}}v69999999
+          tag_name: ${{matrix.host}}v699999999
+          release_name: Release ${{matrix.host}}v699999999
           draft: false
           prerelease: false
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-apple-darwin11' }}
-        id: create_releasemac
+        id: upload-release-assetmac
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{matrix.host}}v69999999
-          release_name: Release ${{matrix.host}}v69999999
+          tag_name: ${{matrix.host}}v699999999
+          release_name: Release ${{matrix.host}}v699999999
           draft: false
           prerelease: false
 
@@ -152,7 +152,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          upload_url: ${{ steps.create_releasewin.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.upload-release-assetWIn.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_name: litedoge-qt.exe
           asset_path: ./litedoge-qt.exe
           asset_content_type: application/zip
@@ -163,7 +163,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          upload_url: ${{ steps.create_releasemac.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.upload-release-assetmac.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_name: litedoge-qt
           asset_path: ./litedoge-qt
           asset_content_type: application/zip
