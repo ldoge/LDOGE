@@ -103,7 +103,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{ github.ref }}v3
+          tag_name: ${{ github.ref }}v4
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
