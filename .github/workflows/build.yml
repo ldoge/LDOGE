@@ -103,8 +103,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: v68
-          release_name: Release v68
+          tag_name: v69
+          release_name: Release v69
           draft: false
           prerelease: false
           
