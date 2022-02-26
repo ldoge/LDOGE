@@ -9,7 +9,7 @@ on:
       - 'doc/**'
       - 'contrib/**'
       - '**/*.md'
- 
+
 jobs:
   build:
     name: ${{ matrix.name }}
