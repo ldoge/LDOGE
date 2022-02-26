@@ -104,8 +104,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{matrix.host}}v6999999
-          release_name: Release ${{matrix.host}}v6999999
+          tag_name: ${{matrix.host}}v69999999
+          release_name: Release ${{matrix.host}}v69999999
           draft: false
           prerelease: false
       - name: Upload Files to a GitHub Release (mac)
@@ -115,8 +115,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{matrix.host}}v6999999
-          release_name: Release ${{matrix.host}}v6999999
+          tag_name: ${{matrix.host}}v69999999
+          release_name: Release ${{matrix.host}}v69999999
           draft: false
           prerelease: false
       - name: Upload Files to a GitHub Release (mac)
@@ -126,8 +126,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{matrix.host}}v6999999
-          release_name: Release ${{matrix.host}}v6999999
+          tag_name: ${{matrix.host}}v69999999
+          release_name: Release ${{matrix.host}}v69999999
           draft: false
           prerelease: false
 
