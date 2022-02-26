@@ -96,7 +96,7 @@ jobs:
       - name: QMake
         run: qmake RELEASE=1
       - name: Make
-        run: make
+        run: make && ls
       - name: Upload Files to a GitHub Release (u)
         if: ${{ matrix.platform == 'ubuntu-latest' }}
         id: upload-release-assetu
