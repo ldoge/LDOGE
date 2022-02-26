@@ -103,8 +103,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: v67
-          release_name: Release v67
+          tag_name: v68
+          release_name: Release v68
           draft: false
           prerelease: false
           
@@ -124,6 +124,17 @@ jobs:
          echo "::notice ${{ steps.create_release.outputs.upload_url }}"
         if: ${{ matrix.platform == 'windows-latest' }}
         id: upload-release-assetMACLINUX
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.mysecret }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_name: litedoge-qt
+          asset_path: ../release/litedoge-qt
+          asset_content_type: application/zip
+      - name: Upload Files to a GitHub Release (mac)
+        if: ${{ matrix.platform == 'macos-latest' }}
+        id: upload-release-assetMAC
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
