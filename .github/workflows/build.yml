@@ -110,7 +110,7 @@ jobs:
           prerelease: false
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-w64-mingw32' }}
-        id: upload-release-assetWIn
+        id: upload-release-assetWInd
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
@@ -121,7 +121,7 @@ jobs:
           prerelease: false
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-apple-darwin11' }}
-        id: upload-release-assetmac
+        id: upload-release-assetmacd
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
@@ -152,9 +152,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          upload_url: ${{ steps.upload-release-assetWIn.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_name: litedoge-qt.exe
-          asset_path: ./litedoge-qt.exe
+          upload_url: ${{ steps.upload-release-assetWInd.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_name: litedoge-qt
+          asset_path: ./litedoge-qt
           asset_content_type: application/zip
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-apple-darwin11' }}
@@ -163,7 +163,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          upload_url: ${{ steps.upload-release-assetmac.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.upload-release-assetmacd.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_name: litedoge-qt
           asset_path: ./litedoge-qt
           asset_content_type: application/zip
