@@ -52,7 +52,7 @@ jobs:
           brew install openssl berkeley-db@4 miniupnpc qrencode
           brew upgrade openssl
 
-          brew install boost@1.55 
+          brew install boost@1.76
       - name: Post install
         if: ${{ matrix.postinstall }}
         run: ${{ matrix.postinstall }}
