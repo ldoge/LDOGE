@@ -52,6 +52,7 @@ jobs:
           brew upgrade openssl
 
           brew install boost@1.76
+          export LDFLAGS=-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib          
       - name: Post install
         if: ${{ matrix.postinstall }}
         run: ${{ matrix.postinstall }}
