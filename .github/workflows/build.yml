@@ -47,9 +47,14 @@ jobs:
           sudo dpkg --add-architecture "${{ matrix.arch }}"
       - name: Install packages
         run: |
+          xcode-select --install
           brew update
-          brew install boost db48 openssl miniupnpc
-          brew install ${{ matrix.packages }}
+          brew install openssl berkeley-db4 miniupnpc qrencode
+          brew link --force berkeley-db4
+          brew upgrade openssl
+
+          brew install boost@1.55 --c++11 
+          brew link boost@1.55 --force
       - name: Post install
         if: ${{ matrix.postinstall }}
         run: ${{ matrix.postinstall }}
@@ -65,9 +70,9 @@ jobs:
           curl --location --fail $SDK_URL/MacOSX${{ matrix.sdk }}.sdk.tar.gz -o depends/sdk-sources/MacOSX${{ matrix.sdk }}.sdk.tar.gz
           tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${{ matrix.sdk }}.sdk.tar.gz
       - name: QMake
-        run: qmake RELEASE=1
+        run: qmake -config release litedoge-qt.pro "USE_UPNP=1" "USE_QRCODE=1" "RELEASE=1" 
       - name: Make
-        run: make && ls -a
+        run: make -f Makefile && ls-a
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-apple-darwin11' }}
         id: create_releasemac
