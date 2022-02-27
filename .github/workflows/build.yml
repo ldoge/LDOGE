@@ -49,8 +49,8 @@ jobs:
         run: |
           
           brew update
-          brew install openssl berkeley-db4 miniupnpc qrencode
-          brew link --force berkeley-db4
+          brew install openssl berkeley-db@4 miniupnpc qrencode
+          brew link --force berkeley-db@4
           brew upgrade openssl
 
           brew install boost@1.55 --c++11 
