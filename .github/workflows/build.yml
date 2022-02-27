@@ -50,11 +50,9 @@ jobs:
           
           brew update
           brew install openssl berkeley-db@4 miniupnpc qrencode
-          brew link --force berkeley-db@4
           brew upgrade openssl
 
           brew install boost@1.55 --c++11 
-          brew link boost@1.55 --force
       - name: Post install
         if: ${{ matrix.postinstall }}
         run: ${{ matrix.postinstall }}
