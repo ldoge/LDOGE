@@ -26,31 +26,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        name:
-          - x86_64-linux
-          - x86_64-macos
-          - x86_64-win
-        include:
-          - name: x86_64-linux
-            host: x86_64-unknown-linux-gnu
-            os: ubuntu-18.04
-            packages: bc python3-zmq libboost-dev libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libleveldb-dev 
-            run-tests: true
-            goal: install
-          - name: x86_64-win
-            host: x86_64-w64-mingw32
-            arch: "i386"
-            os: ubuntu-20.04
-            packages: python3 nsis g++-mingw-w64-x86-64 wine64 bc wine-binfmt libboost-dev libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libleveldb-dev 
-            postinstall: |
-              sudo update-alternatives --set x86_64-w64-mingw32-gcc  /usr/bin/x86_64-w64-mingw32-gcc-posix
-              sudo update-alternatives --set x86_64-w64-mingw32-g++  /usr/bin/x86_64-w64-mingw32-g++-posix
-              sudo update-binfmts --import /usr/share/binfmts/wine
-            run-tests: true
-            dep-opts: ""
-            config-opts: "--enable-reduce-exports --enable-gui=qt5"
-            goal: install
+    
           - name: x86_64-macos
             host: x86_64-apple-darwin11
             os: ubuntu-18.04
@@ -97,65 +73,17 @@ jobs:
         run: qmake RELEASE=1
       - name: Make
         run: make && ls
-      - name: Upload Files to a GitHub Release (u)
-        if: ${{ matrix.host == 'x86_64-unknown-linux-gnu' }}
-        id: upload-release-assetu
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.mysecret }}
-        with:
-          tag_name: ${{matrix.host}}v699999999
-          release_name: Release ${{matrix.host}}v699999999
-          draft: false
-          prerelease: false
-      - name: Upload Files to a GitHub Release (mac)
-        if: ${{ matrix.host == 'x86_64-w64-mingw32' }}
-        id: upload-release-assetWInd
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.mysecret }}
-        with:
-          tag_name: ${{matrix.host}}v699999999
-          release_name: Release ${{matrix.host}}v699999999
-          draft: false
-          prerelease: false
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-apple-darwin11' }}
-        id: upload-release-assetmacd
+        id: upload-release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          tag_name: ${{matrix.host}}v699999999
-          release_name: Release ${{matrix.host}}v699999999
+          tag_name: v7
+          release_name: Release v7
           draft: false
           prerelease: false
-
-          
-      - name: Upload Files to a GitHub Release (Ubuntu)
-        if: ${{ matrix.host == 'x86_64-unknown-linux-gnu' }}
-        id: upload-release-asseunix 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.mysecret }}
-        with:
-          upload_url: ${{ steps.upload-release-assetu.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_name: litedoge-qt
-          asset_path: ./litedoge-qt
-          asset_content_type: application/zip
-
-      - name: Upload Files to a GitHub Release (Windows)
-         echo "::notice ${{ steps.create_release.outputs.upload_url }}"
-        if: ${{ matrix.host == 'x86_64-w64-mingw32' }}
-        id: upload-release-assetwin
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.mysecret }}
-        with:
-          upload_url: ${{ steps.upload-release-assetWInd.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_name: litedoge-qt
-          asset_path: ./litedoge-qt
-          asset_content_type: application/zip
       - name: Upload Files to a GitHub Release (mac)
         if: ${{ matrix.host == 'x86_64-apple-darwin11' }}
         id: upload-release-assetMAC
@@ -163,7 +91,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.mysecret }}
         with:
-          upload_url: ${{ steps.upload-release-assetmacd.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          upload_url: ${{ steps.upload-release.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_name: litedoge-qt
           asset_path: ./litedoge-qt
           asset_content_type: application/zip
