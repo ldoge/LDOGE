@@ -48,7 +48,7 @@ jobs:
       - name: Install packages
         run: |
           brew update
-          brew install build-essential libtool autotools-dev automake pkg-config bsdmainutils curl ca-certificates ccache python3 rsync git procps bison
+          brew install boost db48 openssl miniupnpc
           brew install ${{ matrix.packages }}
       - name: Post install
         if: ${{ matrix.postinstall }}
