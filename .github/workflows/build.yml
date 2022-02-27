@@ -32,7 +32,6 @@ jobs:
             dep-opts: ""
             config-opts: "--enable-gui=qt5 --enable-reduce-exports"
             goal: install
-            sdk: 10.13
 
     runs-on: ${{ matrix.os }}
 
