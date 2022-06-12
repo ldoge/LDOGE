@@ -19,6 +19,9 @@
 
 #include <openssl/crypto.h>
 #include <db_cxx.h>
+#include <boost/version.hpp>
+#include <miniupnpc/miniupnpc.h>
+#include <qrencode.h>
 
 // TODO: add a scrollback limit, as there is currently none
 // TODO: make it possible to filter out categories (esp debug messages when implemented)
@@ -202,7 +205,9 @@ RPCConsole::RPCConsole(QWidget *parent) :
     detailNodeStats.nodestats.nodeid = -1;
 
     ui->setupUi(this);
-
+    int major = 0;
+    int minor = 0;
+    int patch = 0;
 #ifndef Q_OS_MAC
     ui->openDebugLogfileButton->setIcon(QIcon(":/icons/export"));
     ui->showCLOptionsButton->setIcon(QIcon(":/icons/options"));
@@ -215,9 +220,17 @@ RPCConsole::RPCConsole(QWidget *parent) :
     connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(clear()));
 
     // set OpenSSL version label
-    ui->openSSLVersion->setText(SSLeay_version(SSLEAY_VERSION));
-    ui->berkeleyDBVersion->setText(DbEnv::version(0, 0, 0));
-
+    ui->label_bdb_version->setText(DbEnv::version(&major, &minor, &patch));
+    ui->label_boost_version->setText(BOOST_LIB_VERSION);
+    ui->label_miniupnp_version->setText("unused");
+#ifdef USE_UPNP
+    ui->label_miniupnp_version->setText(MINIUPNPC_VERSION);
+#endif
+    ui->lable_openssl_version->setText(SSLeay_version(SSLEAY_VERSION));
+    ui->lable_qrencode_version->setText("unused");
+#ifdef USE_QRCODE
+     ui->lable_qrencode_version->setText(QRcode_APIVersionString());
+#endif
     startExecutor();
     setTrafficGraphRange(INITIAL_TRAFFIC_GRAPH_MINS);
     ui->detailWidget->hide();
