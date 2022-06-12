@@ -1,5 +1,5 @@
-// Copyright (c) 2009-2021 Satoshi Nakamoto
-// Copyright (c) 2009-2021 The Bitcoin developers
+// Copyright (c) 2009-2022 Satoshi Nakamoto
+// Copyright (c) 2009-2022 The Bitcoin developers
 // Copyright (c) 2015-2021 The Litedogecoin developers
 
 // Distributed under the MIT/X11 software license, see the accompanying
