@@ -854,12 +854,12 @@ void BitcoinGUI::openInstagram()
 
 void BitcoinGUI::gotoChatPage()
 {
-    QDesktopServices::openUrl(QUrl("https://discord.gg/yvYVft6"));
+    QDesktopServices::openUrl(QUrl("http://discord.litedogeofficial.org/"));
 }
 
 void BitcoinGUI::gotoReddit()
 {
-    QDesktopServices::openUrl(QUrl("https:/"));
+    QDesktopServices::openUrl(QUrl("http://reddit.litedogeofficial.org/"));
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
