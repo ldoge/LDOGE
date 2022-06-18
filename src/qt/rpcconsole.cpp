@@ -20,8 +20,14 @@
 #include <openssl/crypto.h>
 #include <db_cxx.h>
 #include <boost/version.hpp>
-#include <miniupnpc/miniupnpc.h>
+#ifdef USE_QRCODE
 #include <qrencode.h>
+#endif
+
+#ifdef USE_UPNP
+#include <miniupnpc/miniupnpc.h>
+#endif
+
 
 // TODO: add a scrollback limit, as there is currently none
 // TODO: make it possible to filter out categories (esp debug messages when implemented)
