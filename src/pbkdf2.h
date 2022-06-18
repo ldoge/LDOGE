@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2021 LiteDogecoin Developers
+// Copyright (c) 2013-2022 LiteDogecoin Developers
 
 #ifndef PBKDF2_H
 #define PBKDF2_H

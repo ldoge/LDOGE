@@ -1,5 +1,5 @@
-// Copyright (c) 2009-2021 Satoshi Nakamoto
-// Copyright (c) 2009-2021 The Bitcoin developers
+// Copyright (c) 2009-2022 Satoshi Nakamoto
+// Copyright (c) 2009-2022 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1087,7 +1087,11 @@ static const char *strMainNetDNSSeed[][2] = {
     {"seed06", "seed06.litedogeofficial.org"},
     {"seed07", "seed07.litedogeofficial.org"},
     {"seed08", "seed08.litedogeofficial.org"},
+    {"lab-support-node0", "ldoge0.nerdlabs.dev."},
+    {"lab-support-node1", "ldoge1.nerdlabs.dev."},
     {"2600:6c52:6f00:ae0c:31a3:9485:3241:c006", "{2600:6c52:6f00:ae0c:31a3:9485:3241:c006"}
+
+
    
 };
 
