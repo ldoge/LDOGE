@@ -95,7 +95,7 @@ jobs:
           tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${{ matrix.sdk }}.sdk.tar.gz
 
       - name: QMake
-        run: qmake RELEASE=1
+        run: qmake RELEASE=1 USE_UPNP=1 USE_QRCODE=1 USE_IPV6=1
       - name: Make
         run: make
       - uses: actions/upload-artifact@v2
