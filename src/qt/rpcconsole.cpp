@@ -20,6 +20,13 @@
 #include <openssl/crypto.h>
 #include <db_cxx.h>
 #include <boost/version.hpp>
+#ifdef USE_QRCODE
+#include <qrencode.h>
+#endif
+
+#ifdef USE_UPNP
+#include <miniupnpc/miniupnpc.h>
+#endif
 
 
 // TODO: add a scrollback limit, as there is currently none
@@ -223,13 +230,11 @@ RPCConsole::RPCConsole(QWidget *parent) :
     ui->label_boost_version->setText(BOOST_LIB_VERSION);
     ui->label_miniupnp_version->setText("unused");
 #ifdef USE_UPNP
-#include <miniupnpc/miniupnpc.h>
     ui->label_miniupnp_version->setText(MINIUPNPC_VERSION);
 #endif
     ui->lable_openssl_version->setText(SSLeay_version(SSLEAY_VERSION));
     ui->lable_qrencode_version->setText("unused");
 #ifdef USE_QRCODE
-#include <qrencode.h>
      ui->lable_qrencode_version->setText(QRcode_APIVersionString());
 #endif
     startExecutor();
