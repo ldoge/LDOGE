@@ -1,6 +1,6 @@
 # Punch List
 
-Update logos, Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electrum Wallet
+Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electrum Wallet
 
 # LiteDoge dev Repository
 
