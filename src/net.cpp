@@ -1088,16 +1088,11 @@ static const char *strMainNetDNSSeed[][2] = {
     {"seed07", "seed07.litedogeofficial.org"},
     {"seed08", "seed08.litedogeofficial.org"},
     {"lab-support-node0", "ldoge0.nerdlabs.dev."},
-    {"lab-support-node1", "ldoge1.nerdlabs.dev."},
-    {"2600:6c52:6f00:ae0c:31a3:9485:3241:c006", "{2600:6c52:6f00:ae0c:31a3:9485:3241:c006"}
-
-
-   
+    {"lab-support-node1", "ldoge1.nerdlabs.dev."},  
 };
 
 static const char *strTestNetDNSSeed[][2] = {
     {"cloud.litedoge.info", "cloud.litedoge.info"},
-    {NULL, NULL}
 };
 
 void ThreadDNSAddressSeed()
@@ -1205,7 +1200,7 @@ void ThreadOpenConnections()
         boost::this_thread::interruption_point();
 
         // Add seed nodes if DNS seeds are all down (an infrastructure attack?).
-        if (addrman.size() == 0 && (GetTime() - nStart > 60)) {
+        if (addrman.size() == 0 && (GetTime() - nStart > 5)) {
             static bool done = false;
             if (!done) {
                 LogPrintf("Adding fixed seed nodes as DNS doesn't seem to be available.\n");
