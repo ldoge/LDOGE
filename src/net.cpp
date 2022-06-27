@@ -1077,7 +1077,7 @@ void MapPort(bool)
 // The first name is used as information source for addrman.
 // The second name should resolve to a list of seed addresses.
 static const char *strMainNetDNSSeed[][2] = {
-    {"seed00", "cloud.litedoge.info"},
+    {"cloud.litedoge.info", "cloud.litedoge.info"},
     {"seed01", "seed01.litedogeofficial.org"},               
     {"seed01", "seed01.litedogeofficial.org"},
     {"seed02", "seed02.litedogeofficial.org"},
@@ -1088,7 +1088,7 @@ static const char *strMainNetDNSSeed[][2] = {
     {"seed07", "seed07.litedogeofficial.org"},
     {"seed08", "seed08.litedogeofficial.org"},
     {"lab-support-node0", "ldoge0.nerdlabs.dev."},
-    {"lab-support-node1", "ldoge1.nerdlabs.dev."},  
+    {"lab-support-node1", "ldoge1.nerdlabs.dev."}  
 };
 
 static const char *strTestNetDNSSeed[][2] = {
