@@ -103,7 +103,7 @@ FreeDesktop notification interface through DBUS using the following qmake option
 Generation of QR codes
 -----------------------
 
-- cd novacoin
+- cd litedoge
  qmake USE_UPNP=1 USE_O3=1 USE_ASM=1 (если хотите LevelDB, то USE_LEVELDB=1) 
  make
 
