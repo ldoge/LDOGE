@@ -5,10 +5,9 @@ SetCompressor /SOLID lzma
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.3.0
-!define COMPANY "NovaCoin project"
-!define URL http://www.novacoin.ru/
-
+!define VERSION 3.6.0.1
+!define COMPANY "LiteDoge Organization"
+!define URL http://www.litedogeofficial.org
 # MUI Symbol Definitions
 !define MUI_ICON "../share/pixmaps/novacoin.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "../share/pixmaps/nsis-wizard.bmp"
@@ -19,8 +18,8 @@ SetCompressor /SOLID lzma
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM
 !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGKEY}
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER NovaCoin
-#!define MUI_FINISHPAGE_RUN $INSTDIR\novacoin-qt.exe
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER Litedoge
+#!define MUI_FINISHPAGE_RUN $INSTDIR\litedoge-qt.exe
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "../share/pixmaps/nsis-wizard.bmp"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
@@ -45,14 +44,14 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE English
 
 # Installer attributes
-OutFile novacoin-0.3.0-win32-setup.exe
-InstallDir $PROGRAMFILES\NovaCoin
+OutFile litedoge-3.6.0.1-win32-setup.exe
+InstallDir $PROGRAMFILES\Litedoge
 CRCCheck on
 XPStyle on
 BrandingText " "
 ShowInstDetails show
-VIProductVersion 0.3.0.0
-VIAddVersionKey ProductName NovaCoin
+VIProductVersion 3.6.0.1
+VIAddVersionKey ProductName LiteDoge
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
 VIAddVersionKey CompanyWebsite "${URL}"
@@ -66,18 +65,18 @@ ShowUninstDetails show
 Section -Main SEC0000
     SetOutPath $INSTDIR
     SetOverwrite on
-    #File ../release/novacoin-qt.exe
+    #File ../release/litedoge-qt.exe
     File /oname=license.txt ../COPYING
     File /oname=readme.txt ../doc/README_windows.txt
     SetOutPath $INSTDIR\daemon
-    File ../src/novacoind.exe
+    File ../src/litedoged.exe
     SetOutPath $INSTDIR\src
     File /r /x *.exe /x *.o ../src\*.*
     SetOutPath $INSTDIR
     WriteRegStr HKCU "${REGKEY}\Components" Main 1
 
     # Remove old wxwidgets-based-bitcoin executable and locales:
-    #Delete /REBOOTOK $INSTDIR\novacoin.exe
+    #Delete /REBOOTOK $INSTDIR\litedoge.exe
     #RMDir /r /REBOOTOK $INSTDIR\locale
 SectionEnd
 
