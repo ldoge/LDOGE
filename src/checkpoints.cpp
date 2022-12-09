@@ -148,6 +148,18 @@ namespace Checkpoints
             (  3410000, uint256("0x4079f0ddc3403af52f4343d63d0569142f8d2de167ed286d882952527cd3fd51") )
             (  3415000, uint256("0x0235a965317d8af19834acdb57ddc340591508c68872409cacf19b26e7e317e5") )
             (  3420000, uint256("0x5b575f84afb8a4c5bc4c49aea5481de045fd2d8c53aad277c9db025b3c61c3c3") )
+            (  3450000, uint256("0x9e5be94304bf1297cd897cc19c79cf58d3d7a456d7940b715bc89aa0e28bba15") )
+            (  3452753, uint256("0xdcad10d37ee4d8e8ba1879186e01e2f1df96b2183b9e9b38550ea086427cfe2c") )//nl debugging
+            (  3453000, uint256("0x7c99a9a9186a7529a9c98af0a6d78ce07382cc1b31b4fe73cc49bc698ac10f9f") )//nl
+            (  3455000, uint256("0x219db3d77782313906655bee9f94196e97e63d37e7c22b9aec1ee86f10c8cb3b") )//nl
+            (  3458000, uint256("0xbf14b6cc1f88a967fa2ed4ddfaaabbcbc5d5532f5e12990a36d97c37cbe4620f") )//nl
+            (  3460000, uint256("0x94d1b72660acb46e38e2f320c7bab254556719e6e541b672c49f1534f662e27b") )//nl
+            (  3461000, uint256("0x794691feb1cbc75fb541aa2ba93b16e67d29bf1a267cff85525594aabd23ba95") )//nl
+            (  3462000, uint256("0x13ebe5030a2eb3e4602c91c67071827c0e0bf4883e40490bfc3bdb4a32b7444b") )//nl
+            (  3465000, uint256("0xaf32cacd0fd487ea3a8be3555894870ec47a3a0ada33ec588f62c2935d4ae98f") )//nl
+            (  3468000, uint256("0x0db720de476421048bfcc7c7e3c3bfc5c5ddac43edf614c9968ffb44473e2e75") )//nl
+            (  3469000, uint256("0x3c50b80372bcfab08b2686d5423586fb6d3e67aef015a80bfeb3c609c09da95b") )//nl
+            (  3470000, uint256("0x0e1e65229f4d7170e8d3f39f3338c9ef0f38acbafa6e788d2e46e03d15d6a3df") )//nl
 
 
 
