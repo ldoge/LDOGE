@@ -160,6 +160,9 @@ namespace Checkpoints
             (  3468000, uint256("0x0db720de476421048bfcc7c7e3c3bfc5c5ddac43edf614c9968ffb44473e2e75") )//nl
             (  3469000, uint256("0x3c50b80372bcfab08b2686d5423586fb6d3e67aef015a80bfeb3c609c09da95b") )//nl
             (  3470000, uint256("0x0e1e65229f4d7170e8d3f39f3338c9ef0f38acbafa6e788d2e46e03d15d6a3df") )//nl
+            (  3650000, uint256("0x6a99179ee067b2953b35fd0eb9ff6e63c24434672f195f05ff46402406465bd0") )//nl
+            (  3653000, uint256("0x045bd71684665c6553b96fcc972f6159b850cf2039b66d555cf2eb0a64d6a2e1") )//nl debugging
+
 
 
 
