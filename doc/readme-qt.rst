@@ -11,8 +11,7 @@ First, make sure that the required packages for Qt5 development of your
 distribution are installed, for Debian and Ubuntu these are:
 
 ::
-
-    apt-get install qt5-default qt5-qmake qtbase5-dev-tools qttools5-dev-tools \
+        sudo apt-get install qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools \
         build-essential libboost-dev libboost-system-dev \
         libboost-filesystem-dev libboost-program-options-dev libboost-thread-dev \
         libssl-dev libdb++-dev libminiupnpc-dev
@@ -104,11 +103,10 @@ Generation of QR codes
 -----------------------
 
 - cd litedoge
- qmake USE_UPNP=1 USE_O3=1 USE_ASM=1 (если хотите LevelDB, то USE_LEVELDB=1) 
- make
+ qmake USE_UPNP=1 USE_O3=1 USE_ASM=1 (то turn off USE_LEVELDB=0, то turn on USE_LEVELDB=1)
 
 - cd src
- make -f makefile.unix USE_UPNP=1  USE_O3=1 USE_ASM=1 (если хотите LevelDB, то USE_LEVELDB=1) 
+ make -f makefile.unix USE_UPNP=1  USE_O3=1 USE_ASM=1 ( LevelDB, то USE_LEVELDB=1) 
 
 libqrencode may be used to generate QRCode images for payment requests. 
 It can be downloaded from http://fukuchi.org/works/qrencode/index.html.en, or installed via your package manager. Pass the USE_QRCODE 
