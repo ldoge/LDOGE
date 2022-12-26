@@ -15,7 +15,7 @@ To Build
 --------
 
 cd src/
-qmake -f makefile.unix            # Headless litedoge
+make -f makefile.unix            # Headless litedoge
 
 See readme-qt.rst for instructions on building LiteDoge QT,
 the graphical litedoge.
