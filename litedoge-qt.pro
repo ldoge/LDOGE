@@ -12,13 +12,25 @@ CONFIG += thread
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    QT += webkitwidgets
 }
     
 # QMAKE_CC=clang
 # QMAKE_CXX=clang++
 # QMAKE_LINK=clang++
 
+# for boost 1.37, add -mt to the boost libraries
+# use: qmake BOOST_LIB_SUFFIX=-mt
+# for boost thread win32 with _win32 sufix
+# use: BOOST_THREAD_LIB_SUFFIX=_win32-...
+# or when linking against a specific BerkelyDB version: BDB_LIB_SUFFIX=-4.8
+
+# Dependency library locations can be customized with:
+#    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
+#    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
+
+OBJECTS_DIR = build
+MOC_DIR = build
+UI_DIR = build
 
 !win32 {
 # for extra security against potential buffer overflows: enable GCCs Stack Smashing Protection
