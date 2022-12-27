@@ -12,11 +12,8 @@ CONFIG += thread
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+    QT += webkitwidgets
 }
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-}
-    QT += webkit
     
 # QMAKE_CC=clang
 # QMAKE_CXX=clang++
