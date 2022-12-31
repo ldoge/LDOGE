@@ -34,7 +34,7 @@ void Serveur::errorSocket(QAbstractSocket::SocketError error)
 	switch(error)
 	{
 		case QAbstractSocket::HostNotFoundError:
-            affichage->append(tr("<em>ERROR : can't find freenode server.</em>"));
+            affichage->append(tr("<em>ERROR : can't find libera server.</em>"));
 			break;
 		case QAbstractSocket::ConnectionRefusedError:
             affichage->append(tr("<em>ERROR : server refused connection</em>"));
@@ -53,7 +53,7 @@ void Serveur::connected()
 
     sendData("USER "+pseudo+" localhost "+serveur+" :"+pseudo);
     sendData("NICK "+pseudo);
-    affichage->append("Connected to irc.freenode.net");
+    affichage->append("Connected to https://web.libera.chat");
 
 }
 

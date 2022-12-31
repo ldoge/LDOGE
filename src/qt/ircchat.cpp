@@ -157,17 +157,17 @@ void ChatWindow::connecte()
     ui->labelLogo->show();
 
     ui->tab->addTab(textEdit,"Console/PM");
-    ui->tab->setTabToolTip(ui->tab->count()-1,"irc.freenode.net");
+    ui->tab->setTabToolTip(ui->tab->count()-1,"web.libera.chat");
     // current tab is now the last, therefore remove all but the last
     for (int i = ui->tab->count(); i > 1; --i) {
        ui->tab->removeTab(0);
     }
 
-    serveurs.insert("irc.freenode.net",serveur);
+    serveurs.insert("web.libera.chat",serveur);
 
     serveur->pseudo=ui->editPseudo->text();
-    serveur->serveur="irc.freenode.net";
-    serveur->port=6667;
+    serveur->serveur="web.libera.chat";
+    serveur->port=6697;
     serveur->affichage=textEdit;
     serveur->tab=ui->tab;
     serveur->userList=ui->userView;
@@ -178,7 +178,7 @@ void ChatWindow::connecte()
     connect(serveur, SIGNAL(joinTab()),this, SLOT(tabJoined() ));
     connect(serveur, SIGNAL(tabJoined()),this, SLOT(tabJoining() ));
 
-    serveur->connectToHost("irc.freenode.net",6667);
+    serveur->connectToHost("web.libera.chat",6697);
 
     ui->tab->setCurrentIndex(ui->tab->count()-1);
 }

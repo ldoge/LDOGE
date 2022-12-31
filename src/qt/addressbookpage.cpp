@@ -32,10 +32,8 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     ui->copyToClipboard->setIcon(QIcon());
     ui->deleteButton->setIcon(QIcon());
 #endif
+      
 
-#ifndef USE_QRCODE
-    ui->showQRCode->setVisible(false);
-#endif
 
     switch(mode)
     {
@@ -54,18 +52,22 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
         ui->labelExplanation->setVisible(false);
         ui->deleteButton->setVisible(true);
         ui->signMessage->setVisible(false);
+        ui->verifyMessage->setVisible(true);    
         break;
     case ReceivingTab:
         ui->deleteButton->setVisible(false);
         ui->signMessage->setVisible(true);
+        ui->verifyMessage->setVisible(false);    
         break;
     }
 
     // Context menu actions
     QAction *copyLabelAction = new QAction(tr("Copy &Label"), this);
     QAction *copyAddressAction = new QAction(ui->copyToClipboard->text(), this);
-    QAction *editAction = new QAction(tr("&Edit"), this);
-    QAction *showQRCodeAction = new QAction(ui->showQRCode->text(), this);
+     QAction *editAction = new QAction(tr("&Edit"), this);
+#ifdef USE_QRCODE
+    QAction *showQRCodeAction = new QAction(tr("Show &QR Code"), this);
+#endif   
     QAction *signMessageAction = new QAction(ui->signMessage->text(), this);
     QAction *verifyMessageAction = new QAction(ui->verifyMessage->text(), this);
     deleteAction = new QAction(ui->deleteButton->text(), this);
@@ -88,8 +90,10 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(copyAddressAction, SIGNAL(triggered()), this, SLOT(on_copyToClipboard_clicked()));
     connect(copyLabelAction, SIGNAL(triggered()), this, SLOT(onCopyLabelAction()));
     connect(editAction, SIGNAL(triggered()), this, SLOT(onEditAction()));
-    connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteButton_clicked()));
+    connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteButton_clicked())); 
+    #ifdef USE_QRCODE
     connect(showQRCodeAction, SIGNAL(triggered()), this, SLOT(on_showQRCode_clicked()));
+    #endif
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(on_signMessage_clicked()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(on_verifyMessage_clicked()));
 
@@ -134,7 +138,7 @@ void AddressBookPage::setModel(AddressTableModel *model)
     // Set column widths
     ui->tableView->horizontalHeader()->resizeSection(
             AddressTableModel::Address, 320);
-    ui->tableView->horizontalHeader()->setResizeMode(
+    ui->tableView->horizontalHeader()->setSectionResizeMode(
             AddressTableModel::Label, QHeaderView::Stretch);
 
     connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
@@ -270,12 +274,10 @@ void AddressBookPage::selectionChanged()
             break;
         }
         ui->copyToClipboard->setEnabled(true);
-        ui->showQRCode->setEnabled(true);
     }
     else
     {
         ui->deleteButton->setEnabled(false);
-        ui->showQRCode->setEnabled(false);
         ui->copyToClipboard->setEnabled(false);
         ui->signMessage->setEnabled(false);
         ui->verifyMessage->setEnabled(false);
@@ -335,7 +337,7 @@ void AddressBookPage::exportClicked()
 
 void AddressBookPage::on_showQRCode_clicked()
 {
-#ifdef USE_QRCODE
+    #ifdef USE_QRCODE
     QTableView *table = ui->tableView;
     QModelIndexList indexes = table->selectionModel()->selectedRows(AddressTableModel::Address);
 
@@ -349,7 +351,6 @@ void AddressBookPage::on_showQRCode_clicked()
         dialog->setAttribute(Qt::WA_DeleteOnClose);
         dialog->show();
     }
-#endif
 }
 
 void AddressBookPage::contextualMenu(const QPoint &point)
@@ -359,6 +360,7 @@ void AddressBookPage::contextualMenu(const QPoint &point)
     {
         contextMenu->exec(QCursor::pos());
     }
+#endif    
 }
 
 void AddressBookPage::selectNewAddress(const QModelIndex &parent, int begin, int end)

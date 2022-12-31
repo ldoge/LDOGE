@@ -91,6 +91,7 @@ public:
         assert(hashGenesisBlock == uint256("0x0000032101032f27e7cdddb1196353f7fc9e1b6294717432135add95534f67c6"));
         assert(genesis.hashMerkleRoot == uint256("0x6e8089863e3811437cca6029c8eb113e0ddec4cb553e7cfdf8944c964cf86832"));
 
+        vSeeds.push_back(CDNSSeedData("seed00", "cloud.litedoge.info"));
         vSeeds.push_back(CDNSSeedData("seed01", "seed01.litedogeofficial.org"));
         vSeeds.push_back(CDNSSeedData("seed02", "seed02.litedogeofficial.org"));
         vSeeds.push_back(CDNSSeedData("seed03", "seed03.litedogeofficial.org"));

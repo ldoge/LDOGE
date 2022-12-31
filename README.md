@@ -1,16 +1,23 @@
+# Punch List
+
+
+Make buildable avaiable on all operating systems, Update logos, Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electrum Wallet
+
 # LiteDoge dev Repository
 
-LiteDoge is a PoS-based cryptocurrency.
+LiteDoge-LDOGE is a scrypt algorithm, proof of stake 2.0 based cryptocurrency.
 
 Official Website: https://litedogeofficial.org
 
-Latest Wallets: https://github.com/vashshawn/LDOGE/releases
+Latest Wallets: https://github.com/ldoge/LDOGE/releases
 
-Wiki and Installation guides: https://github.com/vashshawn/LDOGE/wiki
+Wiki and Installation guides: https://github.com/ldoge/LDOGE/wiki
 
-Block Explorer: http://explorer.litedogeofficial.org/ 
+Block Explorer: http://blocks.litedogeofficial.org/
 
-Cryto-City: https://www.crypto-city.com/index.php/lite-doge-ldoge/
+Bitcointalk: https://bitcointalk.org/index.php?topic=1308769.0
+
+Development Channel: https://discord.gg/dVWy7MqE2J
 
 # Development process
 
@@ -26,4 +33,4 @@ From time to time a pull request will become outdated. If this occurs, and the p
 
 Issues with no commits will be given a similar warning, and closed after 15 days from their last activity. Issues closed in this manner will be labeled 'stale'.
 
-Build with qmake , make 
+When Building Litedoge use qmake

@@ -12,6 +12,7 @@
 #include "net.h"
 #include "script.h"
 #include "scrypt.h"
+#include "hash.h"
 
 #include <list>
 
@@ -24,6 +25,7 @@ class CReserveKey;
 class CWallet;
 
 static const int LAST_POW_BLOCK = 8000;
+static const int POW_RESTART_BLOCK = 4000000;
 
 /** The maximum allowed size for a serialized block, in bytes (network rule) */
 static const unsigned int MAX_BLOCK_SIZE = 1000000;
@@ -40,11 +42,11 @@ static const unsigned int MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
 /** The maximum number of orphan transactions kept in memory */
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 /** Default for -maxorphanblocks, maximum number of orphan blocks kept in memory */
-static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 750;
+static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 40;
 /** The maximum number of entries in an 'inv' protocol message */
 static const unsigned int MAX_INV_SZ = 50000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
-static const int64_t MIN_TX_FEE = 1000000; //0.01 coins
+static const int64_t MIN_TX_FEE =10000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for relaying) */
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
 /** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) after block 594999 */
@@ -52,15 +54,15 @@ static const int64_t MIN_TX_FEEv2 = 10000000; //0.1 coins
 /** Fees smaller than this (in satoshi) are considered zero fee (for relaying) after block 594999 */
 static const int64_t MIN_RELAY_TX_FEEv2 = MIN_TX_FEEv2;
 /** No amount larger than this (in satoshi) is valid for sending*/
-static const int64_t MAX_MONEY = 50000000000 * COIN;
+static const int64_t MAX_MONEY = std::numeric_limits<int64_t>::max();
 inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 /** Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp. */
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 
-static const int64_t COIN_YEAR_REWARD = 1 * CENT; 
+static const int64_t COIN_YEAR_REWARD = 1 * CENT; // 1% per year
 
-inline bool IsProtocolV1RetargetingFixed(int nHeight) { return TestNet() || nHeight > 1; } 
-inline bool IsProtocolV2(int nHeight) { return TestNet() || nHeight > 2; } 
+inline bool IsProtocolV1RetargetingFixed(int nHeight) { return TestNet() || nHeight > 1; }
+inline bool IsProtocolV2(int nHeight) { return TestNet() || nHeight > 2; }
 
 inline int64_t PastDrift(int64_t nTime, int nHeight)   { return IsProtocolV2(nHeight) ? nTime      : nTime - 10 * 60; }
 
@@ -140,7 +142,7 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles);
 
 bool CheckProofOfWork(uint256 hash, unsigned int nBits);
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake);
-int64_t GetProofOfWorkReward(int nHeight, int64_t nFees);
+int64_t GetProofOfWorkReward(int height, int64_t nFees);
 int64_t GetProofOfStakeReward(int64_t nCoinAge, int64_t nFees);
 unsigned int ComputeMinWork(unsigned int nBase, int64_t nTime);
 unsigned int ComputeMinStake(unsigned int nBase, int64_t nTime, unsigned int nBlockTime);
@@ -1024,10 +1026,10 @@ public:
     static bool IsSuperMajority(int minVersion, const CBlockIndex* pstart,
                                 unsigned int nRequired, unsigned int nToCheck);
 
-
+    // ppcoin: two types of block: proof-of-work or proof-of-stake
     bool IsProofOfWork() const
     {
-        return !(nFlags & BLOCK_PROOF_OF_STAKE);
+        return (GetBlockHeader().vtx.size() > 1 && GetBlockHeader().vtx[1].IsCoinStake());
     }
 
     bool IsProofOfStake() const
@@ -1039,12 +1041,17 @@ public:
     {
         nFlags |= BLOCK_PROOF_OF_STAKE;
     }
-
+  
+    // ppcoin: entropy bit for stake modifier if chosen by modifier
     unsigned int GetStakeEntropyBit() const
-    {
-        return ((nFlags & BLOCK_STAKE_ENTROPY) >> 1);
+      {
+        // Take last bit of block hash as entropy bit
+        unsigned int nEntropyBit = ((GetBlockHash().Get64()) & 1llu);
+        if (fDebug && GetBoolArg("-printstakemodifier", false))
+            printf("GetStakeEntropyBit: hashBlock=%s nEntropyBit=%u\n", GetBlockHash().ToString().c_str(), nEntropyBit);
+        return nEntropyBit;
     }
-
+  
     bool SetStakeEntropyBit(unsigned int nEntropyBit)
     {
         if (nEntropyBit > 1)

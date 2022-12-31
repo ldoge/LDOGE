@@ -518,7 +518,7 @@ void CNode::copyStats(CNodeStats &stats)
     // Raw ping time is in microseconds, but show it to user as whole seconds (Bitcoin users should be well used to small numbers with many decimal places by now :)
     stats.dPingTime = (((double)nPingUsecTime) / 1e6);
     stats.dPingWait = (((double)nPingUsecWait) / 1e6);
-    
+
     // Leave string empty if addrLocal invalid (not filled in yet)
     stats.addrLocal = addrLocal.IsValid() ? addrLocal.ToString() : "";
 }
@@ -978,7 +978,7 @@ void ThreadMapPort()
 #else
     /* miniupnpc 1.9.20150730 */
     int error = 0;
-    devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0, 0, 2, &error);    
+    devlist = upnpDiscover(2000, multicastif, minissdpdpath, 0, 0, 2, &error);
 #endif
 
     struct UPNPUrls urls;
@@ -1072,10 +1072,29 @@ void MapPort(bool)
 }
 #endif
 
+// DNS seeds
+// Each pair gives a source name and a seed name.
+// The first name is used as information source for addrman.
+// The second name should resolve to a list of seed addresses.
+static const char *strMainNetDNSSeed[][2] = {
+    {"seed00", "cloud.litedoge.info"},
+    {"seed01", "seed01.litedogeofficial.org"},               
+    {"seed01", "seed01.litedogeofficial.org"},
+    {"seed02", "seed02.litedogeofficial.org"},
+    {"seed03", "seed03.litedogeofficial.org"},
+    {"seed04", "seed04.litedogeofficial.org"},
+    {"seed05", "seed05.litedogeofficial.org"},
+    {"seed06", "seed06.litedogeofficial.org"},
+    {"seed07", "seed07.litedogeofficial.org"},
+    {"seed08", "seed08.litedogeofficial.org"},
+    {"2600:6c52:6f00:ae0c:31a3:9485:3241:c006", "{2600:6c52:6f00:ae0c:31a3:9485:3241:c006"}
+   
+};
 
-
-
-
+static const char *strTestNetDNSSeed[][2] = {
+    {"cloud.litedoge.info", "cloud.litedoge.info"},
+    {NULL, NULL}
+};
 
 void ThreadDNSAddressSeed()
 {
@@ -1119,14 +1138,6 @@ void ThreadDNSAddressSeed()
 
     LogPrintf("%d addresses found from DNS seeds\n", found);
 }
-
-
-
-
-
-
-
-
 
 void DumpAddresses()
 {

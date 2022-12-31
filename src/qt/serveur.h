@@ -26,37 +26,37 @@
 
 class Serveur : public QTcpSocket
 {
-	Q_OBJECT
+     Q_OBJECT
 
-	public:
+     public:
         Serveur();
-		QTextEdit *affichage;
+        QTextEdit *affichage;
         QListView *userList;
-		QString pseudo,serveur,msgQuit;
-		int port;
+        QString pseudo,serveur,msgQuit;
+	int port;
         QTabWidget *tab;
-		QMap<QString,QTextEdit *> conversations;
-		QSystemTrayIcon *tray;
+	QMap<QString,QTextEdit *> conversations;
+	QSystemTrayIcon *tray;
 
-		bool updateUsers;
+        bool updateUsers;
 
-		QString parseCommande(QString comm,bool serveur=false);
+        QString parseCommande(QString comm,bool serveur=false);
 
-		QWidget *parent;
+        QWidget *parent;
 
 
-	signals:
-		void pseudoChanged(QString newPseudo);
-		void joinTab();
+     signals:
+	void pseudoChanged(QString newPseudo);
+	void joinTab();
         void tabJoined();
 
-	public slots:
-		void readServeur();
-		void errorSocket(QAbstractSocket::SocketError);
+     public slots:
+	void readServeur();
+	void errorSocket(QAbstractSocket::SocketError);
         void connected();
-        void joins();
-		void sendData(QString txt);
-		void join(QString chan);
+	void joins();
+	void sendData(QString txt);
+	void join(QString chan);
         void leave(QString chan);
         void ecrire(QString txt,QString destChan="",QString msgTray="");
         void updateUsersList(QString chan="",QString message="");
