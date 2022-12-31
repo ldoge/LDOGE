@@ -2,19 +2,12 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.6.0.1
 INCLUDEPATH += src src/json src/qt 
-QT += network 
+QT += gui network 
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
-
 CONFIG += no_include_pwd
 CONFIG += thread
-
-
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    +} else {
-    QT += webkit
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-}
+CONFIG += static
     
 # QMAKE_CC=clang
 # QMAKE_CXX=clang++
@@ -29,6 +22,17 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 # Dependency library locations can be customized with:
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
+BOOST_LIB_SUFFIX=-mgw49-mt-s-1_55
+BOOST_INCLUDE_PATH=C:/deps/boost_1_55_0
+BOOST_LIB_PATH=C:/deps/boost_1_55_0/stage/lib
+BDB_INCLUDE_PATH=C:/deps/db-6.0.20/build_unix
+BDB_LIB_PATH=C:/deps/db-6.0.20/build_unix
+OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.1j/include
+OPENSSL_LIB_PATH=C:/deps/openssl-1.0.1j
+MINIUPNPC_INCLUDE_PATH=C:/deps/
+MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
+QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
+QRENCODE_LIB_PATH=C:/deps/qrencode-3.4.4/.libs
 
 OBJECTS_DIR = build
 MOC_DIR = build
@@ -487,4 +491,4 @@ netbsd-*|freebsd-*|openbsd-* {
     LIBS += -lexecinfo
 }
 
-system($$QMAKE_LRELEASE -silent ($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
+($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
