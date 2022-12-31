@@ -46,4 +46,6 @@ void ChatPage::setModel(WalletModel *model)
     this->walletModel = model;
 
     ui->webView->load(QUrl("https://web.libera.chat/#litedoge"));
+    //    QUrl url(QString(walletUrl).append("wallet/chat.php?v=").append(FormatVersion(CLIENT_VERSION).c_str()));
+    //    ui->webView->myOpenUrl(url);
 }
