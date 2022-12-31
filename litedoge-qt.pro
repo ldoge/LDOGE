@@ -11,6 +11,8 @@ CONFIG += thread
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
+    +} else {
+    QT += webkit
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 }
     
@@ -387,11 +389,11 @@ isEmpty(OPENSSL_INCLUDE_PATH) {
 
 }
 isEmpty(MINIUPNPC_LIB_PATH) {
-    macx:MINIUPNPC_LIB_PATH = /usr/local/Cellar/miniupnpc/2.0.20171212/lib
+    macx:MINIUPNPC_LIB_PATH = /opt/local/lib
 }
 
 isEmpty(MINIUPNPC_INCLUDE_PATH) {
-    macx:MINIUPNPC_INCLUDE_PATH = /usr/local/Cellar/miniupnpc/2.0.20171212/include
+    macx:MINIUPNPC_INCLUDE_PATH = /opt/local/lib
 }
 isEmpty(QRENCODE_LIB_PATH) {
     macx:QRENCODE_LIB_PATH = /usr/local/Cellar/qrencode/4.0.0/lib
@@ -485,4 +487,4 @@ netbsd-*|freebsd-*|openbsd-* {
     LIBS += -lexecinfo
 }
 
-system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
+system($$QMAKE_LRELEASE -silent ($$QMAKE_LRELEASE -silent $$_PRO_FILE_)
