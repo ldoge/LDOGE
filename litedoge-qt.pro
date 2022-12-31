@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.6.0.1
 INCLUDEPATH += src src/json src/qt 
-QT += gui network 
+QT += gui network webkit webkitwidgets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
 CONFIG += no_include_pwd
@@ -31,8 +31,8 @@ OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.1j/include
 OPENSSL_LIB_PATH=C:/deps/openssl-1.0.1j
 MINIUPNPC_INCLUDE_PATH=C:/deps/
 MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
-QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
-QRENCODE_LIB_PATH=C:/deps/qrencode-3.4.4/.libs
+QRENCODE_INCLUDE_PATH=C:/deps/qrencode-4.0.0
+QRENCODE_LIB_PATH=C:/deps/qrencode-4.0.0/.libs
 
 OBJECTS_DIR = build
 MOC_DIR = build
@@ -365,7 +365,7 @@ isEmpty(BOOST_THREAD_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_LIB_PATH) {
-    macx:BDB_LIB_PATH = "/usr/local/opt/berkeley-db@4/lib"
+    macx:BDB_LIB_PATH = "/usr/local/lib"
 }
 
 isEmpty(BDB_LIB_SUFFIX) {
@@ -373,15 +373,15 @@ isEmpty(BDB_LIB_SUFFIX) {
 }
 
 isEmpty(BDB_INCLUDE_PATH) {
-    macx:BDB_INCLUDE_PATH = "/usr/local/opt/berkeley-db@4/include/"
+    macx:BDB_INCLUDE_PATH = "/usr/local/include/"
 }
 
 isEmpty(BOOST_LIB_PATH) {
-    macx:BOOST_LIB_PATH = "/usr/local/opt/boost@1.55/lib/"
+    macx:BOOST_LIB_PATH = "/usr/local/lib"
 }
 
 isEmpty(BOOST_INCLUDE_PATH) {
-    macx:BOOST_INCLUDE_PATH = "/usr/local/opt/boost@1.55/include"
+    macx:BOOST_INCLUDE_PATH = "/usr/local/include"
 }
 
 isEmpty(OPENSSL_LIB_PATH) {
