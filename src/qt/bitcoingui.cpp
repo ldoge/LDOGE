@@ -29,7 +29,7 @@
 #include "qrcodedialog.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "ircchat.h"
+#include "ui_chatpage.h"
 #include "serveur.h"
 #include "autosaver.h"
 #include "chatpage.h"
@@ -99,10 +99,9 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     nWeight(0)
 	    
 {
-    resize(850, 550);
+    resize(850+95, 550);
 	setMinimumWidth(850);
-	setMinimumHeight(550);
-        
+	setMinimumHeight(550);   
     setWindowTitle(tr("LiteDoge") + " - " + tr("Wallet"));       
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
@@ -144,6 +143,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     qrcodedialog = new QRcodeDialog(this);	    
    
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+	    
     chatPage = new ChatPage(this);    
 
 
@@ -279,7 +279,8 @@ void BitcoinGUI::createActions()
     historyAction->setToolTip(tr("Browse transaction history"));
     historyAction->setCheckable(true);
     historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
-    tabGroup->addAction(historyAction);
+    tabGroup->addAction(chatPageAction);
+
 
     addressBookAction = new QAction(QIcon(":/icons/address-book"), tr("&Very Address"), this);
     addressBookAction->setToolTip(tr("Edit the list of stored addresses and labels"));
@@ -293,7 +294,7 @@ void BitcoinGUI::createActions()
     websiteAction = new QAction(QIcon(":/icons/globe"), tr("&Wow Website"), this);
     websiteAction->setToolTip(tr("LDOGE Website"));
 
-    websiteAction = new QAction(QIcon(":/icons/irc"), tr("&Such Discord"), this);
+    websiteAction = new QAction(QIcon(":icons/discord"), tr("&Such Discord"), this);
     websiteAction->setToolTip(tr("Join LDOGE Discord Channel"));
     
     websiteAction = new QAction(QIcon(":/icons/reddit"),tr("&Such Reddit"), this);
