@@ -249,6 +249,74 @@ bool AddLocal(const CService& addr, int nScore)
     return true;
 }
 
+void testCase(bool fixed)
+{
+    int clientSock;
+    char rcvBuf[100];
+
+    // create socket
+    clientSock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+    if(fixed)
+    {
+        BOOL bNewBehavior = FALSE;
+        DWORD dwBytesReturned = 0;
+        WSAIoctl(clientSock, SIO_UDP_CONNRESET, &bNewBehavior, sizeof bNewBehavior, NULL, 0, &dwBytesReturned, NULL, NULL);
+    }
+
+    // bind socket
+    struct sockaddr_in clientAddr;
+    clientAddr.sin_family = AF_INET;
+    clientAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    clientAddr.sin_port = htons(61234);
+    int sizeClientAddr = sizeof(clientAddr);
+    bind(clientSock, (sockaddr*) &clientAddr, sizeClientAddr);
+
+    struct sockaddr_in serverAddr = clientAddr;
+    serverAddr.sin_port = htons(2324); // change port where nobody listens
+    int sizeServerAddr = sizeof(struct sockaddr);
+
+    int lasterror = 0;
+    int status = 0;
+
+    // send where nobody is listening
+    printf("Send to nowhere--->:\n");
+    /* It's UDP, so it doesn't matter if there is someone to receive the packet */
+    status =sendto(clientSock, "Message", 7, 0, (sockaddr*)&serverAddr, sizeServerAddr);
+    lasterror = WSAGetLastError(); 
+    printf("sendto return %d (lasterror %d)\n", status, lasterror);
+
+    // recvfrom with "failing" sendto before. 
+    // fixed: This should block.
+    // unfixed: WSAGetLastError is 10054
+    memset(rcvBuf, 0, sizeof(rcvBuf));
+    status = recvfrom(clientSock, rcvBuf, sizeof(rcvBuf), 0, (sockaddr*)&serverAddr, &sizeServerAddr);
+    lasterror = WSAGetLastError(); 
+    printf("recvfrom return %d (lasterror %d)\n", status, lasterror);
+    printf("--->From the server: -%s-\n", rcvBuf);
+
+    closesocket(clientSock);
+}
+
+int _tmain(int argc, _TCHAR* argv[])
+{
+    /* Initializing WSA */
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
+
+    printf("##### UNFIXED\n");
+    testCase(false);
+    printf("##### FIXED\n");
+    testCase(true);
+
+    WSACleanup();
+
+    // pause
+    char buf[100];
+    gets(buf);
+    return 0;
+}
+
 bool AddLocal(const CNetAddr &addr, int nScore)
 {
     return AddLocal(CService(addr, GetListenPort()), nScore);
