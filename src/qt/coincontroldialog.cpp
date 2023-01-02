@@ -96,9 +96,13 @@ CoinControlDialog::CoinControlDialog(QWidget *parent) :
     connect(ui->treeWidget, SIGNAL(itemChanged( QTreeWidgetItem*, int)), this, SLOT(viewItemChanged( QTreeWidgetItem*, int)));
 
     // click on header
+    #if QT_VERSION < 0x50000        
     ui->treeWidget->header()->setSectionsClickable(true);
+    #else 
+    ui->treeWidget->header()->setSectionsClickable(true);    
     connect(ui->treeWidget->header(), SIGNAL(sectionClicked(int)), this, SLOT(headerSectionClicked(int)));
-
+    #endif
+        
     // ok button
     connect(ui->buttonBox, SIGNAL(clicked( QAbstractButton*)), this, SLOT(buttonBoxClicked(QAbstractButton*)));
 
