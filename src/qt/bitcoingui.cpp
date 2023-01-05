@@ -143,7 +143,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     qrcodedialog = new QRcodeDialog(this);	    
    
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
-	    
     chatPage = new ChatPage(this);    
 
 
