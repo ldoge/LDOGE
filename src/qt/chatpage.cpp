@@ -9,8 +9,14 @@
 #include "webview.h"
 
 using namespace GUIUtiL;
-
-// Setup header and styles
+ChatPage::ChatPage(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::ChatPage),
+    walletModel(0)
+{
+    ui->setupUi(this);
+        
+    // Setup header and styles
 //    if (fNoHeaders)
 //        GUIUtil::header(this, QString(""));
 //    else if (fSmallHeaders)
@@ -19,27 +25,27 @@ using namespace GUIUtiL;
 //        GUIUtil::header(this, QString(":images/headerChat"));
 //    this->layout()->setContentsMargins(0, HEADER_HEIGHT, 0, 0); 
 
-ChatPage::ChatPage(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::ChatPage),
-    walletModel(0)
-{
-    ui->setupUi(this);
+
     
     CookieJar *chatJar = new CookieJar;
     ui->webView->page()->networkAccessManager()->setCookieJar(chatJar);
 
     ui->webView->page()->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
-    ui->webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);  
+    ui->webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
+    ui->frame->setVisible(true); // Set to true to enable webView navigation buttons    
     connect(ui->webView->page()->networkAccessManager(), SIGNAL(sslErrors(QNetworkReply*, const QList<QSslError> & )), ui->webView, SLOT(sslErrorHandler(QNetworkReply*, const QList<QSslError> & )));
     connect(ui->webView->page(), SIGNAL(linkClicked(QUrl)), ui->webView, SLOT(myOpenUrl(QUrl)));
-
+    
+    // buttons
+    ui->back->setDisabled(true);
+    ui->home->setDisabled(true);
+    ui->forward->setDisabled(true);
+    ui->webView->sendButtons(ui->back, ui->home, ui->forward);
+    connect(ui->back, SIGNAL(clicked()), ui->webView, SLOT(myBack()));
+    connect(ui->home, SIGNAL(clicked()), ui->webView, SLOT(myHome()));
+    connect(ui->forward, SIGNAL(clicked()), ui->webView, SLOT(myForward()));
+    connect(ui->reload, SIGNAL(clicked()), ui->webView, SLOT(myReload()));
 }   
-
-ChatPage::~ChatPage()
-{
-    delete ui;
-}
 
 void ChatPage::setModel(WalletModel *model)
 {
