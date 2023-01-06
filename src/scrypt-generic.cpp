@@ -111,7 +111,7 @@ static INLINE void xor_salsa8(uint32_t B[16], const uint32_t Bx[16])
  */
 uint256 scrypt_blockhash(const uint8_t* input)
 {
-    uint8_t scratchpad[SCRYPT_BUFFER_SIZE];
+    uint8_t scratchpad[1024];
     uint32_t X[32];
     uint256 result = 0;
 
