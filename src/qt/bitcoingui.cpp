@@ -32,6 +32,7 @@
 #include "ui_chatpage.h"
 #include "serveur.h"
 #include "autosaver.h"
+#include "ircchat.h"
 #include "chatpage.h"
 #include "cookiejar.h"
 #include "webview.h"
