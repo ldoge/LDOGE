@@ -95,7 +95,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     notificator(0),
     rpcConsole(0),
     prevBlocks(0),
-    chatpage(0),
+    chatPage(0),
     qrcodedialog(0),
     nWeight(0)
 	    
@@ -379,6 +379,7 @@ void BitcoinGUI::createMenuBar()
     file->addAction(exportAction);
     file->addAction(signMessageAction);
     file->addAction(verifyMessageAction);
+    file->addAction(chatPageAction);	
     file->addSeparator();
     file->addAction(quitAction);
 
@@ -906,9 +907,10 @@ void BitcoinGUI::gotoChatPage()
     chatPageAction->setChecked(true);
     centralStackedWidget->setCurrentWidget(ChatPage);
 
-    exportAction->setEnabled(false);
+    exportAction->setEnabled(true);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
     connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
+    QDesktopServices::openUrl(QUrl("https://web.libera.chat/?channels=#litedoge"));	
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)
