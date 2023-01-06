@@ -74,6 +74,11 @@
 #include <QStyle>
 #include <QWidget>
 #include <QWebView>
+#include <QWebView>
+#include <QWebFrame>
+#include <QWebHistory>
+#include <QPushButton>
+#include <QList>
 
 #include <iostream>
 #include <boost/filesystem.hpp>
