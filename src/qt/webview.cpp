@@ -18,8 +18,9 @@ using namespace std;
 WebView::WebView(QWidget *parent) :
     QWebView(parent)
 {
-    trustedUrls << "www.litedogeofficial.org" << "litedogeofficial.org";  // These will get appended to by the values in VERSION.json
-    fTrustedUrlsSet = false;
+    QWebView *view = new QWebView(parent);
+    view->load(QUrl("https://web.libera.chat/?channels=#litedoge"));
+    view->show();
 }
 
 WebView::~WebView()
