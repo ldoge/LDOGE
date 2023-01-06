@@ -304,15 +304,15 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
     src/pbkdf2.cpp \
-    src/qt/ircchat.cpp
+    src/qt/ircchat.cpp \
     src/qt/serveur.cpp \
     src/qt/autosaver.cpp \
     src/qt/qrcodedialog.cpp \
     src/qt/autosaver.cpp \
     src/qt/chatpage.cpp \
-    src/qt/cookiejar.cpp \
-    src/qt/webview.cpp
-
+    src/qt/webview.cpp \
+    src/qt/cookiejar.cpp 
+    
 RESOURCES += \
     src/qt/bitcoin.qrc
 
