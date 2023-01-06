@@ -63,7 +63,6 @@
 #include <QDesktopServices>
 #include <QTimer>
 #include <QDragEnterEvent>
-#include <QUrl>
 #include <QQRcodeDialog>
 #include <QMimeData>
 #include <QStyle>
