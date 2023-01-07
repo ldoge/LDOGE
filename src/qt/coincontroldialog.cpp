@@ -29,7 +29,7 @@ QList<qint64> CoinControlDialog::payAmounts;
 CCoinControl* CoinControlDialog::coinControl = new CCoinControl();
 
 CoinControlDialog::CoinControlDialog(QWidget *parent) :
-    QWidget(parent, DIALOGWINDOWHINTS),
+    QDialog(parent),
     ui(new Ui::CoinControlDialog),
     model(0)
 {
@@ -120,7 +120,6 @@ CoinControlDialog::CoinControlDialog(QWidget *parent) :
     ui->treeWidget->setColumnWidth(COLUMN_DATE, 90);
     ui->treeWidget->setColumnWidth(COLUMN_CONFIRMATIONS, 70);
     ui->treeWidget->setColumnWidth(COLUMN_PRIORITY, 100);
-    ui->treeWidget->setColumnWidth(COLUMN_WEIGHT, 100);    
     ui->treeWidget->setColumnHidden(COLUMN_TXHASH, true);         // store transacton hash in this column, but dont show it
     ui->treeWidget->setColumnHidden(COLUMN_VOUT_INDEX, true);     // store vout index in this column, but dont show it
     ui->treeWidget->setColumnHidden(COLUMN_AMOUNT_INT64, true);   // store amount int64_t in this column, but dont show it
