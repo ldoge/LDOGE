@@ -7,10 +7,7 @@
 #include "editaddressdialog.h"
 #include "csvmodelwriter.h"
 #include "guiutil.h"
-
-#ifdef USE_QRCODE
 #include "qrcodedialog.h"
-#endif
 
 #include <QSortFilterProxyModel>
 #include <QClipboard>
@@ -65,14 +62,12 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     QAction *copyLabelAction = new QAction(tr("Copy &Label"), this);
     QAction *copyAddressAction = new QAction(ui->copyToClipboard->text(), this);
      QAction *editAction = new QAction(tr("&Edit"), this);
-#ifdef USE_QRCODE
-    QAction *showQRCodeAction = new QAction(tr("Show &QR Code"), this);
-#endif   
+    QAction *showQRCodeAction = new QAction(tr("Show &QR Code"), this); 
     QAction *signMessageAction = new QAction(ui->signMessage->text(), this);
     QAction *verifyMessageAction = new QAction(ui->verifyMessage->text(), this);
     deleteAction = new QAction(ui->deleteButton->text(), this);
 
-    // Build context menu
+       // Build context menu
     contextMenu = new QMenu();
     contextMenu->addAction(copyAddressAction);
     contextMenu->addAction(copyLabelAction);
@@ -80,7 +75,9 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     if(tab == SendingTab)
         contextMenu->addAction(deleteAction);
     contextMenu->addSeparator();
+        
     contextMenu->addAction(showQRCodeAction);
+        
     if(tab == ReceivingTab)
         contextMenu->addAction(signMessageAction);
     else if(tab == SendingTab)
@@ -91,12 +88,9 @@ AddressBookPage::AddressBookPage(Mode mode, Tabs tab, QWidget *parent) :
     connect(copyLabelAction, SIGNAL(triggered()), this, SLOT(onCopyLabelAction()));
     connect(editAction, SIGNAL(triggered()), this, SLOT(onEditAction()));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_deleteButton_clicked())); 
-    #ifdef USE_QRCODE
     connect(showQRCodeAction, SIGNAL(triggered()), this, SLOT(on_showQRCode_clicked()));
-    #endif
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(on_signMessage_clicked()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(on_verifyMessage_clicked()));
-
     connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextualMenu(QPoint)));
 
     // Pass through accept action from button box
@@ -138,7 +132,7 @@ void AddressBookPage::setModel(AddressTableModel *model)
     // Set column widths
     ui->tableView->horizontalHeader()->resizeSection(
             AddressTableModel::Address, 320);
-    ui->tableView->horizontalHeader()->setSectionResizeMode(
+    ui->tableView->horizontalHeader()->resizeSection(
             AddressTableModel::Label, QHeaderView::Stretch);
 
     connect(ui->tableView->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
