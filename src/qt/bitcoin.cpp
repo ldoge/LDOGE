@@ -74,7 +74,7 @@
 #include <QStyle>
 #include <QWidget>
 #include <QWebView>
-#include <QWebView>
+#include <Qheaderview>
 #include <QWebFrame>
 #include <QWebHistory>
 #include <QPushButton>
