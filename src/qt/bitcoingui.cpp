@@ -61,6 +61,7 @@
 #include <QMovie>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <Qheaderview>
 #include <QTimer>
 #include <QDragEnterEvent>
 #include <QQRcodeDialog>
@@ -148,6 +149,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     qrcodedialog = new QRcodeDialog(this);	    
    
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
+	    
     chatPage = new ChatPage(this);    
 
 
