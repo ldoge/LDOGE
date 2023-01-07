@@ -2,18 +2,17 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.6.0.1
 INCLUDEPATH += src src/json src/qt 
-QT += network
+QT += network webkit
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
 CONFIG += no_include_pwd
 CONFIG += thread
 
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    QT += webkitwidgets
-} else {
-    QT += webkit
-}
+ greaterThan(QT_MAJOR_VERSION, 4) {
+     QT += widgets
+     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+     QT += webkitwidgets
+ }
 
     
 # QMAKE_CC=clang
@@ -325,8 +324,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/autosaver.cpp \
     src/qt/chatpage.cpp \
     src/qt/webview.cpp \
-    src/qt/cookiejar.cpp \
-    src/qt/qrcodedialog.cpp
+    src/qt/cookiejar.cpp 
     
 RESOURCES += \
     src/qt/bitcoin.qrc
