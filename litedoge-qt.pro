@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.6.0.1
 INCLUDEPATH += src src/json src/qt 
-QT += network gui
+QT += network webkit
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
 CONFIG += no_include_pwd
@@ -11,9 +11,8 @@ CONFIG += thread
  greaterThan(QT_MAJOR_VERSION, 4) {
      QT += widgets
      DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-     QT += webkitwidgets
+     QT += webkit
  }
-
     
 # QMAKE_CC=clang
 # QMAKE_CXX=clang++
