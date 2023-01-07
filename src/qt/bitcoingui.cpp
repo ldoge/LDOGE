@@ -1,9 +1,12 @@
 /*
- * Qt5 bitcoin GUI.
+ * Qt4 bitcoin GUI.
  *
  * W.J. van der Laan 2011-2012
  * The Bitcoin Developers 2011-2021
  */
+
+#include <QApplication>
+
 #include "bitcoingui.h"
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
@@ -64,9 +67,12 @@
 #include <Qheaderview>
 #include <QTimer>
 #include <QDragEnterEvent>
+#if QT_VERSION < 0x050000
+#include <QUrl>
+#endif
+#include <QStyle>
 #include <QQRcodeDialog>
 #include <QMimeData>
-#include <QStyle>
 #include <QWidget>
 #include <QWebView>
 #include <QWebFrame>
@@ -79,10 +85,13 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+
 extern CWallet* pwalletMain;
 extern int64 nLastCoinStakeSearchInterval;
 extern double GetPoSKernelPS();
 extern unsigned int nStakeTargetSpacing;
+extern bool fWalletUnlockMintOnly;
+extern uint64_t nStakeInputsMapSize;
 extern BitcoinGUI *guiref;
 extern Splash *stwref;
 
@@ -150,17 +159,21 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
    
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 	    
-    chatPage = new ChatPage(this);    
-
+    chatPage = new QTabWidget(this);    
+    QVBoxLayout *vbox = new QVBoxLayout();
+    chatPage = new chatPage(this);
+    vbox->addWidget(chatPage);
+    chatPage->setLayout(vbox);
 
     centralStackedWidget = new QStackedWidget(this);
     centralStackedWidget->addWidget(overviewPage);
     centralStackedWidget->addWidget(transactionsPage);
     centralStackedWidget->addWidget(addressBookPage);
     centralStackedWidget->addWidget(receiveCoinsPage);
-    centralStackedWidget->addWidget(sendCoinsPage);     
+    centralStackedWidget->addWidget(sendCoinsPage);
+    centralStackedWidget->addWidget(QRcodeDialog);  	    
     centralStackedWidget->addWidget(chatPage);
-	   
+    setCentralWidget(centralWidget);	   
 
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
@@ -247,9 +260,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     // Clicking on "Sign Message" in the receive coins page sends you to the sign message tab
     connect(receiveCoinsPage, SIGNAL(signMessage(QString)), this, SLOT(gotoSignMessageTab(QString)));
 
-    gotoOverviewPage();
-}
-
 BitcoinGUI::~BitcoinGUI()
 {
     if(trayIcon) // Hide tray icon, as deleting will let it linger until quit (on Ubuntu)
@@ -285,7 +295,7 @@ void BitcoinGUI::createActions()
     historyAction->setToolTip(tr("Browse transaction history"));
     historyAction->setCheckable(true);
     historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
-    tabGroup->addAction(chatPageAction);
+    tabGroup->addAction(historyAction);
 
 
     addressBookAction = new QAction(QIcon(":/icons/address-book"), tr("&Very Address"), this);
@@ -306,7 +316,7 @@ void BitcoinGUI::createActions()
     websiteAction = new QAction(QIcon(":/icons/reddit"),tr("&Such Reddit"), this);
     websiteAction->setToolTip((tr("LDOGE SubReddit")));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such Bridge Chat"), this);
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such IRC Chat"), this);
     chatPageAction->setToolTip((tr("Join LDOGE IRC Channel")));
     chatPageAction->setCheckable(true);
     chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
