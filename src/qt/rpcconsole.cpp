@@ -209,14 +209,24 @@ RPCConsole::RPCConsole(QWidget *parent) :
 
     // set OpenSSL version label
     ui->openSSLVersion->setText(SSLeay_version(SSLEAY_VERSION));
-    ui->berkeleyDBVersion->setText(DbEnv::version(0, 0, 0));
-
+    ui->label_bdb_version->setText(DbEnv::version(&major, &minor, &patch));
+    ui->label_boost_version->setText(BOOST_LIB_VERSION);
+    ui->label_miniupnp_version->setText("unused");
+#ifdef USE_UPNP
+#include <miniupnpc/miniupnpc.h>
+    ui->label_miniupnp_version->setText(MINIUPNPC_VERSION);
+#endif
+    ui->lable_openssl_version->setText(SSLeay_version(SSLEAY_VERSION));
+    ui->lable_qrencode_version->setText("unused");
+#ifdef USE_QRCODE
+#include <qrencode.h>
+     ui->lable_qrencode_version->setText(QRcode_APIVersionString());
+#endif
     startExecutor();
     setTrafficGraphRange(INITIAL_TRAFFIC_GRAPH_MINS);
-
+    ui->detailWidget->hide();
     clear();
 }
-
 RPCConsole::~RPCConsole()
 {
     emit stopExecutor();
