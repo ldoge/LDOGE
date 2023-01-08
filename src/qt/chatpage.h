@@ -1,7 +1,7 @@
 #ifndef CHATPAGE_H
 #define CHATPAGE_H
 
-#include <QtWebKitWidgets/QWebView>
+#include <QtWebKitWidgets>
 #include <QWidget>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
