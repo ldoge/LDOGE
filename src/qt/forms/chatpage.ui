@@ -266,9 +266,10 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>WebView</class>
+<class>QWebView</class>
    <extends>QWidget</extends>
    <header>webview.h</header>
+    <header>qwebview.cpp</header>
   </customwidget>
  </customwidgets>
  <resources/>
