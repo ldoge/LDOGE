@@ -60,6 +60,7 @@
 #include <QDateTime>
 #include <QMovie>
 #include <QTextCodec>
+#include <QtWebKitWidgets>
 #include <QLocale>
 #include <QFileDialog>
 #include <QDesktopServices>
