@@ -7,6 +7,7 @@
 #include "webview.h"
 #include "util.h"
 
+#include <QWebview>
 #include <QPushButton>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
