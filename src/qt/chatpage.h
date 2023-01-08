@@ -6,6 +6,7 @@
 #include <QNetworkReply>
 #include <QByteArray>
 #include <QTimer>
+#include <QWebView>
 
 namespace Ui {
     class ChatPage;

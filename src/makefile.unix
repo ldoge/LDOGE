@@ -1,15 +1,20 @@
-# Copyright (c) 2009-2022 Satoshi Nakamoto
-# Copyright (c) 2009 - 2022 The Litedoge developers
+# Copyright (c) 2009-2021 Bitcoin Developers
+# Copyright (c) 2015-2021 LiteDogecoin Developers
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-USE_UPNP:=0
+USE_UPNP:=1
 USE_WALLET:=1
+USE_LEVELDB:=0
+USE_IPV6:=1
+
+# CC=clang
+# CXX=clang++
 
 LINK:=$(CXX)
-ARCH:=$(system lscpu | head -n 1 | awk '{print $2}')
+ARCH:=$(shell uname -m)
 
-DEFS=-DBOOST_SPIRIT_THREADSAFE
+DEFS=-DBOOST_SPIRIT_THREADSAFE -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS
 
 DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/obj $(BOOST_INCLUDE_PATH) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH))
 LIBS = $(addprefix -L,$(BOOST_LIB_PATH) $(BDB_LIB_PATH) $(OPENSSL_LIB_PATH))
@@ -23,7 +28,7 @@ ifdef STATIC
 	endif
 endif
 
-# for boost 1.37, add -mt to the boost libraries
+# for boost 1.55, add -mt to the boost libraries
 LIBS += \
  -Wl,-B$(LMODE) \
    -l boost_system$(BOOST_LIB_SUFFIX) \
@@ -87,15 +92,25 @@ LIBS+= \
 DEBUGFLAGS=-g
 
 
-ifeq (${ARCH}, i686)
-    EXT_OPTIONS=-msse2
+ifeq ($(xCPUARCH),i686)
+    xCXXFLAGS+=-msse2
 endif
 
 
 # CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
 # adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
-xCXXFLAGS=-O2 $(EXT_OPTIONS) -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wformat-security -Wno-unused-parameter \
-    $(DEBUGFLAGS) $(DEFS) $(HARDENING) $(CXXFLAGS)
+
+xCFLAGS= -O2 -std=c++11 -pthread -D_REENTRANT -Wall -W -Wextra -Wformat -Wformat-security -Wno-unused-parameter \
+    $(DEBUGFLAGS) $(EXT_OPTIONS) $(DEFS) $(HARDENING) $(CFLAGS) $(LDHARDENING) $(LDFLAGS)
+
+    
+# If we have an ARM device, we can't use SSE2 instructions, so don't try to use them
+# xCPUARCH is passed in as a define (xCPUARCH=armv7l, xCPUARCH=armv6l)
+ifeq ($(xCPUARCH),armv7l)
+    xCXXFLAGS+= -DNOSSE
+else ifeq ($(xCPUARCH),armv6l)
+    xCXXFLAGS+= -DNOSSE
+
 
 # LDFLAGS can be specified on the make command line, so we use xLDFLAGS that only
 # adds some defaults in front. Unfortunately, LDFLAGS=... $(LDFLAGS) does not work.
@@ -134,10 +149,13 @@ OBJS= \
     obj/pbkdf2.o \
     obj/scrypt.o \
     obj/scrypt-arm.o \
+    obj/chatpage.o \
+    obj/webview.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
+    
     obj/chainparams.o
-
+    
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
     OBJS += \
@@ -151,6 +169,8 @@ ifeq (${USE_WALLET}, 1)
 endif
 
 all: litedoged
+
+litedoged:: leveldb/libleveldb.a
 
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
@@ -186,11 +206,26 @@ obj/%.o: %.cpp
 
 litedoged: $(OBJS:obj/%=obj/%)
 	$(LINK) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
+	
+TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
+
+obj-test/%.o: test/%.cpp
+	$(CXX) -c $(TESTDEFS) $(xCXXFLAGS) -MMD -MF $(@:%.o=%.d) -o $@ $<
+	@cp $(@:%.o=%.d) $(@:%.o=%.P); \
+	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
+	      -e '/^$$/ d' -e 's/$$/ :/' < $(@:%.o=%.d) >> $(@:%.o=%.P); \
+	  rm -f $(@:%.o=%.d)
+
+test_litedoge: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
+	$(CXX) $(xCXXFLAGS) -o $@ $(LIBPATHS) $^ -Wl,-B$(LMODE) -lboost_unit_test_framework $(xLDFLAGS) $(LIBS)	
 
 clean:
-	-rm -f litedoged
+	-rm -f litedoged test_litedoge
 	-rm -f obj/*.o
+	-rm -f obj/*.d
 	-rm -f obj/*.P
-	-rm -f obj/build.h
+	-rm -f obj-test/*.o
+	-rm -f obj-test/*.P
+	-rm -f src/build.h
 
 FORCE:

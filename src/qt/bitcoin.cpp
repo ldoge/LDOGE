@@ -2,30 +2,84 @@
  * W.J. van der Laan 2011-2012
  */
 #include "bitcoingui.h"
+#include "transactiontablemodel.h"
+#include "addressbookpage.h"
+#include "sendcoinsdialog.h"
+#include "signverifymessagedialog.h"
+#include "optionsdialog.h"
+#include "aboutdialog.h"
 #include "clientmodel.h"
 #include "walletmodel.h"
+#include "editaddressdialog.h"
 #include "optionsmodel.h"
-#include "guiutil.h"
+#include "transactiondescdialog.h"
+#include "addresstablemodel.h"
+#include "transactionview.h"
+#include "overviewpage.h"
+#include "bitcoinunits.h"
 #include "guiconstants.h"
-#include "init.h"
-#include "util.h"
+#include "askpassphrasedialog.h"
+#include "notificator.h"
+#include "guiutil.h"
+#include "rpcconsole.h"
 #include "wallet.h"
+#include "qrcodedialog.h"
+#include "init.h"
 #include "ui_interface.h"
+#include "ui_chatpage.h"
+#include "serveur.h"
+#include "autosaver.h"
+#include "ircchat.h"
+#include "chatpage.h"
+#include "cookiejar.h"
+#include "webview.h"
 #include "paymentserver.h"
+
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
 #endif
 
-#include <QDesktopWidget>
-#include <QStyleFactory>
 #include <QApplication>
+#if QT_VERSION < 0x050000
+#include <QMainWindow>
+#endif
+#include <QMenuBar>
+#include <QMenu>
+#include <QIcon>
+#include <QTabWidget>
+#include <QVBoxLayout>
+#include <QToolBar>
+#include <QStatusBar>
+#include <QLabel>
 #include <QMessageBox>
+#include <QProgressBar>
+#include <QStackedWidget>
+#include <QDateTime>
+#include <QMovie>
 #include <QTextCodec>
 #include <QLocale>
+#include <QFileDialog>
+#include <QDesktopServices>
 #include <QTimer>
+#include <QDragEnterEvent>
+#include <QUrl>
 #include <QTranslator>
 #include <QSplashScreen>
 #include <QLibraryInfo>
+#include <QQRcodeDialog>
+#include <QMimeData>
+#include <QStyle>
+#include <QWidget>
+#include <QWebView>
+#include <Qheaderview>
+#include <QWebFrame>
+#include <QWebHistory>
+#include <QPushButton>
+#include <QList>
+
+#include <iostream>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 #if defined(BITCOIN_NEED_QT_PLUGINS) && !defined(_BITCOIN_QT_PLUGINS_INCLUDED)
 #define _BITCOIN_QT_PLUGINS_INCLUDED

@@ -10,6 +10,7 @@
 #include <QWebView>
 #include <QWebFrame>
 #include <QWebHistory>
+#include <QStackedWidget>
 #include <QDesktopServices>
 #include <QNetworkReply>
 #include <QPushButton>

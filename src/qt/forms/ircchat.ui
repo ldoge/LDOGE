@@ -41,6 +41,7 @@
      <string/>
     </property>
     <property name="pixmap">
+     <pixmap resource="../bitcoin.qrc">:/images/horLogo</pixmap>
      <pixmap>:/images/chatLogo</pixmap>
     </property>
    </widget>
@@ -72,7 +73,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="chanServ">
        <attribute name="title">
@@ -141,7 +142,7 @@
        <string/>
       </property>
       <property name="pixmap">
-       <pixmap>:/images/horLogo</pixmap>
+       <pixmap>:/images/chatLogo</pixmap>
       </property>
      </widget>
      <widget class="QLabel" name="join">

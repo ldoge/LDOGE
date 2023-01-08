@@ -98,6 +98,7 @@ OBJS= \
     obj/pbkdf2.o \
     obj/sync.o \
     obj/scrypt.o \
+    obj/chatpage.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
     obj/chainparams.o \

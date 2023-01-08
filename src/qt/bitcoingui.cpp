@@ -3,12 +3,12 @@
  *
  * W.J. van der Laan 2011-2012
  * The Bitcoin Developers 2011-2022
+ * The Litedoge Developers 2011-2023
  */
 
 #include <QApplication>
 
 #include "bitcoingui.h"
-
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
 #include "sendcoinsdialog.h"
@@ -30,17 +30,29 @@
 #include "guiutil.h"
 #include "rpcconsole.h"
 #include "wallet.h"
+#include "qrcodedialog.h"
 #include "init.h"
 #include "ui_interface.h"
-
+#include "ui_chatpage.h"
+#include "serveur.h"
+#include "autosaver.h"
+#include "ircchat.h"
+#include "chatpage.h"
+#include "cookiejar.h"
+#include "webview.h"
 
 #ifdef Q_OS_MAC
 #include "macdockiconhandler.h"
 #endif
 
+#include <QApplication>
+#if QT_VERSION < 0x050000
+#include <QMainWindow>
+#endif
 #include <QMenuBar>
 #include <QMenu>
 #include <QIcon>
+#include <QTabWidget>
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QStatusBar>
@@ -53,17 +65,36 @@
 #include <QMovie>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <Qheaderview>
 #include <QTimer>
 #include <QDragEnterEvent>
+#if QT_VERSION < 0x050000
 #include <QUrl>
-#include <QMimeData>
+#endif
 #include <QStyle>
+#include <QQRcodeDialog>
+#include <QMimeData>
+#include <QWidget>
+#include <QWebView>
+#include <QWebFrame>
+#include <QWebHistory>
+#include <QPushButton>
+#include <QList>
+#include <QUrl>
 
 #include <iostream>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+
 
 extern CWallet* pwalletMain;
-extern int64_t nLastCoinStakeSearchInterval;
-double GetPoSKernelPS();
+extern int64 nLastCoinStakeSearchInterval;
+extern double GetPoSKernelPS();
+extern unsigned int nStakeTargetSpacing;
+extern bool fWalletUnlockMintOnly;
+extern uint64_t nStakeInputsMapSize;
+extern BitcoinGUI *guiref;
+extern Splash *stwref;
 
 BitcoinGUI::BitcoinGUI(QWidget *parent):
     QMainWindow(parent),
@@ -79,10 +110,15 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     notificator(0),
     rpcConsole(0),
     prevBlocks(0),
+    chatPage(0),
+    qrcodedialog(0),
     nWeight(0)
+	    
 {
-    resize(850+95, 400);
-    setWindowTitle(tr("LiteDoge") + " - " + tr("Wallet"));
+    resize(850+95, 550);
+	setMinimumWidth(850);
+	setMinimumHeight(550);   
+    setWindowTitle(tr("LiteDoge") + " - " + tr("Wallet"));       
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/bitcoin"));
     setWindowIcon(QIcon(":icons/bitcoin"));
@@ -120,8 +156,15 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     sendCoinsPage = new SendCoinsDialog(this);
 
+    qrcodedialog = new QRcodeDialog(this);	    
+   
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
-
+	    
+    chatPage = new QTabWidget(this);    
+    QVBoxLayout *vbox = new QVBoxLayout();
+    chatPage = new chatPage(this);
+    vbox->addWidget(chatPage);
+    chatPage->setLayout(vbox);
 
     centralStackedWidget = new QStackedWidget(this);
     centralStackedWidget->addWidget(overviewPage);
@@ -129,6 +172,9 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(addressBookPage);
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
+    centralStackedWidget->addWidget(QRcodeDialog);  	    
+    centralStackedWidget->addWidget(chatPage);
+    setCentralWidget(centralWidget);	   
 
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
@@ -215,9 +261,6 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     // Clicking on "Sign Message" in the receive coins page sends you to the sign message tab
     connect(receiveCoinsPage, SIGNAL(signMessage(QString)), this, SLOT(gotoSignMessageTab(QString)));
 
-    gotoOverviewPage();
-}
-
 BitcoinGUI::~BitcoinGUI()
 {
     if(trayIcon) // Hide tray icon, as deleting will let it linger until quit (on Ubuntu)
@@ -255,6 +298,7 @@ void BitcoinGUI::createActions()
     historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
     tabGroup->addAction(historyAction);
 
+
     addressBookAction = new QAction(QIcon(":/icons/address-book"), tr("&Very Address"), this);
     addressBookAction->setToolTip(tr("Edit the list of stored addresses and labels"));
     addressBookAction->setCheckable(true);
@@ -265,18 +309,21 @@ void BitcoinGUI::createActions()
     blockExplorerAction->setToolTip(tr("LDOGE Block Explorer"));
 
     websiteAction = new QAction(QIcon(":/icons/globe"), tr("&Wow Website"), this);
-    websiteAction->setToolTip(tr("The Official LDOGE Website"));
+    websiteAction->setToolTip(tr("LDOGE Website"));
 
-    instagramAction = new QAction(QIcon(":/icons/instagram"), tr("&Such Instagram"), this);
-    instagramAction->setToolTip(tr("LDOGE Instagram"));
+    websiteAction = new QAction(QIcon(":icons/discord"), tr("&Such Discord"), this);
+    websiteAction->setToolTip(tr("Join LDOGE Discord Channel"));
+    
+    websiteAction = new QAction(QIcon(":/icons/reddit"),tr("&Such Reddit"), this);
+    websiteAction->setToolTip((tr("LDOGE SubReddit")));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
-    chatPageAction->setToolTip((tr("Join LDOGE Discord Channel")));
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such IRC Chat"), this);
+    chatPageAction->setToolTip((tr("Join LDOGE IRC Channel")));
+    chatPageAction->setCheckable(true);
+    chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
+    tabGroup->addAction(chatPageAction);
 
-    redditPageAction = new QAction(QIcon(":/icons/reddit"),tr("&Such Reddit"), this);
-    redditPageAction->setToolTip((tr("SubReddit with LDOGE Tip Bot")));
-
-
+    
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(gotoOverviewPage()));
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -289,9 +336,9 @@ void BitcoinGUI::createActions()
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
     connect(blockExplorerAction, SIGNAL(triggered()), this, SLOT(openBlockExplorer()));
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
-    connect(instagramAction, SIGNAL(triggered()), this, SLOT(openInstagram()));
-    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
     connect(redditPageAction, SIGNAL(triggered()), this, SLOT(gotoReddit()));
+    connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
+    
 
     quitAction = new QAction(tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
@@ -349,6 +396,7 @@ void BitcoinGUI::createMenuBar()
     file->addAction(exportAction);
     file->addAction(signMessageAction);
     file->addAction(verifyMessageAction);
+    file->addAction(chatPageAction);	
     file->addSeparator();
     file->addAction(quitAction);
 
@@ -398,9 +446,9 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(addressBookAction);
     toolbar->addAction(blockExplorerAction);
     toolbar->addAction(websiteAction);
-    toolbar->addAction(instagramAction);
-    toolbar->addAction(chatPageAction);
     toolbar->addAction(redditPageAction);
+    toolbar->addAction(chatPageAction);
+    
 
     toolbar->addWidget(makeToolBarSpacer());
 
@@ -458,7 +506,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
         rpcConsole->setClientModel(clientModel);
         addressBookPage->setOptionsModel(clientModel->getOptionsModel());
         receiveCoinsPage->setOptionsModel(clientModel->getOptionsModel());
-
+           
     }
 }
 
@@ -477,6 +525,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
+        chatPage->setModel(walletModel);
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
@@ -520,6 +569,9 @@ void BitcoinGUI::createTrayIcon()
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(optionsAction);
     trayIconMenu->addAction(openRPCConsoleAction);
+    rayIconMenu->addSeparator();
+    trayIconMenu->addAction(optionsAction);
+    trayIconMenu->addAction(openChatPage);	
 #ifndef Q_OS_MAC // This is built-in on Mac
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
@@ -837,6 +889,16 @@ void BitcoinGUI::gotoSendCoinsPage()
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }
 
+void BitcoinGUI::gotoQrcodeDialog()
+{
+    QrcodeDialogAction->setChecked(true);
+    centralStackedWidget->setCurrentWidget(QrcodeDialogPage);
+
+    exportAction->setEnabled(false);
+    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+}
+
+
 void BitcoinGUI::openBlockExplorer()
 {
     QDesktopServices::openUrl(QUrl("http://blocks.litedogeofficial.org/"));
@@ -844,22 +906,30 @@ void BitcoinGUI::openBlockExplorer()
 
 void BitcoinGUI::openWebsite()
 {
-    QDesktopServices::openUrl(QUrl("https://litedogeofficial.wordpress.com/"));
+    QDesktopServices::openUrl(QUrl("https://litedogeofficial.org/"));
 }
 
-void BitcoinGUI::openInstagram()
+void BitcoinGUI::openDiscord()
 {
-    QDesktopServices::openUrl(QUrl("https://www.instagram.com/litedoge_ldoge"));
+    QDesktopServices::openUrl(QUrl("https://discord.gg/dVWy7MqE2J"));
+
+}
+
+void BitcoinGUI::openReddit()
+{
+    QDesktopServices::openUrl(QUrl("https://www.reddit.com/r/litedoge/"));
+
 }
 
 void BitcoinGUI::gotoChatPage()
 {
-    QDesktopServices::openUrl(QUrl("http://discord.litedogeofficial.org/"));
-}
+    chatPageAction->setChecked(true);
+    centralStackedWidget->setCurrentWidget(ChatPage);
 
-void BitcoinGUI::gotoReddit()
-{
-    QDesktopServices::openUrl(QUrl("http://reddit.litedogeofficial.org/"));
+    exportAction->setEnabled(true);
+    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+    connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
+    QDesktopServices::openUrl(QUrl("https://web.libera.chat/?channels=#litedoge"));	
 }
 
 void BitcoinGUI::gotoSignMessageTab(QString addr)

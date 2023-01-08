@@ -90,6 +90,7 @@ OBJS= \
     obj/txmempool.o \
     obj/util.o \
     obj/hash.o \
+    obj/chatpage.o \
     obj/noui.o \
     obj/pbkdf2.o \
     obj/kernel.o \
