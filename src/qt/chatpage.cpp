@@ -1,6 +1,6 @@
 #include "chatpage.h"
 #include "ui_chatpage.h"
-#include <QtWebKitWidgets/QWebView>
+#include <QWebView.h>
 #include "clientmodel.h"
 #include "walletmodel.h"
 #include "guiutil.h"
