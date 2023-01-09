@@ -283,6 +283,9 @@ void BitcoinGUI::createActions()
     chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(chatPageAction);
 
+    discordPageAction = new QAction(QIcon(":/icons/discord"),tr("&Such Discord"), this);
+    discordPageAction->setToolTip((tr("Join LiteDoge Discord Channel")));
+
     redditPageAction = new QAction(QIcon(":/icons/reddit"),tr("&Such Reddit"), this);
     redditPageAction->setToolTip((tr("SubReddit with LDOGE Tip Bot")));
 
@@ -301,6 +304,7 @@ void BitcoinGUI::createActions()
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
     connect(instagramAction, SIGNAL(triggered()), this, SLOT(openInstagram()));
     connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
+    connect(discordPageAction, SIGNAL(triggered()), this, SLOT(gotoDiscord()));
     connect(redditPageAction, SIGNAL(triggered()), this, SLOT(gotoReddit()));
 
     quitAction = new QAction(tr("E&xit"), this);
@@ -410,6 +414,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(websiteAction);
     toolbar->addAction(instagramAction);
     toolbar->addAction(chatPageAction);
+    toolbar->addAction(discordPageAction);
     toolbar->addAction(redditPageAction);
 
     toolbar->addWidget(makeToolBarSpacer());
@@ -873,6 +878,12 @@ void BitcoinGUI::gotoChatPage()
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
     connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
 }
+
+void BitcoinGUI::gotoDiscord()
+{
+    QDesktopServices::openUrl(QUrl("http://discord.litedogeofficial.org/"));
+}
+
 
 void BitcoinGUI::gotoReddit()
 {

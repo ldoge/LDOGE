@@ -103,6 +103,7 @@ private:
     QAction *websiteAction;
     QAction *instagramAction;
     QAction *chatPageAction;
+    QAction *discordPageAction;
     QAction *redditPageAction;
 
     QSystemTrayIcon *trayIcon;
@@ -171,6 +172,7 @@ private slots:
     void openInstagram();
     /** Switch to IRC Chat Page */
     void gotoChatPage();
+    void gotoDiscord();
     void gotoReddit();
 
     /** Show Sign/Verify Message dialog and switch to sign message tab */

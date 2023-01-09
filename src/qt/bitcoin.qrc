@@ -65,7 +65,7 @@
         <file>res/icons/litedogecoin-48.png</file>
         <file>res/icons/bitcoin_testnet.png</file>
         <file>res/icons/bitcoin.icns</file>
-        <file>res/icons/discordLOGO.png</file>
+        <file alias="discord">res/icons/discord.png</file>
     </qresource>
     <qresource prefix="/icons/black">
         <file alias="connect_0">res/icons/black/connect0_16.png</file>
@@ -134,4 +134,5 @@
         <file alias="zh_CN">locale/bitcoin_zh_CN.ts</file>
         <file alias="zh_TW">locale/bitcoin_zh_TW.ts</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>
