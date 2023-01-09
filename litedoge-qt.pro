@@ -313,7 +313,6 @@ FORMS += \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
     src/qt/forms/chatpage.ui \
-    src/qt/forms/ircchat.ui \
     src/qt/forms/chatpage.ui
 
 contains(USE_QRCODE, 1) {
