@@ -11,6 +11,8 @@ CONFIG += thread
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+    QT += webkitwidgets
+
 }
 
 # for boost 1.37, add -mt to the boost libraries
@@ -69,6 +71,7 @@ contains(BITCOIN_NEED_QT_PLUGINS, 1) {
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 SOURCES += src/txdb-leveldb.cpp
+
 !win32 {
     # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
     genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
@@ -205,7 +208,11 @@ HEADERS += src/qt/bitcoingui.h \
     src/clientversion.h \
     src/threadsafety.h \
     src/tinyformat.h \
-    src/qt/autosaver.h
+    src/qt/autosaver.h \
+    src/qt/chatpage.h \
+    src/qt/cookiejar.h \
+    src/qt/webview.h
+
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -284,7 +291,10 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
     src/pbkdf2.cpp \
-    src/qt/autosaver.cpp
+    src/qt/autosaver.cpp \
+    src/qt/chatpage.cpp \
+    src/qt/cookiejar.cpp \
+    src/qt/webview.cpp
 
 RESOURCES += \
     src/qt/bitcoin.qrc
@@ -301,7 +311,10 @@ FORMS += \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
-    src/qt/forms/optionsdialog.ui
+    src/qt/forms/optionsdialog.ui \
+    src/qt/forms/chatpage.ui \
+    src/qt/forms/ircchat.ui \
+    src/qt/forms/chatpage.ui
 
 contains(USE_QRCODE, 1) {
     HEADERS += src/qt/qrcodedialog.h

@@ -16,6 +16,8 @@ class SendCoinsDialog;
 class SignVerifyMessageDialog;
 class Notificator;
 class RPCConsole;
+class ChatPage;
+
 
 
 QT_BEGIN_NAMESPACE
@@ -67,6 +69,8 @@ private:
     AddressBookPage *receiveCoinsPage;
     SendCoinsDialog *sendCoinsPage;
     SignVerifyMessageDialog *signVerifyMessageDialog;
+    ChatPage *chatPage;
+
 
     QLabel *labelEncryptionIcon;
     QLabel *labelStakingIcon;

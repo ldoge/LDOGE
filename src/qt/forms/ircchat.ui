@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>762</width>
-    <height>550</height>
+    <width>1315</width>
+    <height>790</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -113,9 +113,48 @@
        <rect>
         <x>550</x>
         <y>30</y>
-        <width>150</width>
-        <height>441</height>
+        <width>200</width>
+        <height>600</height>
        </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>3</horstretch>
+        <verstretch>3</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>600</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QListView:layout fixed; width: 500px; height: 500px;</string>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustIgnored</enum>
+      </property>
+      <property name="movement">
+       <enum>QListView::Static</enum>
+      </property>
+      <property name="isWrapping" stdset="0">
+       <bool>true</bool>
+      </property>
+      <property name="resizeMode">
+       <enum>QListView::Fixed</enum>
       </property>
      </widget>
     </widget>

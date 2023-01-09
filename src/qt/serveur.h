@@ -14,8 +14,8 @@
 * License along with this program; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA*/
 
-#ifndef SERVEUR_H
-#define SERVEUR_H
+#ifndef SERVER_H
+#define SERVER_H
 
 #include <QWidget>
 #include <QListView>
@@ -24,12 +24,12 @@
 #include <QtNetwork>
 #include <QSystemTrayIcon>
 
-class Serveur : public QTcpSocket
+class Server : public QTcpSocket
 {
 	Q_OBJECT
 
 	public:
-        Serveur();
+        Server();
 		QTextEdit *affichage;
         QListView *userList;
 		QString pseudo,serveur,msgQuit;
@@ -51,7 +51,7 @@ class Serveur : public QTcpSocket
         void tabJoined();
 
 	public slots:
-		void readServeur();
+                void readServer();
 		void errorSocket(QAbstractSocket::SocketError);
         void connected();
         void joins();
@@ -64,4 +64,4 @@ class Serveur : public QTcpSocket
 		//void tabChanged(int index);
 };
 
-#endif // SERVEUR_H
+#endif // SERVER_H
