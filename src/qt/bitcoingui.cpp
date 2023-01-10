@@ -32,6 +32,10 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
+#include "ui_chatpage.h"
+#include "chatpage.h"
+#include "cookiejar.h"
+#include "webview.h"
 
 
 #ifdef Q_OS_MAC
@@ -122,6 +126,8 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 
+    chatPage = new ChatPage(this);
+
 
     centralStackedWidget = new QStackedWidget(this);
     centralStackedWidget->addWidget(overviewPage);
@@ -129,6 +135,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(addressBookPage);
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
+    centralStackedWidget->addWidget(chatPage);
 
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
@@ -270,8 +277,14 @@ void BitcoinGUI::createActions()
     instagramAction = new QAction(QIcon(":/icons/instagram"), tr("&Such Instagram"), this);
     instagramAction->setToolTip(tr("LDOGE Instagram"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Such LDOGE Chat"), this);
-    chatPageAction->setToolTip((tr("Join LDOGE Discord Channel")));
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("Wow LDOGE IRC"), this);
+    chatPageAction->setToolTip((tr("Join LiteDoge IRC Channel")));
+    chatPageAction->setCheckable(true);
+    chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
+    tabGroup->addAction(chatPageAction);
+
+    discordPageAction = new QAction(QIcon(":/icons/discord"),tr("&Such Discord"), this);
+    discordPageAction->setToolTip((tr("Join LiteDoge Discord Channel")));
 
     redditPageAction = new QAction(QIcon(":/icons/reddit"),tr("&Such Reddit"), this);
     redditPageAction->setToolTip((tr("SubReddit with LDOGE Tip Bot")));
@@ -291,6 +304,7 @@ void BitcoinGUI::createActions()
     connect(websiteAction, SIGNAL(triggered()), this, SLOT(openWebsite()));
     connect(instagramAction, SIGNAL(triggered()), this, SLOT(openInstagram()));
     connect(chatPageAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
+    connect(discordPageAction, SIGNAL(triggered()), this, SLOT(gotoDiscord()));
     connect(redditPageAction, SIGNAL(triggered()), this, SLOT(gotoReddit()));
 
     quitAction = new QAction(tr("E&xit"), this);
@@ -400,6 +414,7 @@ void BitcoinGUI::createToolBars()
     toolbar->addAction(websiteAction);
     toolbar->addAction(instagramAction);
     toolbar->addAction(chatPageAction);
+    toolbar->addAction(discordPageAction);
     toolbar->addAction(redditPageAction);
 
     toolbar->addWidget(makeToolBarSpacer());
@@ -477,6 +492,8 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
         receiveCoinsPage->setModel(walletModel->getAddressTableModel());
         sendCoinsPage->setModel(walletModel);
         signVerifyMessageDialog->setModel(walletModel);
+        chatPage->setModel(walletModel);
+
 
         setEncryptionStatus(walletModel->getEncryptionStatus());
         connect(walletModel, SIGNAL(encryptionStatusChanged(int)), this, SLOT(setEncryptionStatus(int)));
@@ -854,8 +871,19 @@ void BitcoinGUI::openInstagram()
 
 void BitcoinGUI::gotoChatPage()
 {
+    chatPageAction->setChecked(true);
+    centralStackedWidget->setCurrentWidget(chatPage);
+
+    exportAction->setEnabled(false);
+    disconnect(exportAction, SIGNAL(triggered()), 0, 0);
+    connect(exportAction, SIGNAL(triggered()), chatPage, SLOT(exportClicked()));
+}
+
+void BitcoinGUI::gotoDiscord()
+{
     QDesktopServices::openUrl(QUrl("http://discord.litedogeofficial.org/"));
 }
+
 
 void BitcoinGUI::gotoReddit()
 {

@@ -14,12 +14,12 @@
 * License along with this program; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA*/
 #include <QScrollBar>
-#include "serveur.h"
+#include "server.h"
         QStringList users;
         bool delist = true;
-Serveur::Serveur()
+server::server()
 {
-	connect(this, SIGNAL(readyRead()), this, SLOT(readServeur()));
+        connect(this, SIGNAL(readyRead()), this, SLOT(readserver()));
 	connect(this, SIGNAL(connected()), this, SLOT(connected()));
     connect(this, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorSocket(QAbstractSocket::SocketError)));
 
@@ -29,7 +29,7 @@ Serveur::Serveur()
 
 
 
-void Serveur::errorSocket(QAbstractSocket::SocketError error)
+void server::errorSocket(QAbstractSocket::SocketError error)
 {
 	switch(error)
 	{
@@ -47,22 +47,22 @@ void Serveur::errorSocket(QAbstractSocket::SocketError error)
 	}
 }
 
-void Serveur::connected()
+void server::connected()
 {
     affichage->append("Connecting...");
 
-    sendData("USER "+pseudo+" localhost "+serveur+" :"+pseudo);
+    sendData("USER "+pseudo+" localhost "+server+" :"+pseudo);
     sendData("NICK "+pseudo);
     affichage->append("Connected to irc.freenode.net");
 
 }
 
-void Serveur::joins()
+void server::joins()
 {
     join("#litedoge");
 }
 
-void Serveur::readServeur()
+void server::readserver()
 {
         QString message=QString::fromUtf8(this->readAll());
 
@@ -139,7 +139,7 @@ void Serveur::readServeur()
                     QRegExp reg(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ NOTICE [a-zA-Z0-9]+ :(.+)");
                     ecrire(msg.replace(reg,"<b>[NOTICE] <i>\\1</i> : \\2 <br />"),currentChan);
                 }
-                else if(currentChan==serveur)
+                else if(currentChan==server)
                 {
                     QRegExp reg(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ NOTICE [a-zA-Z0-9]+ :(.+)");
                     ecrire(msg.replace(reg,"<b>[NOTICE] <i>\\1</i> : \\2 <br />"));
@@ -159,7 +159,7 @@ void Serveur::readServeur()
         //}
 }
 
-void Serveur::sendData(QString txt)
+void server::sendData(QString txt)
 {
 	if(this->state()==QAbstractSocket::ConnectedState)
     {
@@ -167,7 +167,7 @@ void Serveur::sendData(QString txt)
 	}
 }
 
-QString Serveur::parseCommande(QString comm,bool serveur)
+QString server::parseCommande(QString comm,bool server)
 {
     if(comm.startsWith("/"))
     {
@@ -252,7 +252,7 @@ QString Serveur::parseCommande(QString comm,bool serveur)
         else
             return pref+" "+msg;
     }
-    else if(!serveur)
+    else if(!server)
 	{
         QString destChan=tab->tabText(tab->currentIndex());
                 if(comm.endsWith("<br />"))
@@ -271,13 +271,13 @@ QString Serveur::parseCommande(QString comm,bool serveur)
 	}
 }
 
-void Serveur::join(QString chan)
+void server::join(QString chan)
 {
     affichage->append("Joining "+ chan +" channel");
 	emit joinTab();
 	QTextEdit *textEdit=new QTextEdit;
 	int index=tab->insertTab(tab->currentIndex()+1,textEdit,chan);
-	tab->setTabToolTip(index,serveur);
+        tab->setTabToolTip(index,server);
 	tab->setCurrentIndex(index);
 
 	textEdit->setReadOnly(true);
@@ -288,12 +288,12 @@ void Serveur::join(QString chan)
 
 	emit tabJoined();
 }
-void Serveur::leave(QString chan)
+void server::leave(QString chan)
 {
     sendData(parseCommande("/part "+chan+ " "+msgQuit));
 }
 
-void Serveur::ecrire(QString txt,QString destChan,QString msgTray)
+void server::ecrire(QString txt,QString destChan,QString msgTray)
 {
 	if(destChan!="")
         {
@@ -321,11 +321,11 @@ void Serveur::ecrire(QString txt,QString destChan,QString msgTray)
 
 }
 
-void Serveur::updateUsersList(QString chan,QString message)
+void server::updateUsersList(QString chan,QString message)
 {
     message = message.replace("\r\n","");
     message = message.replace("\r","");
-    if(chan!=serveur)
+    if(chan!=server)
     {
     if(updateUsers==true || message != "")
     {

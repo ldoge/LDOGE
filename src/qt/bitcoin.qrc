@@ -59,18 +59,13 @@
         <file>res/icons/litedogecoin-192.png</file>
         <file>res/icons/litedogecoin-256.png</file>
         <file>res/icons/litedogecoin-512.png</file>
-        <file>res/icons/twitter.png</file>
         <file>res/icons/toolbar.png</file>
-        <file>res/icons/telegram.png</file>
         <file>res/icons/notsynced.png</file>
         <file>res/icons/litedogecoin.ico</file>
         <file>res/icons/litedogecoin-48.png</file>
-        <file>res/icons/discord.png</file>
-        <file>res/icons/crypto-city.png</file>
         <file>res/icons/bitcoin_testnet.png</file>
         <file>res/icons/bitcoin.icns</file>
-        <file>res/icons/LD_Coin_Star_Master.png</file>
-        <file>res/icons/IRC.png</file>
+        <file alias="discord">res/icons/discord.png</file>
     </qresource>
     <qresource prefix="/icons/black">
         <file alias="connect_0">res/icons/black/connect0_16.png</file>
@@ -139,4 +134,5 @@
         <file alias="zh_CN">locale/bitcoin_zh_CN.ts</file>
         <file alias="zh_TW">locale/bitcoin_zh_TW.ts</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

@@ -2,16 +2,20 @@
 <ui version="4.0">
  <class>ChatPage</class>
  <widget class="QWidget" name="ChatPage">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1024</width>
-    <height>768</height>
-   </rect>
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -19,7 +23,7 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -52,8 +56,8 @@
        <height>0</height>
       </size>
      </property>
-     <property name="styleSheet">
-      <string notr="true">background: rgb(204, 204, 204)</string>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
      </property>
      <property name="url" stdset="0">
       <url>
@@ -67,6 +71,7 @@
  <customwidgets>
   <customwidget>
    <class>WebView</class>
+   <extends></extends>
    <header>webview.h</header>
   </customwidget>
  </customwidgets>

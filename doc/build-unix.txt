@@ -67,6 +67,7 @@ sudo apt-get install libssl-dev
 sudo apt-get install libdb++-dev
 sudo apt-get install libboost-all-dev
 sudo apt-get install libqrencode-dev
+sudo apt-get install libqt5webkit5-dev
 
 If using Boost 1.55, append -mt to the boost libraries in the makefile.
 
@@ -86,6 +87,9 @@ Notes
 -----
 The release is built with GCC and then "strip litedoged" to strip the debug
 symbols, which reduces the executable size by about 90%.
+
+
+
 
 miniupnpc
 ---------
