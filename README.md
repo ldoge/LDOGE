@@ -2,7 +2,6 @@
 ![8b55011e9d71b1e9da2ebfb528d43268](https://github.com/ldoge/LDOGE/blob/master/src/qt/res/icons/litedogecoin-128.png) 
  LDOGE Information
    |  Ticker: LDOGE         |  PoW/PoS        | Algorithm:Scrypt |      Nodes        |     Ports            |
-   :-----------------------:|:---------------:|:----------------:|:-----------------:|:---------------------:# 
    | Genesis Block:         | 3/16/2015       | 08:15:00 (PM UTC)|  50.83.9.153      |       Mainnet        |
    |                        |                 |                  |  46.223.163.18    |    P2P Port: 17014   |
    | Proof of Stake Type    | 2.0             |                  |  67.173.133.238   |    RPC Port: 17015   |
