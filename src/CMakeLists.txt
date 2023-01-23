@@ -91,7 +91,13 @@ set(generic_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/version.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/wallet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/walletdb.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/pbkdf2.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/autosaver.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/chatpage.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/walletdb.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/webview.cpp
 )
+
 
 list(APPEND ALL_SOURCES ${generic_sources})
 list(APPEND ALL_LIBRARIES ${Boost_LIBRARIES} ixwebsocket OpenSSL::Crypto)
@@ -158,12 +164,12 @@ execute_process (
 )
 list(APPEND ALL_DEFINITIONS HAVE_BUILD_INFO)
 
-add_executable(novacoind ${ALL_SOURCES})
-target_include_directories(novacoind PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/json ${BerkeleyDB_INC} ${CMAKE_CURRENT_SOURCE_DIR}/additional/sse2neon ${CMAKE_CURRENT_SOURCE_DIR}/additional/leveldb/helpers ${Boost_INCLUDE_DIRS})
-target_link_libraries(novacoind ${ALL_LIBRARIES})
+add_executable(litedoged ${ALL_SOURCES})
+target_include_directories(litedoged PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/json ${BerkeleyDB_INC} ${CMAKE_CURRENT_SOURCE_DIR}/additional/sse2neon ${CMAKE_CURRENT_SOURCE_DIR}/additional/leveldb/helpers ${Boost_INCLUDE_DIRS})
+target_link_libraries(litedoged ${ALL_LIBRARIES})
 
-target_compile_features(novacoind PUBLIC cxx_std_17)
-set_property(TARGET novacoind PROPERTY CXX_STANDARD 17)
-set_property(TARGET novacoind PROPERTY CXX_STANDARD_REQUIRED TRUE)
-set_property(TARGET novacoind PROPERTY COMPILE_DEFINITIONS ${ALL_DEFINITIONS})
-set_property(TARGET novacoind PROPERTY CMAKE_WARN_DEPRECATED FALSE)
+target_compile_features(litedoged PUBLIC cxx_std_17)
+set_property(TARGET litedoged PROPERTY CXX_STANDARD 17)
+set_property(TARGET litedoged PROPERTY CXX_STANDARD_REQUIRED TRUE)
+set_property(TARGET litedoged PROPERTY COMPILE_DEFINITIONS ${ALL_DEFINITIONS})
+set_property(TARGET litedoged PROPERTY CMAKE_WARN_DEPRECATED FALSE)
