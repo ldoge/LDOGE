@@ -47,7 +47,7 @@ Block Explorers
 
 Faucets
 ====================
-https://btcpop.co/faucet/LDOGE" align="center
+(https://btcpop.co/faucet/LDOGE)
 
 Social Media
 ====================
