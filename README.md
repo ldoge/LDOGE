@@ -1,19 +1,34 @@
 # LITEDOGE- LDOG | CORE Wallet Version 3.6.0.1 
 ![8b55011e9d71b1e9da2ebfb528d43268](https://github.com/ldoge/LDOGE/blob/master/src/qt/res/icons/litedogecoin-128.png) 
-**
- Ticker: FIRE           | PoW/PoS         | Algorithm:X15    |     Nodes         |     Ports
+LDOGE Information
+====================
+
+ Ticker: LDOGE          | PoW/PoS         | Algorithm:X15    |     Nodes         |     Ports
 :----------------------:|:---------------:|:----------------:|:-----------------:|:-------------:
- Genesis Block:         | 2014-06-28      | 03:53:29         |   50.83.9.153     |     49698 
- Max POW:               | 97,496  FIRE    | -                |   24.85.114.101   |     49697
- Last PoW Block:        | 2014-07-01      | 01:35:53         |   162.220.166.125 |
- PoS Starts on Block:   | 4,000           | > 4 Days         |   78.46.92.72     |
- First PoS Block:       | 2014-07-01      | 01:37:03         |   91.192.218.148  |
- PoS Annual Interest:   | 1%              | -                |    104.236.167.70 |
- PoS Minimum Stake Age: | 1 Hours         | 15 Blocks        |   188.113.205.212 |
- Total:                 | 150,000 FIRE    | Years            |   188.134.72.213  |
-                        |                 |                  |   37.110.214.68   |**
+ Genesis Block:         | 2014-06-28      | 03:53:29         |   108.95.86.140   |     MAINNET 
+ Max POW:               | 97,496  FIRE    | -                |  122.173.26.30    |     PORT 17014
+ Last PoW Block:        | 2014-07-01      | 01:35:53         |   185.220.100.246 |     RCP  17015
+ PoS Starts on Block:   | 8000            |                  |   154.57.7.131    |
+ First PoS Block:       | 2014-07-01      | 01:37:03         |  174.84.66.125    |
+ PoS Annual Interest:   | 1%              | -                |  189.161.146.213  |
+ PoS Minimum Stake Age: | 8 Hours         | 15 Blocks        |   176.137.227.2   |
+ TOTAL SUPPLY           | NO CAP          |                  |  24.18.45.238     |
+
                         
                      
+                     
+                     
+                     108.95.86.140
+addnode=122.173.26.30
+addnode=128.69.57.22
+addnode=154.57.7.131
+addnode=174.84.66.125
+addnode=176.137.227.2
+addnode=185.220.100.246
+addnode=185.236.200.24
+addnode=189.161.146.213
+addnode=24.18.45.238
+addnode=46.223.163.18
 # Punch list of development in the works 
 
 Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electrum Wallet, make buildable on all systems
