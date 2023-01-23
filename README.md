@@ -41,13 +41,13 @@ Forums
 
 Block Explorers
 ====================
-# (https://chainz.cryptoid.info/ldoge/)
-# [Same IP] (http://blocks.litedogeofficial.org)
+# https://chainz.cryptoid.info/ldoge/
+# Same IP http://blocks.litedogeofficial.org
 
 
 Faucets
 ====================
-(https://btcpop.co/faucet/LDOGE)
+# https://btcpop.co/faucet/LDOGE
 
 Social Media
 ====================
