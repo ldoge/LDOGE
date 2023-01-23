@@ -1,6 +1,6 @@
 # LITEDOGE- LDOG | CORE Wallet Version 3.6.0.1 
 ![8b55011e9d71b1e9da2ebfb528d43268](https://github.com/ldoge/LDOGE/blob/master/src/qt/res/icons/litedogecoin-128.png) 
-
+**
  Ticker: FIRE           | PoW/PoS         | Algorithm:X15    |     Nodes         |     Ports
 :----------------------:|:---------------:|:----------------:|:-----------------:|:-------------:
  Genesis Block:         | 2014-06-28      | 03:53:29         |   50.83.9.153     |     49698 
@@ -11,7 +11,7 @@
  PoS Annual Interest:   | 1%              | -                |    104.236.167.70 |
  PoS Minimum Stake Age: | 1 Hours         | 15 Blocks        |   188.113.205.212 |
  Total:                 | 150,000 FIRE    | Years            |   188.134.72.213  |
-                        |                 |                  |   37.110.214.68   |
+                        |                 |                  |   37.110.214.68   |**
                         
                      
 # Punch list of development in the works 
