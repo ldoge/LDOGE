@@ -7,16 +7,15 @@ LDOGE Information
 :----------------------:|:---------------:|:----------------:|:-----------------:|:-------------:
  Genesis Block:         | 3/15/2015       | 08:15:00 PM UTC  |  108.95.86.140    |     MAINNET 
  Max POS REWARDS:       | 500 COINS       | -                |  122.173.26.30    |     PORT 17014
- Last PoW Block:8000    | 3/19/2015       | 9:10:56 PM UTC   |  46.223.163.18    |     RCP  17015
- PoS Starts on Block:   | 8001            | -                |  154.57.7.131     |- 
- First PoS Block:       | 2014-07-01      | 01:37:03         |  174.84.66.125    |-    
+ Last PoW Block:8000    | 3/19/2015       |  9:08:33 PM UTC  |  46.223.163.18    |     RCP  17015
+ First PoS Block:8001   | 3/19/2015       | 9:10:56  PM UTC  |  174.84.66.125    |-    
  PoS Annual Interest:   | 1%              | -                |  189.161.146.213  |     TESTNET
  PoS type:              | 2.0             | -                |  88.78.111.11     |     PORT
- PoS Minimum Stake Age: | 8 Hours         | 15 Blocks        |  176.137.227.2    |     RCP
+ PoS Minimum Stake Age: | 8 Hours         |                  |  176.137.227.2    |     RCP
  TOTAL SUPPLY           | NO CAP          | -                |  24.18.45.238     |-
  Maturity:              |501 blocks       | -                |  89.41.26.58      | - 
 
-         
+         3/16/2015, 1:18:49 PM (
 # Punch list of development in the works 
 
 Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electrum Wallet, make buildable on all systems
