@@ -6,7 +6,7 @@ LDOGE Information
  Ticker: LDOGE          | PoW/PoS         | Algorithm:SCRYPT    |     Nodes         |     Ports
 :----------------------:|:---------------:|:----------------:|:-----------------:|:-------------:
  Genesis Block:         | 3/15/2015       | 08:15:00 PM UTC  |  108.95.86.140    |     MAINNET 
- Max POS REWARDS:       | 500 COINS       | -                |  122.173.26.30    |     PORT 17014
+ Max POS REWARDS:       | 500.1 COINS     | -                |  122.173.26.30    |     PORT 17014
  Last PoW Block:8000    | 3/19/2015       |  9:08:33 PM UTC  |  46.223.163.18    |     RCP  17015
  First PoS Block:8001   | 3/19/2015       | 9:10:56  PM UTC  |  174.84.66.125    |-    
  PoS Annual Interest:   | 1%              | -                |  189.161.146.213  |     TESTNET
