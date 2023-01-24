@@ -36,7 +36,7 @@ Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electr
 
 Forums
 ====================
-# [Visit our BitCoinTalk Forum](https://bitcointalk.org/index.php?topic=1308769.0)
+# [Visit our BitCoinTalk Forum] https://bitcointalk.org/index.php?topic=1308769.0
 
 Block Explorers
 ====================
@@ -51,7 +51,7 @@ Faucets
 
 Social Media
 ====================
-# [Visit our Twitter page](https://twitter.com/litedoge2018)
+# [Visit our Twitter page] https://twitter.com/litedoge2018
 
 License
 ====================
