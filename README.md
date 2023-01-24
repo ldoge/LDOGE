@@ -48,6 +48,7 @@ Block Explorers
 Faucets
 ====================
 # https://btcpop.co/faucet/LDOGE
+# https://bill48105.github.io/wallet/ -wallet/tip bot/faucet/2fa
 
 Social Media
 ====================
