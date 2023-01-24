@@ -15,7 +15,7 @@ LDOGE Information
  TOTAL SUPPLY           | NO CAP          | -                |  24.18.45.238     |-
  Maturity:              |501 blocks       | -                |  89.41.26.58      | - 
 
-         3/16/2015, 1:18:49 PM (
+        
 # Punch list of development in the works 
 
 Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electrum Wallet, make buildable on all systems
