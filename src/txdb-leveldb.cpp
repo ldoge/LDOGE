@@ -1,6 +1,5 @@
-// Copyright (c) 2009-2023 Satoshi Nakamoto
-// Copyright (c) 2009-2023 The Bitcoin developers
-// Copyright (c) 2009-2023 The Litedoge developers
+// Copyright (c) 2009-2022 Satoshi Nakamoto
+// Copyright (c) 2009-2022 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file license.txt or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,7 +13,7 @@
 #include <leveldb/cache.h>
 #include <leveldb/filter_policy.h>
 #include <leveldb/db.h>
-#include "ui_interface.h"
+
 #include "kernel.h"
 #include "checkpoints.h"
 #include "txdb.h"
@@ -382,18 +381,16 @@ bool CTxDB::LoadBlockIndex()
             return error("LoadBlockIndex() : CheckIndex failed at %d", pindexNew->nHeight);
         }
 
-        // NovaCoin: build setStakeSeen
+        // LiteDogecoin: build setStakeSeen
         if (pindexNew->IsProofOfStake())
             setStakeSeen.insert(make_pair(pindexNew->prevoutStake, pindexNew->nStakeTime));
 
         iterator->Next();
     }
     delete iterator;
-    
-    // if (fRequestShutdown)
-    //    return true;
+
     boost::this_thread::interruption_point();
-    uiInterface.InitMessage("Reorganizing blockchain");
+
     // Calculate nChainTrust
     vector<pair<int, CBlockIndex*> > vSortedByHeight;
     vSortedByHeight.reserve(mapBlockIndex.size());
@@ -402,21 +399,13 @@ bool CTxDB::LoadBlockIndex()
         CBlockIndex* pindex = item.second;
         vSortedByHeight.push_back(make_pair(pindex->nHeight, pindex));
     }
-    uiInterface.InitMessage("Still Reorganizing");
     sort(vSortedByHeight.begin(), vSortedByHeight.end());
-    uiInterface.InitMessage("Reorganizing almost complete");
     BOOST_FOREACH(const PAIRTYPE(int, CBlockIndex*)& item, vSortedByHeight)
     {
         CBlockIndex* pindex = item.second;
         pindex->nChainTrust = (pindex->pprev ? pindex->pprev->nChainTrust : 0) + pindex->GetBlockTrust();
-    // NovaCoin: calculate stake modifier checksum
-        pindex->nStakeModifierChecksum = GetStakeModifierChecksum(pindex);
-        if (!CheckStakeModifierCheckpoints(pindex->nHeight, pindex->nStakeModifierChecksum))
-            return error("CTxDB::LoadBlockIndex() : Failed stake modifier checkpoint height=%d, modifier=0x%016" PRIx64, pindex->nHeight, pindex->nStakeModifier);
     }
-    
-    uiInterface.InitMessage("Reorganizing completed. Looking for highest block index");
-    Sleep(2000);
+
     // Load hashBestChain pointer to end of best chain
     if (!ReadHashBestChain(hashBestChain))
     {
@@ -433,17 +422,12 @@ bool CTxDB::LoadBlockIndex()
     LogPrintf("LoadBlockIndex(): hashBestChain=%s  height=%d  trust=%s  date=%s\n",
       hashBestChain.ToString(), nBestHeight, CBigNum(nBestChainTrust).ToString(),
       DateTimeStrFormat("%x %H:%M:%S", pindexBest->GetBlockTime()));
-    
-    LogPrintf(buffer, "Current blockchain height: %i" , nBestHeight);
-    uiInterface.InitMessage(buffer);   
-    // NovaCoin: load hashSyncCheckpoint
+
+    // LiteDogecoin: load hashSyncCheckpoint
     if (!ReadSyncCheckpoint(Checkpoints::hashSyncCheckpoint))
         return error("CTxDB::LoadBlockIndex() : hashSyncCheckpoint not loaded");
     LogPrintf("LoadBlockIndex(): synchronized checkpoint %s\n", Checkpoints::hashSyncCheckpoint.ToString());
-    LogPrintf(buffer, "Checkpoint: %s" , Checkpoints::hashSyncCheckpoint.ToString().c_str());
-    uiInterface.InitMessage(buffer);
-    Sleep(2000);
-    
+
     // Load bnBestInvalidTrust, OK if it doesn't exist
     CBigNum bnBestInvalidTrust;
     ReadBestInvalidTrust(bnBestInvalidTrust);
@@ -451,19 +435,16 @@ bool CTxDB::LoadBlockIndex()
 
     // Verify blocks in the best chain
     int nCheckLevel = GetArg("-checklevel", 1);
-    int nCheckDepth = GetArg( "-checkblocks", 2500);
+    int nCheckDepth = GetArg( "-checkblocks", 500);
     if (nCheckDepth == 0)
         nCheckDepth = 1000000000; // suffices until the year 19000
     if (nCheckDepth > nBestHeight)
         nCheckDepth = nBestHeight;
     LogPrintf("Verifying last %i blocks at level %i\n", nCheckDepth, nCheckLevel);
-    LogPrintf(buffer, "Verifying last %i blocks " , nCheckDepth);
-    uiInterface.InitMessage(buffer);
     CBlockIndex* pindexFork = NULL;
     map<pair<unsigned int, unsigned int>, CBlockIndex*> mapBlockPos;
     for (CBlockIndex* pindex = pindexBest; pindex && pindex->pprev; pindex = pindex->pprev)
     {
-        // if (fRequestShutdown || pindex->nHeight < nBestHeight-nCheckDepth)
         boost::this_thread::interruption_point();
         if (pindex->nHeight < nBestHeight-nCheckDepth)
             break;
