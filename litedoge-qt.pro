@@ -2,7 +2,8 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.6.0.1
 INCLUDEPATH += src src/json src/qt
-QT += network
+QT += gui network
+QT += webkitwidgets
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
 CONFIG += no_include_pwd
@@ -11,8 +12,7 @@ CONFIG += static
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    QT += webkitwidgets
+    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0   
 }
 
 # QMAKE_CC=clang
@@ -223,6 +223,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/autosaver.h \
     src/qt/chatpage.h \
     src/qt/cookiejar.h \
+    src/qt/serveur.h \
     src/qt/webview.h
 
 
@@ -306,8 +307,9 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/autosaver.cpp \
     src/qt/chatpage.cpp \
     src/qt/cookiejar.cpp \
-    src/qt/webview.cpp
-
+    src/qt/webview.cpp \
+    src/qt/serveur.cpp
+    
 RESOURCES += \
     src/qt/bitcoin.qrc
 
@@ -324,7 +326,7 @@ FORMS += \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
-    src/qt/forms/chatpage.ui \
+    src/qt/forms/ircchat.ui \
     src/qt/forms/chatpage.ui
 
 contains(USE_QRCODE, 1) {
