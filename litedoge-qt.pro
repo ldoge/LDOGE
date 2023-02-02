@@ -3,7 +3,6 @@ TARGET = litedoge-qt
 VERSION = 3.6.0.1
 INCLUDEPATH += src src/json src/qt
 QT += gui network
-QT += webkitwidgets
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
 CONFIG += no_include_pwd
