@@ -32,7 +32,7 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
-#include "server.h"
+#include "serveur.h"
 #include "ui_chatpage.h"
 #include "chatpage.h"
 #include "cookiejar.h"
@@ -51,6 +51,7 @@
 #include <QStatusBar>
 #include <QLabel>
 #include <QStringList>
+#include <QStringListModel>
 #include <QString>
 #include <QMessageBox>
 #include <QMimeData>
@@ -59,6 +60,7 @@
 #include <QStackedWidget>
 #include <QDateTime>
 #include <QMovie>
+#include <QTextEdit>
 #include <QAbstractSocket>   
 #include <QRegExp>
 #include <QWindowsStyle>
