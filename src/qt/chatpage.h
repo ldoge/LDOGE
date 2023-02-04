@@ -1,7 +1,6 @@
 #ifndef CHATPAGE_H
 #define CHATPAGE_H
 
-#include <QWebView>
 #include <QWidget>
 #include <QStackedWidget>
 #include <QNetworkAccessManager>
