@@ -40,7 +40,7 @@ class Server : public QTcpSocket
 
 		bool updateUsers;
 
-		QString parseCommande(QString comm,bool serveur=false);
+		QString parseCommande(QString comm,bool server=false);
 
 		QWidget *parent;
 
