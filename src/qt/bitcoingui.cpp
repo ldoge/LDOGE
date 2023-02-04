@@ -69,6 +69,7 @@
 #include <QMainWindow>
 #include <QSslError>
 #include <QVBoxLayout>
+#include <QCompleter>
 #include <QHBoxLayout>
 #include <QActionGroup>
 #include <QAction>
@@ -77,7 +78,8 @@
 #include <QTimer>
 #include <QDragEnterEvent>
 #include <QWidget>
-#include <QWebView>
+#include <QtGui/QFont>
+#include <QtGui/QFontMetrics>
 #include <QWebFrame>
 #include <QWebHistory>
 #include <QPushButton>
@@ -85,12 +87,21 @@
 #include <QUrl>
 #include <QApp>
 #include <QWidget>
+#include <QNetworkCookie>
+#include <QWebSettings>
+#include <QDebug>
 #include <QListView>
 #include <QMimeData>
 #include <QStyle>
 #include <QtNetwork>
 #include <QGridLayout>
 #include <QSystemTrayIcon>
+#if QT_VERSION >= 0x050000
+#include <QtCore/QSortFilterProxyModel>
+#else
+#include <QSortFilterProxyModel>
+#endif
+
 
 #include <iostream>
 
