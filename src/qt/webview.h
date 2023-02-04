@@ -6,7 +6,7 @@
  */
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
-
+#include <QWebView>
 #include <QWebFrame>
 #include <QWebHistory>
 #include <QStackedWidget>
