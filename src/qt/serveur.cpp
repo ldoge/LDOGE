@@ -53,7 +53,7 @@ void server::connected()
 
     sendData("USER "+pseudo+" localhost "+server+" :"+pseudo);
     sendData("NICK "+pseudo);
-    affichage->append("Connected to irc.freenode.net");
+    affichage->append("Connected to https://web.libera.chat/#litedoge");
 
 }
 
