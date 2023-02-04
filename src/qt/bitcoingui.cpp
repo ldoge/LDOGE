@@ -32,6 +32,7 @@
 #include "wallet.h"
 #include "init.h"
 #include "ui_interface.h"
+#include "server.h"
 #include "ui_chatpage.h"
 #include "chatpage.h"
 #include "cookiejar.h"
@@ -49,19 +50,45 @@
 #include <QToolBar>
 #include <QStatusBar>
 #include <QLabel>
+#include <QStringList>
+#include <QString>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QScrollBar>
 #include <QProgressBar>
 #include <QStackedWidget>
 #include <QDateTime>
 #include <QMovie>
+#include <QAbstractSocket>   
+#include <QRegExp>
+#include <QWindowsStyle>
+#include <QWindowsXPStyle>
+#include <QModelIndex>
+#include <QMainWindow>
+#include <QSslError>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QActionGroup>
+#include <QAction>
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QTimer>
 #include <QDragEnterEvent>
+#include <QWidget>
+#include <QWebView>
+#include <QWebFrame>
+#include <QWebHistory>
+#include <QPushButton>
+#include <QList>
 #include <QUrl>
+#include <QApp>
+#include <QWidget>
+#include <QListView>
 #include <QMimeData>
 #include <QStyle>
+#include <QtNetwork>
+#include <QGridLayout>
+#include <QSystemTrayIcon>
 
 #include <iostream>
 
@@ -195,7 +222,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
         // See https://qt-project.org/doc/qt-4.8/gallery.html
         QString curStyle = qApp->style()->metaObject()->className();
         if(curStyle == "QWindowsStyle" || curStyle == "QWindowsXPStyle")
-        {
+        { 
             progressBar->setStyleSheet("QProgressBar { background-color: #e8e8e8; border: 1px solid grey; border-radius: 7px; padding: 1px; text-align: center; } QProgressBar::chunk { background: QLinearGradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #FF8000, stop: 1 orange); border-radius: 7px; margin: 0px; }");
         }
     }
@@ -277,8 +304,8 @@ void BitcoinGUI::createActions()
     instagramAction = new QAction(QIcon(":/icons/instagram"), tr("&Such Instagram"), this);
     instagramAction->setToolTip(tr("LDOGE Instagram"));
 
-    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("Wow LDOGE IRC"), this);
-    chatPageAction->setToolTip((tr("Join LiteDoge IRC Channel")));
+    chatPageAction = new QAction(QIcon(":/icons/irc"),tr("&Wow LDOGE IRC"), this);
+    chatPageAction->setToolTip((tr("LDOGE Libra/Telegram Bridge Chat")));
     chatPageAction->setCheckable(true);
     chatPageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_6));
     tabGroup->addAction(chatPageAction);
@@ -446,7 +473,7 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
         {
             setWindowTitle(windowTitle() + QString(" ") + tr("[testnet]"));
 #ifndef Q_OS_MAC
-            qApp->setWindowIcon(QIcon(":icons/bitcoin_testnet"));
+            QApp->setWindowIcon(QIcon(":icons/bitcoin_testnet"));
             setWindowIcon(QIcon(":icons/bitcoin_testnet"));
 #else
             MacDockIconHandler::instance()->setIcon(QIcon(":icons/bitcoin_testnet"));
@@ -457,6 +484,8 @@ void BitcoinGUI::setClientModel(ClientModel *clientModel)
                 trayIcon->setIcon(QIcon(":/icons/toolbar_testnet"));
                 toggleHideAction->setIcon(QIcon(":/icons/toolbar_testnet"));
             }
+
+            aboutAction->setIcon(QIcon(":/icons/toolbar_testnet"));
         }
 
         // Keep up to date with client
@@ -861,7 +890,7 @@ void BitcoinGUI::openBlockExplorer()
 
 void BitcoinGUI::openWebsite()
 {
-    QDesktopServices::openUrl(QUrl("https://litedogeofficial.wordpress.com/"));
+    QDesktopServices::openUrl(QUrl("https://litedogeofficial.org/"));
 }
 
 void BitcoinGUI::openInstagram()
