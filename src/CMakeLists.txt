@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.4.1)
 ## cmake -DBerkeleyDB_INC:STRING=/usr/include -DBerkeleyDB_LIBS:STRING=/usr/lib/aarch64-linux-gnu -DUSE_LEVELDB=1 ..
 ##
 
-project(novacoind VERSION 0.5.9 LANGUAGES C CXX)
+project(litedoged VERSION 3.6.0.1 LANGUAGES C CXX)
 
 # Enforce sizeof(size_t) == 8 by default
 if (NOT ALLOW_32BIT AND NOT CMAKE_SIZEOF_VOID_P MATCHES "8")
