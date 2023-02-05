@@ -11,7 +11,10 @@ CONFIG += thread
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0   
+    QT += webkitwidgets  
+    
 }
+
 
 # QMAKE_CC=clang
 # QMAKE_CXX=clang++
@@ -323,8 +326,9 @@ FORMS += \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
-    src/qt/forms/optionsdialog.ui \
-    src/qt/forms/chatpage.ui
+    src/qt/forms/chatpage.ui \
+    src/qt/forms/optionsdialog.ui 
+    
 
 contains(USE_QRCODE, 1) {
     HEADERS += src/qt/qrcodedialog.h
