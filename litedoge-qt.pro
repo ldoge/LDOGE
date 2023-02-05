@@ -99,9 +99,10 @@ SOURCES += src/txdb-leveldb.cpp
     genleveldb.depends = FORCE
     PRE_TARGETDEPS += $$PWD/src/leveldb/libleveldb.a
     QMAKE_EXTRA_TARGETS += genleveldb
+    
     # Gross ugly hack that depends on qmake internals, unfortunately there is no other way to do it.
     QMAKE_CLEAN += $$PWD/src/leveldb/libleveldb.a; cd $$PWD/src/leveldb ; $(MAKE) clean
-} else {
+ else {
     message(Building with Berkeley DB transaction index)
     SOURCES += src/txdb-bdb.cpp
 }
