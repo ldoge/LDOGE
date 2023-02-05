@@ -7,7 +7,6 @@ DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
 CONFIG += no_include_pwd
 CONFIG += thread
-CONFIG += static
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
@@ -325,7 +324,6 @@ FORMS += \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
     src/qt/forms/optionsdialog.ui \
-    src/qt/forms/ircchat.ui \
     src/qt/forms/chatpage.ui
 
 contains(USE_QRCODE, 1) {
