@@ -8,6 +8,7 @@
 #define WEBVIEW_H
 
 #include <QWebView>
+#include <QWidget>
 #include <QWebFrame>
 #include <QWebHistory>
 #include <QStackedWidget>
