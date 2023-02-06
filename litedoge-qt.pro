@@ -11,10 +11,10 @@ CONFIG += static
 
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    QT+= webkit webkitwidgets
-}
+    QT_DISABLE_DEPRECATED_BEFORE=0
+    QT += webkitwidgets
 
+}
 
 # QMAKE_CC=clang
 # QMAKE_CXX=clang++
@@ -318,6 +318,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/scrypt-x86_64.S \
     src/scrypt.cpp \
     src/pbkdf2.cpp \
+    src/qt/qwebview.cpp \
     src/qt/autosaver.cpp \
     src/qt/chatpage.cpp \
     src/qt/cookiejar.cpp \
@@ -458,7 +459,7 @@ LIBS += $$join(BOOST_LIB_PATH,,-L,) $$join(BDB_LIB_PATH,,-L,) $$join(OPENSSL_LIB
 LIBS += -lssl -lcrypto -ldb_cxx$$BDB_LIB_SUFFIX
 # -lgdi32 has to happen after -lcrypto (see  #681)
 windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32
-LIBS += -lboost_system$$BOOST_LIB_SUFFIX -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX -lboost_chrono$$BOOST_LIB_SUFFIX
+LIBS += -lboost_system$$BOOST_LIB_SUFFIX -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX -lboost_chrono$$BOOST_LIB_SUFFIX -ldl
 windows:LIBS += -lboost_chrono$$BOOST_LIB_SUFFIX
 
 # use: qmake "USE_UPNP=1" ( enabled by default; default)
