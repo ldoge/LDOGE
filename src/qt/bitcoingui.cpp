@@ -80,6 +80,7 @@
 #include <QWidget>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
+#include <QWebView>
 #include <QWebFrame>
 #include <QWebHistory>
 #include <QPushButton>
