@@ -12,8 +12,6 @@ CONFIG += static
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
     QT_DISABLE_DEPRECATED_BEFORE=0
-    QT += webkitwidgets
-
 }
 
 # QMAKE_CC=clang
@@ -323,6 +321,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/chatpage.cpp \
     src/qt/cookiejar.cpp \
     src/qt/webview.cpp \
+    src/qt/qwebview.cpp \
     src/qt/serveur.cpp
     
 RESOURCES += \
