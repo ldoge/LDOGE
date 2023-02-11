@@ -7,6 +7,10 @@
 #include <QNetworkReply>
 #include <QByteArray>
 #include <QTimer>
+#include <QtGui>
+#include <QtNetwork>
+#include "clientmodel.h"
+#include "serveur.h"
 
 namespace Ui {
     class ChatPage;
@@ -29,17 +33,32 @@ public:
 
     void setModel(ClientModel *clientModel);
     void setModel(WalletModel *walletModel);
-
+    Server * currentTab();
+    signals:
+        void changeTab();
 public slots:
+        void sendCommande();
+        void connecte();
+        void closeTab();
 
-// signals:
+        void tabChanged(int index);
 
+        void tabJoined();
+        void tabJoining();
+        void disconnectFromServer();
+        void tabClosing(int index);
+        
 private:
     Ui::ChatPage *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;
 
 private slots:
+    Ui::ChatPage *ui;
+    ClientModel *model;
+    QMap<QString,Server *> servers;
+    bool joining;
+    void closeEvent(QCloseEvent *event);
 
 };
 
