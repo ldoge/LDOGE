@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ChatWindowClass</class>
- <widget class="QWidget" name="ChatWindowClass">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>762</width>
-    <height>550</height>
-   </rect>
+ <class>ChatPage</class>
+ <widget class="QWidget" name="ChatPage">
+   <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   </property>
   <property name="minimumSize">
    <size>
@@ -41,7 +43,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>:/images/chatLogo</pixmap>
+     <pixmap>:qt/res/icons/irc_icon</pixmap>
     </property>
    </widget>
    <widget class="QWidget" name="homepage" native="true">
@@ -169,8 +171,8 @@
         <height>21</height>
        </rect>
       </property>
-      <property name="styleSheet">
-       <string notr="true">font: italic 12pt &quot;Ubuntu&quot;; color: white;</string>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
        <string>Nickname</string>
@@ -217,6 +219,19 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+ </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>WebView</class>
+   <extends></extends>
+   <header>webview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
