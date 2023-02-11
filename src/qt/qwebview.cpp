@@ -33,10 +33,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qwebview_p.h"
-#include "qwebviewplugin_p.h"
-#include "qwebviewloadrequest_p.h"
-#include "qwebviewfactory_p.h"
+#include "webview.h"
+#include "webview.cpp"
 QT_BEGIN_NAMESPACE
 QWebView::QWebView(QObject *p)
     : QObject(p)
