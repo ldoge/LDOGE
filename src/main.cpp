@@ -1,6 +1,6 @@
-// Copyright (c) 2009-2022 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin developers
-// Copyright (c) 2015-2021 The Litedogecoin developers
+// Copyright (c) 2009-2023 Satoshi Nakamoto
+// Copyright (c) 2009-2023 The Bitcoin developers
+// Copyright (c) 2015-2023 The Litedogecoin developers
 
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -21,6 +21,8 @@
 #include "txmempool.h"
 #include "ui_interface.h"
 
+#include "main.h"
+
 using namespace std;
 using namespace boost;
 
@@ -34,14 +36,20 @@ set<CWallet*> setpwalletRegistered;
 CCriticalSection cs_main;
 
 CTxMemPool mempool;
+unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
 set<pair<COutPoint, unsigned int> > setStakeSeen;
+CBigNum bnProofOfWorkLimit(~uint256(0) >> 24); // target limit for proof of work, results with 0,00390625 proof-of-work difficulty
+CBigNum bnProofOfStakeLimit(~uint256(0) >> 20); // proof of stake target limit with 0,00390625 proof of stake difficulty
+CBigNum bnProofOfStakeLimitV2(~uint256(0) >> 48); 48 proof of stake target limit equal to 0.03125  proof of stake difficulty
+BigNum bnProofOfStakeHardLimit(~uint256(0) >> 30); // disabled temporarily, will be used in the future to fix minimal proof of stake difficulty at 0.25
+uint256 nPoWBase = uint256("0x000000ffff000000000000000000000000000000000000000000000000000000"); // difficulty-1 target
 
-CBigNum bnProofOfStakeLimit(~uint256(0) >> 20);
-CBigNum bnProofOfStakeLimitV2(~uint256(0) >> 48);
+CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 20);
 
 unsigned int nStakeMinAge = 8 * 60 * 60; // min age is 8 hours
+unsigned int nStakeTargetSpacing = 4 * 60; // 4-minute stakes spacing
 unsigned int nModifierInterval = 10 * 60; // time to elapse before new modifier is computed
 
 int nCoinbaseMaturity = 500;
@@ -67,6 +75,7 @@ struct COrphanBlock {
 map<uint256, COrphanBlock*> mapOrphanBlocks;
 multimap<uint256, COrphanBlock*> mapOrphanBlocksByPrev;
 set<pair<COutPoint, unsigned int> > setStakeSeenOrphan;
+map<uint256, uint256> mapProofOfStake;
 
 map<uint256, CTransaction> mapOrphanTransactions;
 map<uint256, set<uint256> > mapOrphanTransactionsByPrev;
@@ -75,6 +84,13 @@ map<uint256, set<uint256> > mapOrphanTransactionsByPrev;
 CScript COINBASE_FLAGS;
 
 const string strMessageMagic = "LiteDoge Signed Message:\n";
+
+// Settings
+int64_t nTransactionFee = MIN_TX_FEE;
+int64_t nMinimumInputValue = MIN_TXOUT_AMOUNT;
+
+// Ping and address broadcast intervals
+int64_t nPingInterval = 30 * 60;
 
 extern enum Checkpoints::CPMode CheckpointsMode;
 
@@ -207,7 +223,7 @@ void static EraseOrphanTx(uint256 hash)
         if (itPrev->second.empty())
             mapOrphanTransactionsByPrev.erase(itPrev);
     }
-    mapOrphanTransactions.erase(it);
+    mapOrphanTransactions.erase(hash);
 }
 
 unsigned int LimitOrphanTxSize(unsigned int nMaxOrphans)
@@ -1155,9 +1171,14 @@ const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfSta
 }
 
 unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
+CBlockIndex* pindexLast, bool fProofOfStake) 
 {
-    CBigNum bnTargetLimit = fProofOfStake ? GetProofOfStakeLimit(pindexLast->nHeight) : Params().ProofOfWorkLimit();
-
+    CBigNum bnTargetLimit = bnProofOfWorkLimit;
+    if(fProofOfStake)
+    {
+        // Proof-of-Stake blocks has own target limit since nVersion=3 supermajority on mainNet and always on testNet
+        bnTargetLimit = bnProofOfStakeLimit;
+    }
     if (pindexLast == NULL)
         return bnTargetLimit.GetCompact(); // genesis block
 
@@ -1173,19 +1194,26 @@ unsigned int GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfS
     if (IsProtocolV1RetargetingFixed(pindexLast->nHeight)) {
         if (nActualSpacing < 0)
             nActualSpacing = nTargetSpacing;
-    }
+   if(nActualSpacing < 0)
+	{
+		nActualSpacing = 1;
+	}
+	else if(nActualSpacing > nTargetTimespan)
+	{
+		nActualSpacing = nTargetTimespan;
+	}
 
     // ppcoin: target change every block
     // ppcoin: retarget with exponential moving toward target spacing
     CBigNum bnNew;
     bnNew.SetCompact(pindexPrev->nBits);
-    int64_t nInterval = nTargetTimespan / nTargetSpacing;
+    int64 nTargetSpacing = fProofOfStake? nStakeTargetSpacing : min(nTargetSpacingWorkMax, (int64) nStakeTargetSpacing * (1 + pindexLast->nHeight - pindexPrev->nHeight));
+    int64 nInterval = nTargetTimespan / nTargetSpacing;
     bnNew *= ((nInterval - 1) * nTargetSpacing + nActualSpacing + nActualSpacing);
     bnNew /= ((nInterval + 1) * nTargetSpacing);
-
-    if (bnNew <= 0 || bnNew > bnTargetLimit)
+	
+    if (bnNew > bnTargetLimit)
         bnNew = bnTargetLimit;
-
     return bnNew.GetCompact();
 }
 
@@ -1207,9 +1235,24 @@ bool CheckProofOfWork(uint256 hash, unsigned int nBits)
 
 bool IsInitialBlockDownload()
 {
-    LOCK(cs_main);
-    if (pindexBest == NULL || nBestHeight < Checkpoints::GetTotalBlocksEstimate())
-        return true;
+	if (ibdLatched)
+		return false;
+    
+    // only for testnet
+	if (fTestNet && nBestHeight == 0) {
+		return false;
+	}
+	int minTolerated;
+	if (fTestNet)
+		minTolerated = 720;
+	else
+		minTolerated = 5;
+
+	bool res = (pindexBest == NULL || nBestHeight < Checkpoints::GetTotalBlocksEstimate()) || (pindexBest->GetBlockTime() < GetTime() - 5 * 60);
+	if (!res)
+		ibdLatched = true;
+	return (res);
+}
     static int64_t nLastUpdate;
     static CBlockIndex* pindexLastBest;
     if (pindexBest != pindexLastBest)
@@ -1248,17 +1291,7 @@ void CBlock::UpdateTime(const CBlockIndex* pindexPrev)
 {
     nTime = max(GetBlockTime(), GetAdjustedTime());
 }
-
-
-
-
-
-
-
-
-
-
-
+    
 bool CTransaction::DisconnectInputs(CTxDB& txdb)
 {
     // Relinquish previous transactions' spent pointers
@@ -2000,6 +2033,9 @@ bool CBlock::AddToBlockIndex(unsigned int nFile, unsigned int nBlockPos, const u
     if (!ComputeNextStakeModifier(pindexNew->pprev, nStakeModifier, fGeneratedStakeModifier))
         return error("AddToBlockIndex() : ComputeNextStakeModifier() failed");
     pindexNew->SetStakeModifier(nStakeModifier, fGeneratedStakeModifier);
+    pindexNew->nStakeModifierChecksum = GetStakeModifierChecksum(pindexNew);
+    if (!CheckStakeModifierCheckpoints(pindexNew->nHeight, pindexNew->nStakeModifierChecksum))
+        return error("AddToBlockIndex() : Rejected by stake modifier checkpoint height=%d, modifier=0x%016"PRIx64, pindexNew->nHeight, nStakeModifier);
 
     // Add to mapBlockIndex
     map<uint256, CBlockIndex*>::iterator mi = mapBlockIndex.insert(make_pair(hash, pindexNew)).first;
@@ -2048,8 +2084,8 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
         return DoS(50, error("CheckBlock() : proof of work failed"));
 
     // Check timestamp
-    if (GetBlockTime() > FutureDriftV2(GetAdjustedTime()))
-        return error("CheckBlock() : block timestamp too far in the future");
+    if (GetBlockTime() > FutureDrift(GetAdjustedTime()) && nHeight > 4000000)
+         return error("AcceptBlock() : block timestamp too far in the future");
 
     // First transaction must be coinbase, the rest must not be
     if (vtx.empty() || !vtx[0].IsCoinBase())
@@ -2057,7 +2093,11 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
     for (unsigned int i = 1; i < vtx.size(); i++)
         if (vtx[i].IsCoinBase())
             return DoS(100, error("CheckBlock() : more than one coinbase"));
-
+    
+    // Check coinbase timestamp
+    if (GetBlockTime() > FutureDrift((int64_t)vtx[0].nTime))
+        return DoS(50, error("CheckBlock() : coinbase timestamp is too early"));
+    
     if (IsProofOfStake())
     {
         // Coinbase output should be empty if proof-of-stake block
@@ -2072,9 +2112,10 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot, bool fCheckSig) c
                 return DoS(100, error("CheckBlock() : more than one coinstake"));
     }
 
-    // Check proof-of-stake block signature
+    // NovaCoin: check proof-of-stake block signature
     if (fCheckSig && !CheckBlockSignature())
         return DoS(100, error("CheckBlock() : bad proof-of-stake block signature"));
+ }
 
     // Check transactions
     BOOST_FOREACH(const CTransaction& tx, vtx)
@@ -2117,9 +2158,6 @@ bool CBlock::AcceptBlock()
 {
     AssertLockHeld(cs_main);
 
-    if (nVersion > CURRENT_VERSION)
-        return DoS(100, error("AcceptBlock() : reject unknown block version %d", nVersion));
-
     // Check for duplicate
     uint256 hash = GetHash();
     if (mapBlockIndex.count(hash))
@@ -2131,10 +2169,14 @@ bool CBlock::AcceptBlock()
         return DoS(10, error("AcceptBlock() : prev block not found"));
     CBlockIndex* pindexPrev = (*mi).second;
     int nHeight = pindexPrev->nHeight+1;
-
-    if (IsProofOfWork() && nHeight > LAST_POW_BLOCK)
-        return DoS(100, error("AcceptBlock() : reject proof-of-work at height %d", nHeight));
-
+    
+// LiteDoge will now be PoW/PoS hybrid permanently
+/*  if (IsProofOfWork() && nHeight > 4000000)
+        return DoS(100, error("AcceptBlock() : reject proof-of-work at height %d", nHeight));*/
+ 
+    if (IsProofOfStake() && nHeight < MODIFIER_INTERVAL_SWITCH)
+        return DoS(100, error("AcceptBlock() : reject proof-of-stake at height %d", nHeight));
+    
     // Check coinbase timestamp
     if (GetBlockTime() > FutureDrift((int64_t)vtx[0].nTime, nHeight))
         return DoS(50, error("AcceptBlock() : coinbase timestamp is too early"));
@@ -2167,9 +2209,11 @@ bool CBlock::AcceptBlock()
         uint256 targetProofOfStake;
         if (!CheckProofOfStake(pindexPrev, vtx[1], nBits, hashProof, targetProofOfStake))
         {
-            return error("AcceptBlock() : check proof-of-stake failed for block %s", hash.ToString());
+            return error("AcceptBlock() : check proof-of-stake failed for block %s", hash.ToString().c_str());
+            return false; // do not error here as we expect this during initial block download
         }
     }
+    
     // PoW is checked in CheckBlock()
     if (IsProofOfWork())
     {
@@ -2362,7 +2406,9 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
                 setStakeSeenOrphan.insert(pblock->GetProofOfStake());
 
             // Ask this guy to fill in what we're missing
-            PushGetBlocks(pfrom, pindexBest, GetOrphanRoot(hash));
+        if (pfrom)
+        {
+            pfrom->PushGetBlocks(pindexBest, GetOrphanRoot(pblock2));
             // ppcoin: getblocks may not obtain the ancestor block rejected
             // earlier by duplicate-stake check so we ask for it again directly
             if (!IsInitialBlockDownload())
@@ -2410,7 +2456,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 }
 
 #ifdef ENABLE_WALLET
-// litedogecoin: attempt to generate suitable proof-of-stake
+// Novacoin: attempt to generate suitable proof-of-stake
 bool CBlock::SignBlock(CWallet& wallet, int64_t nFees)
 {
     // if we are trying to sign
