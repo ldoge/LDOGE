@@ -1,5 +1,5 @@
 ---
-name: "ppcoin"
+name: "litedoge"
 suites:
 - "lucid"
 architectures:
@@ -11,8 +11,8 @@ packages:
 - "faketime"
 - "wine"
 reference_datetime: "2011-01-30 00:00:00"
-remotes: "https://github.com/ppcoin/ppcoin.git"
-files: "ppcoin"
+remotes: "https://github.com/ldoge/LDOGE.git"
+files: "litedoge"
 - "qt-win32-4.7.4-gitian.zip"
 - "boost-win32-1.47.0-gitian.zip"
 - "ppcoin-deps-0.0.1.zip"
