@@ -121,7 +121,7 @@ def copydata(settings, blkindex, blkset):
 			try:
 				inF = open(fname, "rb")
 			except IOError:
-				print "Done"
+				print("Done")
 				return
 
 		inhdr = inF.read(8)
@@ -200,7 +200,7 @@ def copydata(settings, blkindex, blkset):
 
 if __name__ == '__main__':
 	if len(sys.argv) != 2:
-		print "Usage: linearize-data.py CONFIG-FILE"
+		print("Usage: linearize-data.py CONFIG-FILE")
 		sys.exit(1)
 
 	f = open(sys.argv[1])
