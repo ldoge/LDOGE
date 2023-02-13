@@ -1,6 +1,6 @@
-// Copyright (c) 2010 - 2022Satoshi Nakamoto
-// Copyright (c) 2012- 2022 The Bitcoin developers
-// Copyright (c) 2012- 2022 The Litedoge developers
+// Copyright (c) 2010 - 2023 Satoshi Nakamoto
+// Copyright (c) 2012 - 2023 The Bitcoin developers
+// Copyright (c) 2012 - 2023 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -92,11 +92,9 @@ public:
     boost::signals2::signal<void (int newNumConnections)> NotifyNumConnectionsChanged;
 
     /**
-     * New, updated or cancelled alert.
-     * @note called with lock cs_mapAlerts held.
+     * Status bar alerts changed.
      */
-    boost::signals2::signal<void (const uint256 &hash, ChangeType status)> NotifyAlertChanged;
-};
+    boost::signals2::signal<void ()> NotifyAlertChanged;
 
 extern CClientUIInterface uiInterface;
 
