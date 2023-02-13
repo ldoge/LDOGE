@@ -95,6 +95,7 @@ public:
      * Status bar alerts changed.
      */
     boost::signals2::signal<void ()> NotifyAlertChanged;
+};    
 
 extern CClientUIInterface uiInterface;
 
