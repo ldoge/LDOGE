@@ -17,36 +17,36 @@ cmd = sys.argv[1].lower()
 
 if cmd == "backupwallet":
 	try:
-		path = raw_input("Enter destination path/filename: ")
+		path = input("Enter destination path/filename: ")
 		print(access.backupwallet(path))
 	except:
 		print("\n---An error occurred---\n")
 
 elif cmd == "getaccount":
 	try:
-		addr = raw_input("Enter a Bitcoin address: ")
+		addr = input("Enter a Bitcoin address: ")
 		print(access.getaccount(addr))
 	except:
 		print("\n---An error occurred---\n")
 
 elif cmd == "getaccountaddress":
 	try:
-		acct = raw_input("Enter an account name: ")
+		acct = input("Enter an account name: ")
 		print(access.getaccountaddress(acct))
 	except:
 		print("\n---An error occurred---\n")
 
 elif cmd == "getaddressesbyaccount":
 	try:
-		acct = raw_input("Enter an account name: ")
+		acct = input("Enter an account name: ")
 		print(access.getaddressesbyaccount(acct))
 	except:
 		print("\n---An error occurred---\n")
 
 elif cmd == "getbalance":
 	try:
-		acct = raw_input("Enter an account (optional): ")
-		mc = raw_input("Minimum confirmations (optional): ")
+		acct = input("Enter an account (optional): ")
+		mc = input("Minimum confirmations (optional): ")
 		try:
 			print(access.getbalance(acct, mc))
 		except:
@@ -56,7 +56,7 @@ elif cmd == "getbalance":
 
 elif cmd == "getblockbycount":
 	try:
-		height = raw_input("Height: ")
+		height = input("Height: ")
 		print(access.getblockbycount(height))
 	except:
 		print("\n---An error occurred---\n")
@@ -83,7 +83,7 @@ elif cmd == "getdifficulty":
 	try:
 		print(access.getdifficulty())
 	except:
-		print ("\n---An error occurred---\n")
+		print("\n---An error occurred---\n")
 
 elif cmd == "getgenerate":
 	try:
@@ -105,7 +105,7 @@ elif cmd == "getinfo":
 
 elif cmd == "getnewaddress":
 	try:
-		acct = raw_input("Enter an account name: ")
+		acct = input("Enter an account name: ")
 		try:
 			print(access.getnewaddress(acct))
 		except:
@@ -115,8 +115,8 @@ elif cmd == "getnewaddress":
 
 elif cmd == "getreceivedbyaccount":
 	try:
-		acct = raw_input("Enter an account (optional): ")
-		mc = raw_input("Minimum confirmations (optional): ")
+		acct = input("Enter an account (optional): ")
+		mc = input("Minimum confirmations (optional): ")
 		try:
 			print(access.getreceivedbyaccount(acct, mc))
 		except:
@@ -126,8 +126,8 @@ elif cmd == "getreceivedbyaccount":
 
 elif cmd == "getreceivedbyaddress":
 	try:
-		addr = raw_input("Enter a Bitcoin address (optional): ")
-		mc = raw_input("Minimum confirmations (optional): ")
+		addr = input("Enter a Bitcoin address (optional): ")
+		mc = input("Minimum confirmations (optional): ")
 		try:
 			print(access.getreceivedbyaddress(addr, mc))
 		except:
@@ -137,14 +137,14 @@ elif cmd == "getreceivedbyaddress":
 
 elif cmd == "gettransaction":
 	try:
-		txid = raw_input("Enter a transaction ID: ")
+		txid = input("Enter a transaction ID: ")
 		print(access.gettransaction(txid))
 	except:
 		print("\n---An error occurred---\n")
 
 elif cmd == "getwork":
 	try:
-		data = raw_input("Data (optional): ")
+		data = input("Data (optional): ")
 		try:
 			print(access.gettransaction(data))
 		except:
@@ -154,7 +154,7 @@ elif cmd == "getwork":
 
 elif cmd == "help":
 	try:
-		cmd = raw_input("Command (optional): ")
+		cmd = input("Command (optional): ")
 		try:
 			print(access.help(cmd))
 		except:
@@ -164,7 +164,7 @@ elif cmd == "help":
 
 elif cmd == "listaccounts":
 	try:
-		mc = raw_input("Minimum confirmations (optional): ")
+		mc = input("Minimum confirmations (optional): ")
 		try:
 			print(access.listaccounts(mc))
 		except:
@@ -174,8 +174,8 @@ elif cmd == "listaccounts":
 
 elif cmd == "listreceivedbyaccount":
 	try:
-		mc = raw_input("Minimum confirmations (optional): ")
-		incemp = raw_input("Include empty? (true/false, optional): ")
+		mc = input("Minimum confirmations (optional): ")
+		incemp = input("Include empty? (true/false, optional): ")
 		try:
 			print(access.listreceivedbyaccount(mc, incemp))
 		except:
@@ -185,8 +185,8 @@ elif cmd == "listreceivedbyaccount":
 
 elif cmd == "listreceivedbyaddress":
 	try:
-		mc = raw_input("Minimum confirmations (optional): ")
-		incemp = raw_input("Include empty? (true/false, optional): ")
+		mc = input("Minimum confirmations (optional): ")
+		incemp = input("Include empty? (true/false, optional): ")
 		try:
 			print(access.listreceivedbyaddress(mc, incemp))
 		except:
@@ -196,9 +196,9 @@ elif cmd == "listreceivedbyaddress":
 
 elif cmd == "listtransactions":
 	try:
-		acct = raw_input("Account (optional): ")
-		count = raw_input("Number of transactions (optional): ")
-		frm = raw_input("Skip (optional):")
+		acct = input("Account (optional): ")
+		count = input("Number of transactions (optional): ")
+		frm = input("Skip (optional):")
 		try:
 			print(access.listtransactions(acct, count, frm))
 		except:
@@ -208,11 +208,11 @@ elif cmd == "listtransactions":
 
 elif cmd == "move":
 	try:
-		frm = raw_input("From: ")
-		to = raw_input("To: ")
-		amt = raw_input("Amount:")
-		mc = raw_input("Minimum confirmations (optional): ")
-		comment = raw_input("Comment (optional): ")
+		frm = input("From: ")
+		to = input("To: ")
+		amt = input("Amount:")
+		mc = input("Minimum confirmations (optional): ")
+		comment = input("Comment (optional): ")
 		try:
 			print(access.move(frm, to, amt, mc, comment))
 		except:
@@ -222,12 +222,12 @@ elif cmd == "move":
 
 elif cmd == "sendfrom":
 	try:
-		frm = raw_input("From: ")
-		to = raw_input("To: ")
-		amt = raw_input("Amount:")
-		mc = raw_input("Minimum confirmations (optional): ")
-		comment = raw_input("Comment (optional): ")
-		commentto = raw_input("Comment-to (optional): ")
+		frm = input("From: ")
+		to = input("To: ")
+		amt = input("Amount:")
+		mc = input("Minimum confirmations (optional): ")
+		comment = input("Comment (optional): ")
+		commentto = input("Comment-to (optional): ")
 		try:
 			print(access.sendfrom(frm, to, amt, mc, comment, commentto))
 		except:
@@ -237,10 +237,10 @@ elif cmd == "sendfrom":
 
 elif cmd == "sendmany":
 	try:
-		frm = raw_input("From: ")
-		to = raw_input("To (in format address1:amount1,address2:amount2,...): ")
-		mc = raw_input("Minimum confirmations (optional): ")
-		comment = raw_input("Comment (optional): ")
+		frm = input("From: ")
+		to = input("To (in format address1:amount1,address2:amount2,...): ")
+		mc = input("Minimum confirmations (optional): ")
+		comment = input("Comment (optional): ")
 		try:
 			print(access.sendmany(frm,to,mc,comment))
 		except:
@@ -250,10 +250,10 @@ elif cmd == "sendmany":
 
 elif cmd == "sendtoaddress":
 	try:
-		to = raw_input("To (in format address1:amount1,address2:amount2,...): ")
-		amt = raw_input("Amount:")
-		comment = raw_input("Comment (optional): ")
-		commentto = raw_input("Comment-to (optional): ")
+		to = input("To (in format address1:amount1,address2:amount2,...): ")
+		amt = input("Amount:")
+		comment = input("Comment (optional): ")
+		commentto = input("Comment-to (optional): ")
 		try:
 			print(access.sendtoaddress(to,amt,comment,commentto))
 		except:
@@ -263,16 +263,16 @@ elif cmd == "sendtoaddress":
 
 elif cmd == "setaccount":
 	try:
-		addr = raw_input("Address: ")
-		acct = raw_input("Account:")
+		addr = input("Address: ")
+		acct = input("Account:")
 		print(access.setaccount(addr,acct))
 	except:
 		print("\n---An error occurred---\n")
 
 elif cmd == "setgenerate":
 	try:
-		gen= raw_input("Generate? (true/false): ")
-		cpus = raw_input("Max processors/cores (-1 for unlimited, optional):")
+		gen= input("Generate? (true/false): ")
+		cpus = input("Max processors/cores (-1 for unlimited, optional):")
 		try:
 			print(access.setgenerate(gen, cpus))
 		except:
@@ -282,7 +282,7 @@ elif cmd == "setgenerate":
 
 elif cmd == "settxfee":
 	try:
-		amt = raw_input("Amount:")
+		amt = input("Amount:")
 		print(access.settxfee(amt))
 	except:
 		print("\n---An error occurred---\n")
@@ -295,14 +295,14 @@ elif cmd == "stop":
 
 elif cmd == "validateaddress":
 	try:
-		addr = raw_input("Address: ")
+		addr = input("Address: ")
 		print(access.validateaddress(addr))
 	except:
 		print("\n---An error occurred---\n")
 
 elif cmd == "walletpassphrase":
 	try:
-		pwd = raw_input("Enter wallet passphrase: ")
+		pwd = input("Enter wallet passphrase: ")
 		access.walletpassphrase(pwd, 60)
 		print("\n---Wallet unlocked---\n")
 	except:
@@ -310,8 +310,8 @@ elif cmd == "walletpassphrase":
 
 elif cmd == "walletpassphrasechange":
 	try:
-		pwd = raw_input("Enter old wallet passphrase: ")
-		pwd2 = raw_input("Enter new wallet passphrase: ")
+		pwd = input("Enter old wallet passphrase: ")
+		pwd2 = input("Enter new wallet passphrase: ")
 		access.walletpassphrasechange(pwd, pwd2)
 		print("")
 		print("\n---Passphrase changed---\n")
