@@ -54,17 +54,10 @@ public:
         MAX_BASE58_TYPES
     };
     
-    const Consensus::Params& GetConsensus(uint32_t nTargetHeight) const {
-        return *(pConsensusRoot -> GetConsensus(nTargetHeight));
-    }
-    
     const CMessageHeader::MessageStartChars& MessageStart() const { return pchMessageStart; }
      int GetDefaultPort() const { return nDefaultPort; }
     
-    const CBlock& GenesisBlock() const { return genesis; }
-    /** Make miner wait to have peers to avoid wasting work */
-     const CBlock& GenesisBlock() const { return genesis; }
-    /** Make miner wait to have peers to avoid wasting work */
+    
     bool MiningRequiresPeers() const { return fMiningRequiresPeers; }
     /** Default value for -checkmempool and -checkblockindex argument */
     bool DefaultConsistencyChecks() const { return fDefaultConsistencyChecks; }
@@ -98,17 +91,11 @@ protected:
     vector<CDNSSeedData> vSeeds;
     std::vector<unsigned char> base58Prefixes[MAX_BASE58_TYPES];
     uint64_t nPruneAfterHeight;
-    std::vector<CDNSSeedData> vSeeds;
-    std::vector<unsigned char> base58Prefixes[MAX_BASE58_TYPES];
     std::string strNetworkID;
-    CBlock genesis;
-    std::vector<SeedSpec6> vFixedSeeds;
     bool fMiningRequiresPeers;
     bool fDefaultConsistencyChecks;
     bool fRequireStandard;
     bool fMineBlocksOnDemand;
-    CCheckpointData checkpointData;
-    ChainTxData chainTxData;
     
     int nMaxReorganizationDepth;
     int nMinReorganizationPeers;
