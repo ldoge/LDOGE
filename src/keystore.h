@@ -1,15 +1,12 @@
 // Copyright (c) 2009-2023 Satoshi Nakamoto
 // Copyright (c) 2009-2023 The Bitcoin developers
-// Copyright (c) 2009-2023 The Litedoge developers
+// Copyright (c) 2015-2023 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
 #ifndef BITCOIN_KEYSTORE_H
 #define BITCOIN_KEYSTORE_H
-
 #include "key.h"
 #include "sync.h"
-#include "script.h"
 
 #ifndef Q_MOC_RUN
 #include <boost/signals2/signal.hpp>
