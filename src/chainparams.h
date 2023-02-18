@@ -6,10 +6,7 @@
 
 #ifndef BITCOIN_CHAIN_PARAMS_H
 #define BITCOIN_CHAIN_PARAMS_H
-#include "chainparamsbase.h"
-#include "consensus/params.h"
-#include "primitives/block.h"
-#include "protocol.h"
+
 #include "bignum.h"
 #include "uint256.h"
 #include "util.h"
