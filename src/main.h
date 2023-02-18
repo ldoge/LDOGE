@@ -1,5 +1,6 @@
-// Copyright (c) 2009-2022 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin developers
+// Copyright (c) 2009-2023 Satoshi Nakamoto
+// Copyright (c) 2009-2023 The Bitcoin developers
+// Copyright (c) 2015-2023 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef BITCOIN_MAIN_H
@@ -19,6 +20,7 @@
 class CBlock;
 class CBlockIndex;
 class CInv;
+class CChainParams;
 class CKeyItem;
 class CNode;
 class CReserveKey;
@@ -771,7 +773,7 @@ public:
 
         // Write index header
         unsigned int nSize = fileout.GetSerializeSize(*this);
-        fileout << FLATDATA(Params().MessageStart()) << nSize;
+        fileout << FLATDATA(Params().pchMessageStart()) << nSize;
 
         // Write block
         long fileOutPos = ftell(fileout);
