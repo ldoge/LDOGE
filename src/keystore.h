@@ -9,9 +9,7 @@
 
 #include "key.h"
 #include "sync.h"
-#include "script/script.h"
-#include "script/standard.h"
-#include "sync.h"
+#include "script.h"
 
 #ifndef Q_MOC_RUN
 #include <boost/signals2/signal.hpp>
