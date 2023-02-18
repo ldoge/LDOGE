@@ -10,7 +10,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/bind.hpp>
 
-#include "alert.h"
 #include "chainparams.h"
 #include "checkpoints.h"
 #include "db.h"
@@ -223,7 +222,7 @@ void static EraseOrphanTx(uint256 hash)
         if (itPrev->second.empty())
             mapOrphanTransactionsByPrev.erase(itPrev);
     }
-    mapOrphanTransactions.erase(hash);
+    mapOrphanTransactions.erase(it);
 }
 
 unsigned int LimitOrphanTxSize(unsigned int nMaxOrphans)
@@ -2386,26 +2385,16 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
             if (pblock->IsProofOfStake())
             {
                 // Limited duplicity on stake: prevents block flood attack
-                // Duplicate stake allowed only when there is orphan child block
-                if (setStakeSeenOrphan.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
-                    return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for orphan block %s", pblock->GetProofOfStake().first.ToString(), pblock->GetProofOfStake().second, hash.ToString());
-            }
-            PruneOrphanBlocks();
-            COrphanBlock* pblock2 = new COrphanBlock();
-            {
-                CDataStream ss(SER_DISK, CLIENT_VERSION);
-                ss << *pblock;
-                pblock2->vchBlock = std::vector<unsigned char>(ss.begin(), ss.end());
-            }
-            pblock2->hashBlock = hash;
-            pblock2->hashPrev = pblock->hashPrevBlock;
-            pblock2->stake = pblock->GetProofOfStake();
-            mapOrphanBlocks.insert(make_pair(hash, pblock2));
-            mapOrphanBlocksByPrev.insert(make_pair(pblock2->hashPrev, pblock2));
-            if (pblock->IsProofOfStake())
+            // Duplicate stake allowed only when there is orphan child block
+            if (setStakeSeenOrphan.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
+                return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for orphan block %s", pblock->GetProofOfStake().first.ToString().c_str(), pblock->GetProofOfStake().second, hash.ToString().c_str());
+            else
                 setStakeSeenOrphan.insert(pblock->GetProofOfStake());
-
-            // Ask this guy to fill in what we're missing
+        }
+        CBlock* pblock2 = new CBlock(*pblock);
+        mapOrphanBlocks.insert(make_pair(hash, pblock2));
+        mapOrphanBlocksByPrev.insert(make_pair(pblock2->hashPrevBlock, pblock2));
+        // Ask this guy to fill in what we're missing
         if (pfrom)
         {
             pfrom->PushGetBlocks(pindexBest, GetOrphanRoot(pblock2));
@@ -2416,12 +2405,31 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         }
         return true;
     }
+    // ppcoin: verify hash target and signature of coinstake tx
+    if (pblock->IsProofOfStake())
+    {
+        uint256 hashProofOfStake = 0, targetProofOfStake = 0;
+        if (!CheckProofOfStake(pblock->vtx[1], pblock->nBits, hashProofOfStake, targetProofOfStake))
+        {
+            // Having prev block in index should be enough for validation
+            if (mapBlockIndex.count(pblock->hashPrevBlock))
+                return error("ProcessBlock(): check proof-of-stake (%s, %d) failed for block %s\n", pblock->GetProofOfStake().first.ToString().c_str(), pblock->GetProofOfStake().second, hash.ToString().c_str());
+
+            // Orphan blocks should be validated later once all parents successfully added to local chain
+            printf("ProcessBlock(): delaying proof-of-stake validation for orphan block %s\n", hash.ToString().c_str());
+            return false; // do not error here as we expect this to happen here
+        }
+
+        // Needed for AcceptBlock()
+        if (!mapProofOfStake.count(hash))
+            mapProofOfStake.insert(make_pair(hash, hashProofOfStake));
+    }
 
     // Store to disk
     if (!pblock->AcceptBlock())
         return error("ProcessBlock() : AcceptBlock FAILED");
 
-    // Recursively process any orphan blocks that depended on this one
+    // Process any orphan blocks that depended on this one
     vector<uint256> vWorkQueue;
     vWorkQueue.push_back(hash);
     for (unsigned int i = 0; i < vWorkQueue.size(); i++)
@@ -2431,21 +2439,39 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
              mi != mapOrphanBlocksByPrev.upper_bound(hashPrev);
              ++mi)
         {
-            CBlock block;
-            {
-                CDataStream ss(mi->second->vchBlock, SER_DISK, CLIENT_VERSION);
-                ss >> block;
-            }
-            block.BuildMerkleTree();
-            if (block.AcceptBlock())
-                vWorkQueue.push_back(mi->second->hashBlock);
-            mapOrphanBlocks.erase(mi->second->hashBlock);
-            setStakeSeenOrphan.erase(block.GetProofOfStake());
-            delete mi->second;
-        }
-        mapOrphanBlocksByPrev.erase(hashPrev);
-    }
+            CBlock* pblockOrphan = (*mi).second;
+            uint256 hashOrphanBlock = pblockOrphan->GetHash();
 
+            if (pblockOrphan->IsProofOfStake()) {
+                // Check proof-of-stake and do other contextual
+                //  preparations before running AcceptBlock()
+                uint256 hashOrphanProofOfStake = 0;
+                uint256 targetOrphanProofOfStake = 0;
+
+                if (CheckProofOfStake(pblockOrphan->vtx[1], pblockOrphan->nBits, hashOrphanProofOfStake, targetOrphanProofOfStake))
+                {
+                    // Needed for AcceptBlock()
+                    if (!mapProofOfStake.count(hashOrphanBlock))
+                        mapProofOfStake.insert(make_pair(hashOrphanBlock, hashOrphanProofOfStake));
+
+                    // Finally, we're ready to run AcceptBlock()
+                    if (pblockOrphan->AcceptBlock())
+                       vWorkQueue.push_back(hashOrphanBlock);
+                    setStakeSeenOrphan.erase(pblockOrphan->GetProofOfStake());
+                }
+            } else {
+                // proof-of-work verification
+                //   is notoriously simpler
+                if (pblockOrphan->AcceptBlock())
+                    vWorkQueue.push_back(hashOrphanBlock);
+            }
+
+            mapOrphanBlocks.erase(hashOrphanBlock);
+            delete pblockOrphan;
+        }
+            mapOrphanBlocksByPrev.erase(hashPrev);
+    }
+	    
     LogPrintf("ProcessBlock: ACCEPTED\n");
 
     // ppcoin: if responsible for sync-checkpoint send it
@@ -2456,7 +2482,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 }
 
 #ifdef ENABLE_WALLET
-// Novacoin: attempt to generate suitable proof-of-stake
+// novacoin: attempt to generate suitable proof-of-stake
 bool CBlock::SignBlock(CWallet& wallet, int64_t nFees)
 {
     // if we are trying to sign
@@ -2511,6 +2537,7 @@ bool CBlock::SignBlock(CWallet& wallet, int64_t nFees)
 }
 #endif
 
+// ppcoin: check block signature
 bool CBlock::CheckBlockSignature() const
 {
     if (IsProofOfWork())
@@ -2543,10 +2570,12 @@ bool CheckDiskSpace(uint64_t nAdditionalBytes)
     // Check for nMinDiskSpace bytes (currently 50MB)
     if (nFreeBytesAvailable < nMinDiskSpace + nAdditionalBytes)
     {
+	fShutdown = true;    
         string strMessage = _("Error: Disk space is low!");
         strMiscWarning = strMessage;
         LogPrintf("*** %s\n", strMessage);
-        uiInterface.ThreadSafeMessageBox(strMessage, "", CClientUIInterface::MSG_ERROR);
+	    
+        uiInterface.ThreadSafeMessageBox(strMessage, "LiteDoge", CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION | CClientUIInterface::MODAL);
         StartShutdown();
         return false;
     }
@@ -2599,7 +2628,19 @@ FILE* AppendBlockFile(unsigned int& nFileRet)
         nCurrentBlockFile++;
     }
 }
-
+	
+void UnloadBlockIndex()
+{
+    mapBlockIndex.clear();
+    setStakeSeen.clear();
+    pindexGenesisBlock = NULL;
+    nBestHeight = 0;
+    nBestChainTrust = 0;
+    nBestInvalidTrust = 0;
+    hashBestChain = 0;
+    pindexBest = NULL;
+}
+	
 bool LoadBlockIndex(bool fAllowNew)
 {
     LOCK(cs_main);
@@ -2608,6 +2649,15 @@ bool LoadBlockIndex(bool fAllowNew)
     {
         nStakeMinAge = 1 * 60 * 60; // test net min age is 1 hour
         nCoinbaseMaturity = 10; // test maturity is 10 blocks
+        pchMessageStart[0] = 0xcd;
+        pchMessageStart[1] = 0xf2;
+        pchMessageStart[2] = 0xc0;
+        pchMessageStart[3] = 0xef;
+        bnProofOfWorkLimit = bnProofOfWorkLimitTestNet; // 16 bits PoW target limit for testnet
+        nStakeMinAge = 2 * nOneHour; // test net min age is 2 hours
+        nModifierInterval = 20 * 60; // test modifier interval is 20 minutes
+        nCoinbaseMaturity = 10; // test maturity is 10 blocks
+        nStakeTargetSpacing = 5 * 60; // test block spacing is 5 minutes
     }
 
     //
