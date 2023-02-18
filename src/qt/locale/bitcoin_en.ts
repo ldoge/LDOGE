@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="en">
+<defaultcodec>UTF-8</defaultcodec>    
 <context>
     <name>AboutDialog</name>
     <message>
@@ -15,14 +16,11 @@
     </message>
     <message>
         <location line="+41"/>
-        <source>Copyright © 2009-2022 The Bitcoin developers
-Copyright © 2011-2022 PPCoin Developers
-Copyright © 2014-2022 The BlackCoin developers
-Copyright © 2015-2022 The LiteDogecoin developers</source>
-         <translation type="unfinished"></translation>
+        <source>Copyright © 2009-2023 The Bitcoin developers</source>
+        <translation>Copyright © 2015-2023 The Litedoge developers</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+13"/>
         <source>
 This is experimental software.
 
@@ -2778,8 +2776,8 @@ for example: alertnotify=echo %%s | mail -s &quot;LiteDoge Alert&quot; admin@foo
     </message>
     <message>
         <location line="+6"/>
-        <source>Listen for connections on &lt;port&gt; (default: 17014 or testnet: 27014)</source>
-        <translation>Listen for connections on &lt;port&gt; (default: 17014 or testnet: 27014)</translation>
+        <source>Listen for connections on &lt;port&gt; (default: 17014 or testnet: 27099)</source>
+        <translation>Listen for connections on &lt;port&gt; (default: 17014 or testnet: 27098)</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -2828,7 +2826,7 @@ for example: alertnotify=echo %%s | mail -s &quot;LiteDoge Alert&quot; admin@foo
     </message>
     <message>
         <location line="+64"/>
-        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 17015 or testnet: 27015)</source>
+        <source>Listen for JSON-RPC connections on &lt;port&gt; (default: 17015 or testnet: 27098)</source>
         <translation></translation>
     </message>
     <message>
