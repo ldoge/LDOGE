@@ -496,7 +496,7 @@ macx:QMAKE_LFLAGS_THREAD += -pthread
 macx:QMAKE_CXXFLAGS_THREAD += -pthread
 macx:QMAKE_INFO_PLIST = share/qt/Info.plist
 # osx 10.9 has changed the stdlib default to libc++. To prevent some link error, you may need to use libstdc++
-    QMAKE_CXXFLAGS += -stdlib=libstdc++
+    QMAKE_CXXFLAGS += static-libstdc++
 
     QMAKE_CFLAGS_THREAD += -pthread
     QMAKE_CXXFLAGS_THREAD += -pthread
