@@ -5,12 +5,11 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "assert.h"
-#include "consensus/merkle.h"
 #include "chainparams.h"
 #include "main.h"
 #include "tinyformat.h"
 #include "util.h"
-#include "utilstrencodings.h"
+
 #include <boost/assign/list_of.hpp>
 
 using namespace boost::assign;
