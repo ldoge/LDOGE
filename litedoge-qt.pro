@@ -91,8 +91,9 @@ win32:QMAKE_LFLAGS *= -Wl,--large-address-aware -static
 # libqrencode (http://fukuchi.org/works/qrencode/index.en.html) must be installed for support
 contains(USE_QRCODE, 1) {
     message(Building with QRCode support)
-    DEFINES += USE_QRCODE
-    LIBS += -lqrencode
+    DEFINES += USE_QRCODE=$$USE_QRCODE
+    INCLUDEPATH += $$QRENCODE_INCLUDE_PATH
+    LIBS += $$join(QRENCODE_LIB_PATH,,-L,) -lqrencode
 }
 
 # use: qmake "USE_UPNP=1" ( enabled by default; default)
@@ -270,6 +271,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/protocol.h \
     src/qt/notificator.h \
     src/qt/paymentserver.h \
+    src/qt/transactiontablemodel.h \
     src/qt/peertablemodel.h \
     src/allocators.h \
     src/ui_interface.h \
@@ -280,6 +282,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/threadsafety.h \
     src/tinyformat.h \
     src/qt/autosaver.h \
+    src/qt/qrcodedialog.h \
     src/qt/chatpage.h \
     src/qt/cookiejar.h \
     src/qt/serveur.h \
@@ -365,9 +368,11 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/qwebview.cpp \
     src/qt/autosaver.cpp \
     src/qt/chatpage.cpp \
+    src/qt/qrcodedialog.cpp \
+    src/qt/transactiontablemodel.cpp \
+    src/qt/peertablemodel.cpp \
     src/qt/cookiejar.cpp \
     src/qt/webview.cpp \
-    src/qt/qwebview.cpp \
     src/qt/serveur.cpp
     
 RESOURCES += \
@@ -506,14 +511,6 @@ LIBS += -lboost_system$$BOOST_LIB_SUFFIX -lboost_filesystem$$BOOST_LIB_SUFFIX -l
 windows:LIBS += -lboost_chrono$$BOOST_LIB_SUFFIX
 
 
-# use: qmake "USE_QRCODE=1"
-# libqrencode (http://fukuchi.org/works/qrencode/index.en.html) must be installed for support
-contains(USE_QRCODE, 1) {
-    message(Building with QRCode support)
-    DEFINES += USE_QRCODE=$$USE_QRCODE
-    INCLUDEPATH += $$QRENCODE_INCLUDE_PATH
-    LIBS += $$join(QRENCODE_LIB_PATH,,-L,) -lqrencode
-}
 
 contains(RELEASE, 1) {
     !windows:!macx {
