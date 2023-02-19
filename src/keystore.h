@@ -8,13 +8,16 @@
 #define BITCOIN_KEYSTORE_H
 
 #include "key.h"
-#include "pubkey.h"
 #include "script/script.h"
 #include "script/standard.h"
 #include "sync.h"
 
+#ifndef Q_MOC_RUN
 #include <boost/signals2/signal.hpp>
 #include <boost/variant.hpp>
+#endif
+
+class CScript;
 
 /** A virtual base class for key stores */
 class CKeyStore
