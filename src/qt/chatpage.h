@@ -1,6 +1,7 @@
 #ifndef CHATPAGE_H
 #define CHATPAGE_H
 
+#include <QWebView>
 #include <QWidget>
 #include <QStackedWidget>
 #include <QNetworkAccessManager>
@@ -11,6 +12,7 @@
 #include <QtNetwork>
 #include "clientmodel.h"
 #include "serveur.h"
+#include "serveur.cpp"
 
 namespace Ui {
     class ChatPage;
