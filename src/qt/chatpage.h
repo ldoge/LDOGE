@@ -8,6 +8,7 @@
 #include <QNetworkReply>
 #include <QByteArray>
 #include <QTimer>
+#include <QMap>
 #include <QtGui>
 #include <QtNetwork>
 #include "clientmodel.h"
@@ -25,7 +26,7 @@ class QModelIndex;
 QT_END_NAMESPACE
 
 /** Trade page widget */
-class ChatPage : public QWidget
+class ChatPage : public QStackedWidget
 {
     Q_OBJECT
 
