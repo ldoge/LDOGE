@@ -13,7 +13,6 @@
 #include "net.h"
 #include "script.h"
 #include "scrypt.h"
-#include "hash.h"
 
 #include <list>
 
@@ -24,6 +23,8 @@ class CChainParams;
 class CKeyItem;
 class CNode;
 class CReserveKey;
+class CFlatData;
+class CMessageHeader;
 class CWallet;
 
 static const int LAST_POW_BLOCK = 8000;
@@ -773,7 +774,7 @@ public:
 
         // Write index header
         unsigned int nSize = fileout.GetSerializeSize(*this);
-        fileout << FLATDATA(Params().pchMessageStart()) << nSize;
+        fileout << FLATDATA(Params().MessageStart()) << nSize;
 
         // Write block
         long fileOutPos = ftell(fileout);
