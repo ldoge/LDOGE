@@ -48,6 +48,7 @@ libtool
 Makefile
 litedoge-qt
 Bitcoin-Qt.app
+src/.github/workflows/build.yml
 
 # Unit-tests
 Makefile.test
