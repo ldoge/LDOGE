@@ -1,9 +1,20 @@
+*.tar.gz
+
+
 src/*.exe
 src/litedoged
 src/build.h
 src/test_litedoge
 src/litedoge-qt
-litedoge-qt
+src/test/test_litedoge
+src/qt/test/test_litedoge-qt
+
+# autoreconf
+Makefile.in
+src/qt/forms/ui_*.h
+.deps
+.dirstamp
+.libs
 .*.swp
 *.*~*
 *.bak
@@ -14,17 +25,52 @@ litedoge-qt
 *.P
 *.litedoge
 *.directory
+*.a
+*.pb.cc
+*.pb.h
+config.log
+config.status
+configure
+libtool
+*.log
+*.trs
+*.dmg
+
+*.json.h
+*.raw.h
+
+#libtool object files
+*.lo
+*.la
+
 #compilation and Qt preprocessor part
 *.qm
-.qmake.stash
 Makefile
+litedoge-qt
+Bitcoin-Qt.app
+
+# Unit-tests
+Makefile.test
+litedoge-qt_test
+src/test/buildenv.py
+
 #resources cpp
 qrc_*.cpp
+
 #qt creator
 *.pro.user
+
 #mac specific
-build
 .DS_Store
 build
 
+#lcov
+/*.info
+
+#build tests
+linux-build
+win32-build
+
 !src/leveldb/Makefile
+
+/doc/doxygen/
