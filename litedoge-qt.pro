@@ -367,7 +367,6 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/pbkdf2.cpp \
     src/qt/qwebview.cpp \
     src/qt/autosaver.cpp \
-    src/qt/chatpage.cpp \
     src/qt/qrcodedialog.cpp \
     src/qt/transactiontablemodel.cpp \
     src/qt/peertablemodel.cpp \
