@@ -283,7 +283,6 @@ HEADERS += src/qt/bitcoingui.h \
     src/tinyformat.h \
     src/qt/autosaver.h \
     src/qt/qrcodedialog.h \
-    src/qt/chatpage.h \
     src/qt/cookiejar.h \
     src/qt/serveur.h \
     src/qt/webview.h
@@ -367,9 +366,9 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/pbkdf2.cpp \
     src/qt/qwebview.cpp \
     src/qt/autosaver.cpp \
-    src/qt/chatpage.cpp \
     src/qt/qrcodedialog.cpp \
     src/qt/transactiontablemodel.cpp \
+    src/qt/chatpage.cpp \
     src/qt/peertablemodel.cpp \
     src/qt/cookiejar.cpp \
     src/qt/webview.cpp \
