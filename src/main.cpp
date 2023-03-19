@@ -1,6 +1,7 @@
 // Copyright (c) 2009-2023 Satoshi Nakamoto
 // Copyright (c) 2009-2023 The Bitcoin developers
-// Copyright (c) 2015-2023 The Litedogecoin developers
+// Copyright (c) 2009-2023 The FLAPX developers
+// Copyright (c) 2015-2023 The Litedoge developers
 
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -2327,7 +2328,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     // ppcoin: check proof-of-stake
     // Limited duplicity on stake: prevents block flood attack
     // Duplicate stake allowed only when there is orphan child block
-    if (pblock->IsProofOfStake() && setStakeSeen.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
+     if (!fReindex && !fImporting && pblock->IsProofOfStake() && setStakeSeen.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash))
         return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for block %s", pblock->GetProofOfStake().first.ToString(), pblock->GetProofOfStake().second, hash.ToString());
 
     CBlockIndex* pcheckpoint = Checkpoints::GetLastSyncCheckpoint();
@@ -2341,6 +2342,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
                 pfrom->Misbehaving(1);
             return error("ProcessBlock() : block with timestamp before last checkpoint");
         }
+    }
 
 /* FIXME
         CBigNum bnNewBlock;
@@ -2377,17 +2379,17 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
     // If we don't already have its previous block, shunt it off to holding area until we get it
     if (!mapBlockIndex.count(pblock->hashPrevBlock))
     {
-        LogPrintf("ProcessBlock: ORPHAN BLOCK %lu, prev=%s\n", (unsigned long)mapOrphanBlocks.size(), pblock->hashPrevBlock.ToString());
+      LogPrintf("ProcessBlock: ORPHAN BLOCK %lu, prev=%s\n", (unsigned long)mapOrphanBlocks.size(), pblock->hashPrevBlock.ToString());
 
-        // Accept orphans as long as there is a node to request its parents from
-        if (pfrom) {
-            // ppcoin: check proof-of-stake
-            if (pblock->IsProofOfStake())
-            {
-                // Limited duplicity on stake: prevents block flood attack
+      // Accept orphans as long as there is a node to request its parents from
+      if (pfrom) {
+         // ppcoin: check proof-of-stake
+         if (pblock->IsProofOfStake())
+         {
+            // Limited duplicity on stake: prevents block flood attack
             // Duplicate stake allowed only when there is orphan child block
             if (setStakeSeenOrphan.count(pblock->GetProofOfStake()) && !mapOrphanBlocksByPrev.count(hash) && !Checkpoints::WantedByPendingSyncCheckpoint(hash))
-                return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for orphan block %s", pblock->GetProofOfStake().first.ToString().c_str(), pblock->GetProofOfStake().second, hash.ToString().c_str());
+                return error("ProcessBlock() : duplicate proof-of-stake (%s, %d) for orphan block %s", pblock->GetProofOfStake().first.ToString().c_str(), pblock->GetProofOfStake().second, hash.ToString());
             else
                 setStakeSeenOrphan.insert(pblock->GetProofOfStake());
         }
@@ -2395,16 +2397,17 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         mapOrphanBlocks.insert(make_pair(hash, pblock2));
         mapOrphanBlocksByPrev.insert(make_pair(pblock2->hashPrevBlock, pblock2));
         // Ask this guy to fill in what we're missing
-        if (pfrom)
-        {
-            pfrom->PushGetBlocks(pindexBest, GetOrphanRoot(pblock2));
-            // ppcoin: getblocks may not obtain the ancestor block rejected
-            // earlier by duplicate-stake check so we ask for it again directly
-            if (!IsInitialBlockDownload())
-                pfrom->AskFor(CInv(MSG_BLOCK, WantedByOrphan(pblock2)));
+        PushGetBlocks(pindexBest, GetOrphanRoot(CBlock));
+        // ppcoin: getblocks may not obtain the ancestor block rejected
+        // earlier by duplicate-stake check so we ask for it again directly
+        if (!IsInitialBlockDownload())
+            pfrom->AskFor(CInv(MSG_BLOCK, WantedByOrphan(CBlock)));
         }
         return true;
     }
+    
+     // Accept orphans as long as there is a node to request its parents from 
+     if (pfrom) {	    
     // ppcoin: verify hash target and signature of coinstake tx
     if (pblock->IsProofOfStake())
     {
@@ -2483,7 +2486,7 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
 
 #ifdef ENABLE_WALLET
 // novacoin: attempt to generate suitable proof-of-stake
-bool CBlock::SignBlock(CWallet& wallet, int64_t nFees)
+bool CBlock::SignBlock(CWallet& wallet, int64_t nFees())
 {
     // if we are trying to sign
     //    something except proof-of-stake block template
@@ -2573,9 +2576,8 @@ bool CheckDiskSpace(uint64_t nAdditionalBytes)
 	fShutdown = true;    
         string strMessage = _("Error: Disk space is low!");
         strMiscWarning = strMessage;
-        LogPrintf("*** %s\n", strMessage);
-	    
-        uiInterface.ThreadSafeMessageBox(strMessage, "LiteDoge", CClientUIInterface::OK | CClientUIInterface::ICON_EXCLAMATION | CClientUIInterface::MODAL);
+        LogPrintf("*** %s\n", strMessage);   
+        uiInterface.ThreadSafeMessageBox(strMessage, "", CClientUIInterface::MSG_ERROR);
         StartShutdown();
         return false;
     }
@@ -2606,7 +2608,7 @@ FILE* OpenBlockFile(unsigned int nFile, unsigned int nBlockPos, const char* pszM
     return file;
 }
 
-static unsigned int nCurrentBlockFile = 1;
+static unsigned int = 1;
 
 FILE* AppendBlockFile(unsigned int& nFileRet)
 {
@@ -2896,7 +2898,7 @@ void ThreadImport(std::vector<boost::filesystem::path> vImportFiles)
 // CAlert
 //
 
-extern map<uint256, CAlert> mapAlerts;
+extern map<uint256, CAlert>;
 extern CCriticalSection cs_mapAlerts;
 
 string GetWarnings(string strFor)
@@ -3666,7 +3668,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
     // Update the last seen time for this node's address
     if (pfrom->fNetworkNode)
-        if (strCommand == "version" || strCommand == "addr" || strCommand == "inv" || strCommand == "getdata" || strCommand == "ping")
+        if (runCommand == "version" || runCommand == "addr" || runCommand == "inv" || runCommand == "getdata" || runCommand == "ping")
             AddressCurrentlyConnected(pfrom->addr);
 
 
@@ -3690,7 +3692,7 @@ bool ProcessMessages(CNode* pfrom)
     bool fOk = true;
 
     if (!pfrom->vRecvGetData.empty())
-        ProcessGetData(pfrom);
+        ProcessMessages(pfrom);
 
     // this maintains the order of responses
     if (!pfrom->vRecvGetData.empty()) return fOk;
@@ -3751,7 +3753,7 @@ bool ProcessMessages(CNode* pfrom)
         bool fRet = false;
         try
         {
-            fRet = ProcessMessage(pfrom, strCommand, vRecv, msg.nTime);
+            fRet = ProcessMessages(pfrom, strCommand, vRecv, msg.nTime);
             boost::this_thread::interruption_point();
         }
         catch (std::ios_base::failure& e)
