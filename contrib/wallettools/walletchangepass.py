@@ -10,7 +10,7 @@ if pwd2 == "":
       access.walletpassphrasechange(pwd, pwd2)
       break
     elif awnser == "N":
-      print("Stoped changes")
+      print("Stopped changes")
       break
     else:
       print("Please awnser only with Y or N")
