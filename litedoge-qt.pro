@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = litedoge-qt
-VERSION = 3.6.0.1
+VERSION = 4.0.0.0
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 DEFINES += ENABLE_WALLET
