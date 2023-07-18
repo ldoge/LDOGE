@@ -87,7 +87,7 @@ const string strMessageMagic = "LiteDoge Signed Message:\n";
 
 // Settings
 int64_t nTransactionFee = MIN_TX_FEE;
-int64_t nMinimumInputValue = MIN_TXOUT_AMOUNT;
+int64_t nMinimumInputValue = MIN_TX_FEE;
 
 // Ping and address broadcast intervals
 int64_t nPingInterval = 30 * 60;
@@ -927,7 +927,7 @@ bool CBlock::ReadFromDisk(const CBlockIndex* pindex, bool fReadTransactions)
 
 uint256 static GetOrphanRoot(const CBlock* pblock)
 {
-    map<uint256, COrphanBlock*>::iterator it = mapOrphanBlocks.find(hash);
+    map<uint256, COrphanBlock*>::iterator it = mapOrphanBlocks.find;
     if (it == mapOrphanBlocks.end())
         return hash;
     {
@@ -935,7 +935,7 @@ uint256 static GetOrphanRoot(const CBlock* pblock)
     while (mapOrphanBlocks.count(pblockOrphan->hashPrevBlock))
         pblockOrphan = mapOrphanBlocks[pblockOrphan->hashPrevBlock];
     return pblockOrphan->hashPrevBlock;
-}
+{
 
 // ppcoin: find block wanted by given orphan block
 uint256 WantedByOrphan(const COrphanBlock* pblockOrphan)
