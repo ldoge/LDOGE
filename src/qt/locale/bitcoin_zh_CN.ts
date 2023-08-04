@@ -13,9 +13,9 @@
     </message>
     <message>
         <location line="+41"/>
-        <source>Copyright © 2009-2020 The Bitcoin developers
-Copyright © 2012-2020 The LiteDogecoin developers
-Copyright © 2014-2020 The BlackCoin developers</source>
+        <source>Copyright © 2009-2024 The Bitcoin developers
+    Copyright © 2014-2024 The BlackCoin developers
+    Copyright © 2015-2024 The LiteDoge developers</source>
         <translation>版权所有 © 2009-2020 比特币Bitcoin开发组
 版权所有 © 2012-2020 新星币Novacoin开发组
 版权所有 © 2014 黑币LiteDoge开发组</translation>
