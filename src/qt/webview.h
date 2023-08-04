@@ -1,8 +1,8 @@
 /*
  * MIT License
  *
- * Copyright (c) 2017 Serge Zaitsev
- * Copyright (c) 2022 Steffen André Langnes
+ * Copyright (c) 2014 Serge Zaitsev
+ * Copyright (c) 2024 Steffen André Langnes
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
