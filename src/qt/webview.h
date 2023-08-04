@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2014 Serge Zaitsev
+ * Copyright (c) 2024 Serge Zaitsev
  * Copyright (c) 2024 Steffen André Langnes
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
