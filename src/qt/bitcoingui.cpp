@@ -3,6 +3,7 @@
  *
  * W.J. van der Laan 2011-2024
  * The Bitcoin Developers 2011-2024
+ * The LiteDoge Developers 2011-2024
  */
 
 #include <QApplication>
