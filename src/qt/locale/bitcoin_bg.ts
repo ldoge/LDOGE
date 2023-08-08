@@ -9,7 +9,7 @@
     <message>
         <location line="+39"/>
         <source>&lt;b&gt;LiteDoge&lt;/b&gt; version</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;LiteDoge&lt;/b&gt; version</translation>
     </message>
     <message>
         <location line="+41"/>
