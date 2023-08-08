@@ -24,7 +24,7 @@
     Copyright © 2015-2024 The LiteDoge developers</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+15"/>
         <source>
 This is experimental software.
 
