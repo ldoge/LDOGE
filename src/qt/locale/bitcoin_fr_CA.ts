@@ -16,7 +16,7 @@
         <source>Copyright © 2009-2024 The Bitcoin developers
     Copyright © 2014-2024 The BlackCoin developers
     Copyright © 2015-2024 The LiteDoge developers</source>
-        <translation>Copyright © 2009-2020 Les développeurs Bitcoin
+        <translation>Copyright © 2009-2024 Les développeurs Bitcoin
 Copyright © 2014-2024 Les développeurs Blackcoin
 Copyright © 2015-2024 Les développeurs LiteDoge</translation>
     </message>
