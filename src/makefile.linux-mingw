@@ -1,5 +1,5 @@
-# Copyright (c) 2009-2021 Bitcoin Developers
-# Copyright (c) 2009-2021 LiteDogecoin Developers
+# Copyright (c) 2009-2024 Bitcoin Developers
+# Copyright (c) 2009-2024 Litedoge Developers
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -67,7 +67,6 @@ LIBS += -l mingwthrd -l kernel32 -l user32 -l gdi32 -l comdlg32 -l winspool -l w
 HEADERS = $(wildcard *.h)
 
 OBJS= \
-    obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
     obj/netbase.o \
@@ -90,14 +89,15 @@ OBJS= \
     obj/rpcrawtransaction.o \
     obj/timedata.o \
     obj/script.o \
+    obj/sync.o \
     obj/txmempool.o \
     obj/util.o \
     obj/hash.o \
     obj/noui.o \
     obj/kernel.o \
     obj/pbkdf2.o \
-    obj/sync.o \
     obj/scrypt.o \
+    obj/scrypt-arm.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
     obj/chainparams.o \
