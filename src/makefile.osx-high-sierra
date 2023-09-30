@@ -69,7 +69,6 @@ CFLAGS += -Wall -Wextra -Wformat -Wno-ignored-qualifiers -Wformat-security -Wno-
     $(DEBUGFLAGS) $(DEFS) $(INCLUDEPATHS)
 
 OBJS= \
-    obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
     obj/netbase.o \
@@ -97,12 +96,20 @@ OBJS= \
     obj/util.o \
     obj/hash.o \
     obj/noui.o \
-    obj/pbkdf2.o \
     obj/kernel.o \
+    obj/pbkdf2.o \
     obj/scrypt.o \
+    obj/scrypt-arm.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
-    obj/chainparams.o
+    obj/chainparams.o \
+    obj/db.o \
+    obj/miner.o \
+    obj/rpcdump.o \
+    obj/rpcmining.o \
+    obj/rpcwallet.o \
+    obj/wallet.o \
+    obj/walletdb.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
