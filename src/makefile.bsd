@@ -1,4 +1,4 @@
-# Copyright (c) 2009-2010 Satoshi Nakamoto
+# Copyright (c) 2009-2024 Satoshi Nakamoto
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -94,7 +94,6 @@ xCXXFLAGS=-O0 -msse2 -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wformat -Wf
 xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
-    obj/alert.o \
     obj/version.o \
     obj/checkpoints.o \
     obj/netbase.o \
@@ -128,7 +127,14 @@ OBJS= \
     obj/scrypt-arm.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
-    obj/chainparams.o
+    obj/chainparams.o \
+    obj/db.o \
+    obj/miner.o \
+    obj/rpcdump.o \
+    obj/rpcmining.o \
+    obj/rpcwallet.o \
+    obj/wallet.o \
+    obj/walletdb.o
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
