@@ -144,7 +144,6 @@ OBJS= \
     obj/rpcwallet.o \
     obj/wallet.o \
     obj/walletdb.o
-endif
 
 all: litedoged
 
