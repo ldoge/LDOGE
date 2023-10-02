@@ -3,9 +3,10 @@
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+USE_UPNP:=1
+USE_WALLET:=1
 USE_LEVELDB:=0
 USE_IPV6:=1
-USE_UPNP:=1
 
 LINK:=$(CXX)
 ARCH:=$(shell uname -m)
@@ -142,6 +143,7 @@ OBJS= \
     obj/rpcdump.o \
     obj/rpcmining.o \
     obj/rpcwallet.o \
+    obj/webview.o \
     obj/wallet.o \
     obj/walletdb.o
 
@@ -188,7 +190,7 @@ obj/%.o: %.cpp
 	  rm -f $(@:%.o=%.d)
 
 litedoged: $(OBJS:obj/%=obj/%)
-	$(CXX) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
+	$(LINK) $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
 	
 TESTOBJS := $(patsubst test/%.cpp,obj-test/%.o,$(wildcard test/*.cpp))
 
@@ -203,9 +205,11 @@ test_litedoged: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 	$(CXX) $(xCXXFLAGS) -o $@ $(LIBPATHS) $^ -Wl,-B$(LMODE) -lboost_unit_test_framework $(xLDFLAGS) $(LIBS)	
 
 clean:
-	-rm -f litedoged
+	-rm -f litedoged test_litedoged
 	-rm -f obj/*.o
+        -rm -f obj-test/*.o
 	-rm -f obj/*.P
+        -rm -f obj-test/*.P
 	-rm -f obj/build.h
-
+        
 FORCE:
