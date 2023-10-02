@@ -21,7 +21,6 @@
 #include <QListView>
 #include <QTextEdit>
 #include <QtGui>
-#include <QWebview>
 #include <QtNetwork>
 #include <QSystemTrayIcon>
 
