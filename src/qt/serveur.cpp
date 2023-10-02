@@ -15,11 +15,12 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA*/
 #include <QScrollBar>
 #include "serveur.h"
+#include "chatpage.h"
         QStringList users;
         bool delist = true;
-server::server()
+Serveur::Serveur()
 {
-        connect(this, SIGNAL(readyRead()), this, SLOT(readserver()));
+	connect(this, SIGNAL(readyRead()), this, SLOT(readServeur()));
 	connect(this, SIGNAL(connected()), this, SLOT(connected()));
     connect(this, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorSocket(QAbstractSocket::SocketError)));
 
@@ -29,7 +30,7 @@ server::server()
 
 
 
-void server::errorSocket(QAbstractSocket::SocketError error)
+void Serveur::errorSocket(QAbstractSocket::SocketError error)
 {
 	switch(error)
 	{
@@ -47,7 +48,7 @@ void server::errorSocket(QAbstractSocket::SocketError error)
 	}
 }
 
-void server::connected()
+void Serveur::connected()
 {
     affichage->append("Connecting...");
 
@@ -57,12 +58,12 @@ void server::connected()
 
 }
 
-void server::joins()
+void Serveur::joins()
 {
-    join("#litedoge");
+    join(##litedoge");
 }
 
-void server::readserver()
+void Serveur::readServeur()
 {
         QString message=QString::fromUtf8(this->readAll());
 
@@ -71,14 +72,14 @@ void server::readserver()
 
 	if(message.startsWith("PING :"))
 	{
-        QStringList liste=message.split(" ");
+		QStringList liste=message.split(" ");
 		QString msg="PONG "+liste.at(1);
 		sendData(msg);
 	}
 	else if(message.contains("Nickname is already in use."))
 	{
         pseudo=pseudo+"_2";
-        pseudo.remove("\r\n");
+		pseudo.remove("\r\n");
 		sendData("NICK "+pseudo);
 		emit pseudoChanged(pseudo);
         ecrire("-> Name changed to "+pseudo);
@@ -139,7 +140,7 @@ void server::readserver()
                     QRegExp reg(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ NOTICE [a-zA-Z0-9]+ :(.+)");
                     ecrire(msg.replace(reg,"<b>[NOTICE] <i>\\1</i> : \\2 <br />"),currentChan);
                 }
-                else if(currentChan==server)
+                else if(currentChan==serveur)
                 {
                     QRegExp reg(":([a-zA-Z0-9]+)\\![~a-zA-Z0-9]+@[a-zA-Z0-9\\/\\.-]+ NOTICE [a-zA-Z0-9]+ :(.+)");
                     ecrire(msg.replace(reg,"<b>[NOTICE] <i>\\1</i> : \\2 <br />"));
@@ -159,7 +160,7 @@ void server::readserver()
         //}
 }
 
-void server::sendData(QString txt)
+void Serveur::sendData(QString txt)
 {
 	if(this->state()==QAbstractSocket::ConnectedState)
     {
@@ -167,7 +168,7 @@ void server::sendData(QString txt)
 	}
 }
 
-QString server::parseCommande(QString comm,bool server)
+QString Serveur::parseCommande(QString comm,bool serveur)
 {
     if(comm.startsWith("/"))
     {
@@ -252,7 +253,7 @@ QString server::parseCommande(QString comm,bool server)
         else
             return pref+" "+msg;
     }
-    else if(!server)
+    else if(!serveur)
 	{
         QString destChan=tab->tabText(tab->currentIndex());
                 if(comm.endsWith("<br />"))
@@ -262,8 +263,7 @@ QString server::parseCommande(QString comm,bool server)
         if(comm.startsWith(":"))
             comm.insert(0,":");
 
-//        return "PRIVMSG "+destChan+" "+comm.replace(" ","\t");
-         return "PRIVMSG "+destChan+" "+comm;
+        return "PRIVMSG "+destChan+" "+comm.replace(" ","\t");
     }
 	else
 	{
@@ -271,13 +271,13 @@ QString server::parseCommande(QString comm,bool server)
 	}
 }
 
-void server::join(QString chan)
+void Serveur::join(QString chan)
 {
     affichage->append("Joining "+ chan +" channel");
 	emit joinTab();
 	QTextEdit *textEdit=new QTextEdit;
 	int index=tab->insertTab(tab->currentIndex()+1,textEdit,chan);
-        tab->setTabToolTip(index,server);
+	tab->setTabToolTip(index,serveur);
 	tab->setCurrentIndex(index);
 
 	textEdit->setReadOnly(true);
@@ -288,12 +288,12 @@ void server::join(QString chan)
 
 	emit tabJoined();
 }
-void server::leave(QString chan)
+void Serveur::leave(QString chan)
 {
     sendData(parseCommande("/part "+chan+ " "+msgQuit));
 }
 
-void server::ecrire(QString txt,QString destChan,QString msgTray)
+void Serveur::ecrire(QString txt,QString destChan,QString msgTray)
 {
 	if(destChan!="")
         {
@@ -321,11 +321,11 @@ void server::ecrire(QString txt,QString destChan,QString msgTray)
 
 }
 
-void server::updateUsersList(QString chan,QString message)
+void Serveur::updateUsersList(QString chan,QString message)
 {
     message = message.replace("\r\n","");
     message = message.replace("\r","");
-    if(chan!=server)
+    if(chan!=serveur)
     {
     if(updateUsers==true || message != "")
     {
