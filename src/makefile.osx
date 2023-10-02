@@ -22,6 +22,8 @@ LIBPATHS= \
 
 USE_UPNP:=1
 USE_WALLET:=1
+USE_LEVELDB:=0
+USE_IPV6:=1
 
 LIBS= -dead_strip
 
@@ -54,7 +56,7 @@ ifdef RELEASE
 # Compile for maximum compatibility and smallest size.
 # This requires that dependencies are compiled
 # the same way.
-CFLAGS = -mmacosx-version-min=10.5 -arch x86_64 -O2 -msse2
+CFLAGS = -O2 -msse2
 else
 CFLAGS = -g -msse2
 endif
@@ -116,7 +118,6 @@ ifeq (${USE_WALLET}, 1)
         obj/rpcwallet.o \
         obj/wallet.o \
         obj/walletdb.o
-endif
 
 ifndef USE_UPNP
 	override USE_UPNP = -
@@ -126,14 +127,21 @@ ifneq (${USE_UPNP}, -)
 ifdef STATIC
 	LIBS += $(DEPSDIR)/lib/libminiupnpc.a
 else
-	LIBS += -lminiupnpc
+        LIBS += -lminiupnpc
 endif
+
+ifneq (${USE_IPV6}, -)
+	DEFS += -DUSE_IPV6=$(USE_IPV6)
 endif
 
 all: litedoged
 
+#
+# LevelDB support
+#
+ifdef USE_LEVELDB
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
-DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
+DEFS += $(addprefix -I,$(CURDIR)/leveldb/include) -DUSE_LEVELDB
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
 OBJS += obj/txdb-leveldb.o
 leveldb/libleveldb.a:
