@@ -32,7 +32,6 @@
 
 #include <QWidget>
 #include <QIcon>
-#include <QWebFrame>
 #include <QWebHistory>
 #include <QStackedWidget>
 #include <QDesktopServices>
