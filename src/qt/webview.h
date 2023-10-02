@@ -30,7 +30,6 @@
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
 
-#include <QWebView>
 #include <QWidget>
 #include <QIcon>
 #include <QWebFrame>
