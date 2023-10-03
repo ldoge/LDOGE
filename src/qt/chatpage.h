@@ -1,7 +1,6 @@
 #ifndef CHATPAGE_H
 #define CHATPAGE_H
 
-#include <QWebView>
 #include <QWidget>
 #include <QStackedWidget>
 #include <QNetworkAccessManager>
@@ -36,7 +35,7 @@ public:
 
     void setModel(ClientModel *clientModel);
     void setModel(WalletModel *walletModel);
-    Server * currentTab();
+    Serveur * currentTab();
     signals:
         void changeTab();
 public slots:
