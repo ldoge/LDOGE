@@ -15,6 +15,7 @@
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA*/
 #include <QScrollBar>
 #include "serveur.h"
+#include "autosaver.h"
 #include "chatpage.h"
         QStringList users;
         bool delist = true;
@@ -52,7 +53,7 @@ void Serveur::connected()
 {
     affichage->append("Connecting...");
 
-    sendData("USER "+pseudo+" localhost "+server+" :"+pseudo);
+    sendData("USER "+pseudo+" localhost "+serveur+" :"+pseudo);
     sendData("NICK "+pseudo);
     affichage->append("Connected to https://web.libera.chat/#litedoge");
 
