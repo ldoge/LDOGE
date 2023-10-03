@@ -1,12 +1,13 @@
 #include "chatpage.h"
 #include "clientmodel.h"
-
+#include "cookiejar.h"
+#include "autosaver.h"
 #include "walletmodel.h"
 #include "guiutil.h"
 #include "util.h"
 #include "cookiejar.h"
 #include "webview.h"
-
+#include <QNetworkCookieJar>
 #include <QWebview>
 #include <QWidget>
 #include <QList>
