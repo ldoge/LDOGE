@@ -1,5 +1,5 @@
 /*
- * Qt5 bitcoin GUI.
+ * Qt4 bitcoin GUI.
  *
  * W.J. van der Laan 2011-2012
  * The Bitcoin Developers 2011-2022
@@ -12,6 +12,7 @@
 #include "addressbookpage.h"
 #include "sendcoinsdialog.h"
 #include "signverifymessagedialog.h"
+#include "secondauthdialog.h"
 #include "optionsdialog.h"
 #include "aboutdialog.h"
 #include "clientmodel.h"
@@ -62,7 +63,6 @@
 #include <QTextEdit>
 #include <QAbstractSocket>   
 #include <QRegExp>
-#include <QWindowsXPStyle>
 #include <QModelIndex>
 #include <QMainWindow>
 #include <QSslError>
@@ -72,12 +72,13 @@
 #include <QActionGroup>
 #include <QAction>
 #include <QFileDialog>
+#if QT_VERSION < 0x050000
 #include <QDesktopServices>
 #include <QTimer>
 #include <QDragEnterEvent>
 #include <QWidget>
-#include <QtGui/QFont>
-#include <QtGui/QFontMetrics>
+#include <QFont>
+#include <QFontMetrics>
 #include <QWebView>
 #include <QWebFrame>
 #include <QWebHistory>
@@ -97,16 +98,18 @@
 #include <QSystemTrayIcon>
 #if QT_VERSION >= 0x050000
 #include <QtCore/QSortFilterProxyModel>
-#else
 #include <QSortFilterProxyModel>
 #endif
-
 
 #include <iostream>
 
 extern CWallet* pwalletMain;
 extern int64_t nLastCoinStakeSearchInterval;
+extern unsigned int nTargetSpacing;
 double GetPoSKernelPS();
+
+ActiveLabel::ActiveLabel(const QString & text, QWidget * parent):
+    QLabel(parent){}
 
 BitcoinGUI::BitcoinGUI(QWidget *parent):
     QMainWindow(parent),
@@ -166,7 +169,8 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 
     chatPage = new ChatPage(this);
-
+    Ui::chatPage chat;
+    chat.setupUi(chatPage);
 
     centralStackedWidget = new QStackedWidget(this);
     centralStackedWidget->addWidget(overviewPage);
