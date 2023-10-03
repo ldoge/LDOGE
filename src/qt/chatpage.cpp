@@ -1,6 +1,5 @@
 #include "chatpage.h"
 #include "clientmodel.h"
-#include "cookiejar.h"
 #include "autosaver.h"
 #include "walletmodel.h"
 #include "guiutil.h"
