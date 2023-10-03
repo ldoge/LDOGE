@@ -8,7 +8,6 @@
 #include <QApplication>
 
 #include "bitcoingui.h"
-
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
 #include "sendcoinsdialog.h"
@@ -63,7 +62,6 @@
 #include <QTextEdit>
 #include <QAbstractSocket>   
 #include <QRegExp>
-#include <QWindowsStyle>
 #include <QWindowsXPStyle>
 #include <QModelIndex>
 #include <QMainWindow>
