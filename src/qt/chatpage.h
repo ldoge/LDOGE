@@ -58,7 +58,7 @@ private:
 private slots:
     Ui::ChatPage *ui;
     ClientModel *model;
-    QMap<QString,Server *> servers;
+    QMap<QString,Serveur *> serveurs;
     bool joining;
     void closeEvent(QCloseEvent *event);
 
