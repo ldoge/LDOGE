@@ -32,7 +32,6 @@
 #include "init.h"
 #include "ui_interface.h"
 #include "serveur.h"
-#include "ui_chatpage.h"
 #include "chatpage.h"
 #include "cookiejar.h"
 #include "webview.h"
@@ -53,7 +52,6 @@
 #include <QStringListModel>
 #include <QString>
 #include <QMessageBox>
-#include <QMimeData>
 #include <QScrollBar>
 #include <QProgressBar>
 #include <QStackedWidget>
@@ -123,6 +121,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     trayIcon(0),
     notificator(0),
     rpcConsole(0),
+    Chatpage(0),
     prevBlocks(0),
     nWeight(0)
 {
@@ -166,10 +165,7 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     sendCoinsPage = new SendCoinsDialog(this);
 
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
-
     chatPage = new ChatPage(this);
-    Ui::chatPage chat;
-    chat.setupUi(chatPage);
 
     centralStackedWidget = new QStackedWidget(this);
     centralStackedWidget->addWidget(overviewPage);
