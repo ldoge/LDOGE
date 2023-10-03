@@ -60,7 +60,7 @@ void Serveur::connected()
 
 void Serveur::joins()
 {
-    join(##litedoge");
+    join(#litedoge");
 }
 
 void Serveur::readServeur()
