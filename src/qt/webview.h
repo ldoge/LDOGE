@@ -32,7 +32,6 @@
 
 #include <QWidget>
 #include <QIcon>
-#include <QWebHistory>
 #include <QStackedWidget>
 #include <QDesktopServices>
 #include <QNetworkReply>
@@ -40,6 +39,10 @@
 #include <QList>
 #include <QString>
 #include <QUrl>
+#include <QListView>
+#include <QTextEdit>
+#include <QtGui>
+#include <QtNetwork>
 
 class WebPage;
 
