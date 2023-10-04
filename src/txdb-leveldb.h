@@ -1,5 +1,5 @@
-// Copyright (c) 2009-2012 The Bitcoin Developers
-// Copyright (c) 2009-2012 The Litedoge Developers
+// Copyright (c) 2009-2024 The Bitcoin Developers
+// Copyright (c) 2009-2024 The Litedoge Developers
 // Authored by Google, Inc.
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -8,13 +8,14 @@
 #define BITCOIN_LEVELDB_H
 
 #include "main.h"
-
+#include "db.h"
+#include "txdb-leveldb.h"
+#include <leveldb/db.h>
 #include <map>
 #include <string>
 #include <vector>
 
-#include <leveldb/db.h>
-#include <leveldb/write_batch.h>
+#include <leveldb/include/leveldb/write_batch.h>
 
 // Class that provides access to a LevelDB. Note that this class is frequently
 // instantiated on the stack and then destroyed again, so instantiation has to
