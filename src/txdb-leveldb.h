@@ -9,14 +9,13 @@
 
 #include "main.h"
 #include "db.h"
-#include "txdb-leveldb.h"
 #include <leveldb/include/leveldb/write_batch.h>
 
 #include <map>
 #include <string>
 #include <vector>
 
-
+using namespace std;
 
 // Class that provides access to a LevelDB. Note that this class is frequently
 // instantiated on the stack and then destroyed again, so instantiation has to
