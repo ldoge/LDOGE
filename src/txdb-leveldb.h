@@ -87,7 +87,7 @@ protected:
                 if (status.IsNotFound())
                     return false;
                 // Some unexpected error.
-                LogPrintf("LevelDB read failure: %s\n", status.str());
+                printf("LevelDB read failure: %s\n", status.ToString().c_str());
                 return false;
             }
         }
@@ -97,7 +97,7 @@ protected:
                                 SER_DISK, CLIENT_VERSION);
             ssValue >> value;
         }
-        catch (std::exception &e) {
+        catch (const exception&) {
             return false;
         }
         return true;
@@ -115,14 +115,14 @@ protected:
         CDataStream ssValue(SER_DISK, CLIENT_VERSION);
         ssValue.reserve(10000);
         ssValue << value;
-
+        
         if (activeBatch) {
             activeBatch->Put(ssKey.str(), ssValue.str());
             return true;
         }
-        leveldb::Status status = pdb->Put(leveldb::WriteOptions(), ssKey.str(), ssValue.str());
+        leveldb::Status status = pdb->Delete(leveldb::WriteOptions(), ssKey.str(), ssValue.str());
         if (!status.ok()) {
-            LogPrintf("LevelDB write failure: %s\n", status.").c_str());
+            printf("LevelDB write failure: %s\n", status.ToString().c_str());
             return false;
         }
         return true;
@@ -181,12 +181,12 @@ public:
     bool ReadVersion(int& nVersion)
     {
         nVersion = 0;
-        return Read(std::string("version"), nVersion);
+        return Read(string("version"), nVersion);
     }
 
     bool WriteVersion(int nVersion)
     {
-        return Write(std::string("version"), nVersion);
+        return Write(string("version"), nVersion);
     }
 
     bool ReadTxIndex(uint256 hash, CTxIndex& txindex);
@@ -207,6 +207,8 @@ public:
     bool WriteSyncCheckpoint(uint256 hashCheckpoint);
     bool ReadCheckpointPubKey(std::string& strPubKey);
     bool WriteCheckpointPubKey(const std::string& strPubKey);
+    bool ReadModifierUpgradeTime(unsigned int& nUpgradeTime);
+    bool WriteModifierUpgradeTime(const unsigned int& nUpgradeTime);
     bool LoadBlockIndex();
 private:
     bool LoadBlockIndexGuts();
