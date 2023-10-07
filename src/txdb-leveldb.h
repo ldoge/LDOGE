@@ -9,7 +9,11 @@
 
 #include "main.h"
 #include "db.h"
-#include <leveldb/include/leveldb/write_batch.h>
+#include "bignum.h"
+#include <leveldb/write_batch.h>
+#include "key.h"
+#include "script.h"
+#include "base58.h"
 
 #include <map>
 #include <string>
@@ -64,7 +68,7 @@ protected:
         CDataStream ssKey(SER_DISK, CLIENT_VERSION);
         ssKey.reserve(1000);
         ssKey << key;
-        std::string strValue;
+        string strValue;
 
         bool readFromDb = true;
         if (activeBatch) {
@@ -83,7 +87,7 @@ protected:
                 if (status.IsNotFound())
                     return false;
                 // Some unexpected error.
-                LogPrintf("LevelDB read failure: %s\n", status.ToString.str());
+                LogPrintf("LevelDB read failure: %s\n", status.str());
                 return false;
             }
         }
@@ -118,7 +122,7 @@ protected:
         }
         leveldb::Status status = pdb->Put(leveldb::WriteOptions(), ssKey.str(), ssValue.str());
         if (!status.ok()) {
-            LogPrintf("LevelDB write failure: %s\n", status.ToString.str());
+            LogPrintf("LevelDB write failure: %s\n", status.").c_str());
             return false;
         }
         return true;
