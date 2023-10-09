@@ -3,13 +3,15 @@
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
+using namespace std;
+
 USE_UPNP:=1
 USE_WALLET:=1
 USE_LEVELDB:=0
 USE_IPV6:=1
 
 LINK:=$(CXX)
-ARCH:=$(shell uname -m)
+ARCH:=$(system lscpu | head -n 1 | awk '{print $2}')
 
 DEFS=-DBOOST_SPIRIT_THREADSAFE -D__STDC_FORMAT_MACROS
 
@@ -138,14 +140,18 @@ OBJS= \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
     obj/chainparams.o \
-    obj/db.o \
-    obj/miner.o \
-    obj/rpcdump.o \
-    obj/rpcmining.o \
-    obj/rpcwallet.o \
-    obj/webview.o \
-    obj/wallet.o \
-    obj/walletdb.o
+
+ifeq (${USE_WALLET}, 1)
+    DEFS += -DENABLE_WALLET
+    OBJS += \
+        obj/db.o \
+        obj/miner.o \
+        obj/rpcdump.o \
+        obj/rpcmining.o \
+        obj/rpcwallet.o \
+        obj/wallet.o \
+        obj/walletdb.o
+
 
 all: litedoged
 
@@ -205,9 +211,8 @@ test_litedoged: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 	$(CXX) $(xCXXFLAGS) -o $@ $(LIBPATHS) $^ -Wl,-B$(LMODE) -lboost_unit_test_framework $(xLDFLAGS) $(LIBS)	
 
 clean:
-	-rm -f litedoged test_litedoged
+	-rm -f litedoged 
 	-rm -f obj/*.o
-        -rm -f obj-test/*.o
 	-rm -f obj/*.P
         -rm -f obj-test/*.P
 	-rm -f obj/build.h
