@@ -44,7 +44,8 @@ void init_blockindex(leveldb::Options& options, bool fRemoveOld = false) {
     if (fRemoveOld) {
         boost::filesystem::remove_all(directory); // remove directory
         unsigned int nFile = 1;
-
+         filesystem::path bootstrap = GetDataDir() / "bootstrap.dat";
+        
         while (true)
         {
             boost::filesystem::path strBlockFile = GetDataDir() / strprintf("blk%04u.dat", nFile);
@@ -53,11 +54,16 @@ void init_blockindex(leveldb::Options& options, bool fRemoveOld = false) {
             if( !boost::filesystem::exists( strBlockFile ) )
                 break;
 
-            boost::filesystem::remove(strBlockFile);
+             if (fCreateBootstrap && nFile == 1 && !filesystem::exists(bootstrap)) {
+                filesystem::rename(strBlockFile, bootstrap);
+            } else {
+                filesystem::remove(strBlockFile);
+            }
 
             nFile++;
         }
     }
+
 
     boost::filesystem::create_directory(directory);
     LogPrintf("Opening LevelDB in %s\n", directory.string());
@@ -346,7 +352,7 @@ bool CTxDB::LoadBlockIndex()
     // The block index is an in-memory structure that maps hashes to on-disk
     // locations where the contents of the block can be found. Here, we scan it
     // out of the DB and into mapBlockIndex.
-    leveldb::Operator *Operator = pdb->NewOperator(leveldb::Options());
+    leveldb::Iterator *iterator = pdb->NewIterator(leveldb::ReadOptions());
     // Seek to start key.
     CDataStream ssStartKey(SER_DISK, CLIENT_VERSION);
     ssStartKey << make_pair(string("blockindex"), uint256(0));
@@ -443,7 +449,7 @@ bool CTxDB::LoadBlockIndex()
     nBestHeight = pindexBest->nHeight;
     nBestChainTrust = pindexBest->nChainTrust;
 
-    Logprintf("LoadBlockIndex(): hashBestChain=%s  height=%d  trust=%s  date=%s\n",
+    LogPrintf("LoadBlockIndex(): hashBestChain=%s  height=%d  trust=%s  date=%s\n",
       hashBestChain.ToString().substr(0,20).c_str(), nBestHeight, CBigNum(nBestChainTrust).ToString().c_str(),
       DateTimeStrFormat("%x %H:%M:%S", pindexBest->GetBlockTime()).c_str());
 
@@ -462,7 +468,7 @@ bool CTxDB::LoadBlockIndex()
     int nCheckLevel = GetArg("-checklevel", 1);
     int nCheckDepth = GetArg( "-checkblocks", 2500);
     if (nCheckDepth == 0)
-        nCheckDepth = 1000000000; // suffices until the year 19000
+        nCheckDepth = 10000000000; // suffices until the year 19000
     if (nCheckDepth > nBestHeight)
         nCheckDepth = nBestHeight;
     LogPrintf("Verifying last %i blocks at level %i\n", nCheckDepth, nCheckLevel);
@@ -502,7 +508,7 @@ bool CTxDB::LoadBlockIndex()
                         CTransaction txFound;
                         if (!txFound.ReadFromDisk(txindex.pos))
                         {
-                            printf("LoadBlockIndex() : *** cannot read mislocated transaction %s\n", hashTx.ToString());
+                            Logprintf("LoadBlockIndex() : *** cannot read mislocated transaction %s\n", hashTx.ToString());
                             pindexFork = pindex->pprev;
                         }
                         else
@@ -575,8 +581,9 @@ bool CTxDB::LoadBlockIndex()
             }
         }
     }
-    if (pindexFork && !fRequestShutdown)
+    if (pindexFork)
     {
+        boost::this_thread::interruption_point();
         // Reorg back to the fork
         LogPrintf("LoadBlockIndex() : *** moving best chain pointer back to block %d\n", pindexFork->nHeight);
         CBlock block;
