@@ -31,7 +31,7 @@ leveldb::DB *txdb; // global pointer for LevelDB object instance
 
 static leveldb::Options GetOptions() {
     leveldb::Options options;
-    int nCacheSizeMB = GetArgInt("-dbcache", 25);
+    int nCacheSizeMB = GetArg("-dbcache", 25);
     options.block_cache = leveldb::NewLRUCache(nCacheSizeMB * 1048576);
     options.filter_policy = leveldb::NewBloomFilterPolicy(10);
     return options;
@@ -216,13 +216,13 @@ bool CTxDB::ReadTxIndex(uint256 hash, CTxIndex& txindex)
 
 bool CTxDB::UpdateTxIndex(uint256 hash, const CTxIndex& txindex)
 { 
-    assert(!fClient);
+    assert(!fUseFastIndex);
     return Write(make_pair(string("tx"), hash), txindex);
 }
 
 bool CTxDB::AddTxIndex(const CTransaction& tx, const CDiskTxPos& pos, int nHeight)
 {   
-    assert(!fClient);
+    assert(CTxIndex);
     
     // Add to tx index
     uint256 hash = tx.GetHash();
@@ -369,7 +369,7 @@ bool CTxDB::LoadBlockIndex()
         string strType;
         ssKey >> strType;
         // Did we reach the end of the data to read?
-        if (fRequestShutdown || strType != "blockindex")
+        if (strType != "blockindex")
             break;
         CDiskBlockIndex diskindex;
         ssValue >> diskindex;
@@ -413,8 +413,8 @@ bool CTxDB::LoadBlockIndex()
     }
     delete iterator;
 
-    if (fRequestShutdown)
-        return true;
+    // if (fRequestShutdown)
+    //    return true;
     boost::this_thread::interruption_point();
     
     // Calculate nChainTrust
@@ -431,8 +431,8 @@ bool CTxDB::LoadBlockIndex()
         CBlockIndex* pindex = item.second;
         pindex->nChainTrust = (pindex->pprev ? pindex->pprev->nChainTrust : 0) + pindex->GetBlockTrust();
         // NovaCoin: calculate stake modifier checksum
-        pindex->nStakeModifier = GetStakeModifierChecksum(pindex);
-        if (!CheckStakeModifierCheckpoints(pindex->nHeight, pindex->nStakeModifier))
+        pindex->nStakeModifier = GetStakeModifier(pindex);
+        if (!CheckStakeModifier(pindex->nHeight, pindex->nStakeModifier))
             return error("CTxDB::LoadBlockIndex() : Failed stake modifier checkpoint height=%d, modifier=0x%016" PRIx64, pindex->nHeight, pindex->nStakeModifier);
     }
     
@@ -457,7 +457,7 @@ bool CTxDB::LoadBlockIndex()
     // Novacoin: load hashSyncCheckpoint
     if (!ReadSyncCheckpoint(Checkpoints::hashSyncCheckpoint))
         return error("CTxDB::LoadBlockIndex() : hashSyncCheckpoint not loaded");
-    Logprintf("LoadBlockIndex(): synchronized checkpoint %s\n", Checkpoints::hashSyncCheckpoint.ToString().c_str());
+    LogPrintf("LoadBlockIndex(): synchronized checkpoint %s\n", Checkpoints::hashSyncCheckpoint.ToString().c_str());
 
     // Load bnBestInvalidTrust, OK if it doesn't exist
     CBigNum bnBestInvalidTrust;
@@ -468,7 +468,7 @@ bool CTxDB::LoadBlockIndex()
     int nCheckLevel = GetArg("-checklevel", 1);
     int nCheckDepth = GetArg( "-checkblocks", 2500);
     if (nCheckDepth == 0)
-        nCheckDepth = 10000000000; // suffices until the year 19000
+        nCheckDepth = 1410065408; // suffices until the year 19000
     if (nCheckDepth > nBestHeight)
         nCheckDepth = nBestHeight;
     LogPrintf("Verifying last %i blocks at level %i\n", nCheckDepth, nCheckLevel);
