@@ -54,11 +54,7 @@ void init_blockindex(leveldb::Options& options, bool fRemoveOld = false) {
             if( !boost::filesystem::exists( strBlockFile ) )
                 break;
 
-             if (fCreateBootstrap && nFile == 1 && !filesystem::exists(bootstrap)) {
-                filesystem::rename(strBlockFile, bootstrap);
-            } else {
                 filesystem::remove(strBlockFile);
-            }
 
             nFile++;
         }
@@ -210,6 +206,7 @@ bool CTxDB::ScanBatch(const CDataStream &key, string *value, bool *deleted) cons
 
 bool CTxDB::ReadTxIndex(uint256 hash, CTxIndex& txindex)
 {
+    assert(!fClient);
     txindex.SetNull();
     return Read(make_pair(string("tx"), hash), txindex);
 }
@@ -233,11 +230,14 @@ bool CTxDB::AddTxIndex(const CTransaction& tx, const CDiskTxPos& pos, int nHeigh
 bool CTxDB::EraseTxIndex(const CTransaction& tx)
 {
     assert(!fClient);
+    uint256 hash = tx.GetHash();
+    
     return Erase(make_pair(string("tx"), hash));
 }
 
 bool CTxDB::ContainsTx(uint256 hash)
 {
+    assert(!fClient);
     return Exists(make_pair(string("tx"), hash));
 }
 
@@ -432,7 +432,7 @@ bool CTxDB::LoadBlockIndex()
         pindex->nChainTrust = (pindex->pprev ? pindex->pprev->nChainTrust : 0) + pindex->GetBlockTrust();
         // NovaCoin: calculate stake modifier checksum
         pindex->nStakeModifier = GetStakeModifier(pindex);
-        if (!CheckStakeModifier(pindex->nHeight, pindex->nStakeModifier))
+        if (!CheckCBlockIndex(pindex->nHeight, pindex->nStakeModifier))
             return error("CTxDB::LoadBlockIndex() : Failed stake modifier checkpoint height=%d, modifier=0x%016" PRIx64, pindex->nHeight, pindex->nStakeModifier);
     }
     
@@ -508,7 +508,7 @@ bool CTxDB::LoadBlockIndex()
                         CTransaction txFound;
                         if (!txFound.ReadFromDisk(txindex.pos))
                         {
-                            Logprintf("LoadBlockIndex() : *** cannot read mislocated transaction %s\n", hashTx.ToString());
+                            LogPrintf("LoadBlockIndex() : *** cannot read mislocated transaction %s\n", hashTx.ToString());
                             pindexFork = pindex->pprev;
                         }
                         else
