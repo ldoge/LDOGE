@@ -1,6 +1,6 @@
-// Copyright (c) 2010 - 2022 Satoshi Nakamoto
-// Copyright (c) 2009 - 2022 The Bitcoin developers
-// Copyright (c) 2009 - 2022 The Litedoge developers
+// Copyright (c) 2010 - 2024 Satoshi Nakamoto
+// Copyright (c) 2009 - 2024 The Bitcoin developers
+// Copyright (c) 2009 - 2024 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -68,7 +68,7 @@ enum RPCErrorCode
     RPC_SERVER_NOT_STARTED          = -18, // RPC server was not started (StartRPCThreads() not called)
 
     // P2P client errors
-    RPC_CLIENT_NOT_CONNECTED        = -9,  // Bitcoin is not connected
+    RPC_CLIENT_NOT_CONNECTED        = -9,  // Litedoge is not connected
     RPC_CLIENT_IN_INITIAL_DOWNLOAD  = -10, // Still downloading initial blocks
     RPC_CLIENT_NODE_ALREADY_ADDED   = -23, // Node is already added
     RPC_CLIENT_NODE_NOT_ADDED       = -24, // Node has not been added before
@@ -82,7 +82,7 @@ enum RPCErrorCode
     RPC_WALLET_PASSPHRASE_INCORRECT = -14, // The wallet passphrase entered was incorrect
     RPC_WALLET_WRONG_ENC_STATE      = -15, // Command given in wrong wallet encryption state (encrypting an encrypted wallet etc.)
     RPC_WALLET_ENCRYPTION_FAILED    = -16, // Failed to encrypt the wallet
-    RPC_WALLET_ALREADY_UNLOCKED     = -17, // Wallet is already unlocked
+    RPC_WALLET_ALREADY_UNLOCKED     = -17, // Wallet is already unlocked to Stake
 };
 
 //
@@ -117,7 +117,11 @@ public:
     }
     bool connect(const std::string& server, const std::string& port)
     {
+#if BOOST_VERSION < 107000
+        boost::asio::ip::tcp::resolver resolver(stream.get_io_service());
+#else
         boost::asio::ip::tcp::resolver resolver(GetIOService(stream));
+#endif
         boost::asio::ip::tcp::resolver::query query(server.c_str(), port.c_str());
         boost::asio::ip::tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
         boost::asio::ip::tcp::resolver::iterator end;
