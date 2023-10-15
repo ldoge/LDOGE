@@ -1,5 +1,6 @@
-// Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-2013 The Bitcoin developers
+// Copyright (c) 2000 -2024 Satoshi Nakamoto
+// Copyright (c) 2009-2024 The Bitcoin developers
+// Copyright (c) 2009-2024 The Bitcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -41,7 +42,11 @@ Object CallRPC(const string& strMethod, const Array& params)
     // Connect to localhost
     bool fUseSSL = GetBoolArg("-rpcssl", false);
     asio::io_service io_service;
+   #if BOOST_VERSION < 107000
+    ssl::context context(io_service, ssl::context::sslv23);
+#else
     ssl::context context(ssl::context::sslv23);
+#endif
     context.set_options(ssl::context::no_sslv2);
     asio::ssl::stream<asio::ip::tcp::socket> sslStream(io_service, context);
     SSLIOStreamDevice<asio::ip::tcp> d(sslStream, fUseSSL);
