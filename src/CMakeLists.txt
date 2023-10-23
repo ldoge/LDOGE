@@ -57,10 +57,10 @@ endif()
 
 set(generic_sources 
     ${CMAKE_CURRENT_SOURCE_DIR}/addrman.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/alert.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/base58.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/bitcoind.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/bitcoinrpc.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/checkpoints.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/chainparms.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/crypter.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/db.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/init.cpp
@@ -85,6 +85,7 @@ set(generic_sources
     ${CMAKE_CURRENT_SOURCE_DIR}/rpcrawtransaction.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/rpcwallet.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/script.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/scrypt.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/stun.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/sync.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/util.cpp
