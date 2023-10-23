@@ -1,4 +1,4 @@
-Name NovaCoin
+Name Litedoge
 
 RequestExecutionLevel highest
 SetCompressor /SOLID lzma
@@ -8,8 +8,9 @@ SetCompressor /SOLID lzma
 !define VERSION 3.6.0.1
 !define COMPANY "LiteDoge Organization"
 !define URL http://www.litedogeofficial.org
+
 # MUI Symbol Definitions
-!define MUI_ICON "../share/pixmaps/novacoin.ico"
+!define MUI_ICON "../share/pixmaps/litedogecoin.ico"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "../share/pixmaps/nsis-wizard.bmp"
 !define MUI_HEADERIMAGE
 !define MUI_HEADERIMAGE_RIGHT
@@ -75,7 +76,7 @@ Section -Main SEC0000
     SetOutPath $INSTDIR
     WriteRegStr HKCU "${REGKEY}\Components" Main 1
 
-    # Remove old wxwidgets-based-bitcoin executable and locales:
+    # Remove old wxwidgets-based-litedoge executable and locales:
     #Delete /REBOOTOK $INSTDIR\litedoge.exe
     #RMDir /r /REBOOTOK $INSTDIR\locale
 SectionEnd
@@ -86,7 +87,7 @@ Section -post SEC0001
     WriteUninstaller $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     CreateDirectory $SMPROGRAMS\$StartMenuGroup
-    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall NovaCoin.lnk" $INSTDIR\uninstall.exe
+    CreateShortcut "$SMPROGRAMS\$StartMenuGroup\Uninstall Litedoge.lnk" $INSTDIR\uninstall.exe
     !insertmacro MUI_STARTMENU_WRITE_END
     WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayName "$(^Name)"
     WriteRegStr HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" DisplayVersion "${VERSION}"
@@ -97,11 +98,11 @@ Section -post SEC0001
     WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoModify 1
     WriteRegDWORD HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)" NoRepair 1
 
-    # bitcoin: URI handling disabled for 0.6.0
-    #    WriteRegStr HKCR "bitcoin" "URL Protocol" ""
-    #    WriteRegStr HKCR "bitcoin" "" "URL:Bitcoin"
-    #    WriteRegStr HKCR "bitcoin\DefaultIcon" "" $INSTDIR\bitcoin-qt.exe
-    #    WriteRegStr HKCR "bitcoin\shell\open\command" "" '"$INSTDIR\bitcoin-qt.exe" "$$1"'
+    # litedoge: URI handling disabled for 0.6.0
+    #    WriteRegStr HKCR "litedoge" "URL Protocol" ""
+    #    WriteRegStr HKCR "litedoge" "" "URL:Litedoge"
+    #    WriteRegStr HKCR "litedoge\DefaultIcon" "" $INSTDIR\litedoge-qt.exe
+    #    WriteRegStr HKCR "litedoge\shell\open\command" "" '"$INSTDIR\litedoge-qt.exe" "$$1"'
 SectionEnd
 
 # Macro for selecting uninstaller sections
@@ -119,7 +120,7 @@ done${UNSECTION_ID}:
 
 # Uninstaller sections
 Section /o -un.Main UNSEC0000
-    #Delete /REBOOTOK $INSTDIR\novacoin-qt.exe
+    #Delete /REBOOTOK $INSTDIR\litedoge-qt.exe
     Delete /REBOOTOK $INSTDIR\license.txt
     Delete /REBOOTOK $INSTDIR\readme.txt
     RMDir /r /REBOOTOK $INSTDIR\daemon
@@ -129,9 +130,9 @@ SectionEnd
 
 Section -un.post UNSEC0001
     DeleteRegKey HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
-    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall NovaCoin.lnk"
-    #Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Bitcoin.lnk"
-    #Delete /REBOOTOK "$SMSTARTUP\Bitcoin.lnk"
+    Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall Litedoge.lnk"
+    #Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Litedoge.lnk"
+    #Delete /REBOOTOK "$SMSTARTUP\Litedoge.lnk"
     Delete /REBOOTOK $INSTDIR\uninstall.exe
     Delete /REBOOTOK $INSTDIR\debug.log
     Delete /REBOOTOK $INSTDIR\db.log
