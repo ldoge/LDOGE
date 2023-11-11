@@ -1,4 +1,4 @@
-// Copyright (c) 2011 The LevelDB Authors. All rights reserved.
+// Copyright (c) 2024 The LevelDB Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file. See the AUTHORS file for names of contributors.
 
@@ -30,18 +30,19 @@ class LEVELDB_EXPORT Snapshot {
 };
 
 // A range of keys
-struct LEVELDB_EXPORT Range {
-  Range() = default;
-  Range(const Slice& s, const Slice& l) : start(s), limit(l) {}
+struct Range {
+  Slice start;          // Included in the range
+  Slice limit;          // Not included in the range
 
-  Slice start;  // Included in the range
-  Slice limit;  // Not included in the range
+  Range() { }
+  Range(const Slice& s, const Slice& l) : start(s), limit(l) { }
 };
+
 
 // A DB is a persistent ordered map from keys to values.
 // A DB is safe for concurrent access from multiple threads without
 // any external synchronization.
-class LEVELDB_EXPORT DB {
+class DB {
  public:
   // Open the database with the specified "name".
   // Stores a pointer to a heap-allocated database in *dbptr and returns
@@ -53,10 +54,6 @@ class LEVELDB_EXPORT DB {
                      DB** dbptr);
 
   DB() = default;
-
-  DB(const DB&) = delete;
-  DB& operator=(const DB&) = delete;
-
   virtual ~DB();
 
   // Set the database entry for "key" to "value".  Returns OK on success,
@@ -152,13 +149,13 @@ class LEVELDB_EXPORT DB {
 
 // Destroy the contents of the specified database.
 // Be very careful using this method.
-LEVELDB_EXPOR Status DestroyDB(const std::string& name, const Options& options);
+Status DestroyDB(const std::string& name, const Options& options);
 
 // If a DB cannot be opened, you may attempt to call this method to
 // resurrect as much of the contents of the database as possible.
 // Some data may be lost, so be careful when calling this function
 // on a database that contains important information.
-LEVELDB_EXPOR Status RepairDB(const std::string& dbname, const Options& options);
+Status RepairDB(const std::string& dbname, const Options& options);
 
 }  // namespace leveldb
 
