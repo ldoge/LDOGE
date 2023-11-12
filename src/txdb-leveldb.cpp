@@ -90,8 +90,12 @@ CTxDB::CTxDB(const char* pszMode)
     options = GetOptions();
     options.create_if_missing = fCreate;
     options.filter_policy = leveldb::NewBloomFilterPolicy(10);
-
-    init_blockindex(options); // Init directory
+    filesystem::create_directory(directory);
+    printf("Opening LevelDB in %s\n", directory.string().c_str());
+    leveldb::Status status = leveldb::DB::Open(options, directory.string(), &txdb);
+    if (!status.ok()) {
+        throw runtime_error(strprintf("CDB(): error opening database environment %s", status.ToString().c_str()));
+    }
     pdb = txdb;
 
     if (Exists(string("version")))
