@@ -38,30 +38,29 @@ static leveldb::Options GetOptions() {
     return options;
 }
 
-void init_blockindex(leveldb::Options& options, bool fRemoveOld = false) {
+
     // First time init.
     boost::filesystem::path directory = GetDataDir() / "txleveldb";
+    bool fCreate = strchr(pszMode, 'c');
 
     if (fRemoveOld) {
         boost::filesystem::remove_all(directory); // remove directory
         unsigned int nFile = 1;
          filesystem::path bootstrap = GetDataDir() / "bootstrap.dat";
-        
-        while (true)
-        {
-            boost::filesystem::path strBlockFile = GetDataDir() / strprintf("blk%04u.dat", nFile);
+      boost::filesystem::path strBlockFile = GetDataDir() / strprintf("blk%04u.dat", nFile);
 
-            // Break if no such file
-            if( !boost::filesystem::exists( strBlockFile ) )
-                break;
-
-                filesystem::remove(strBlockFile);
-
-            nFile++;
-        }
+            if (txdb) {
+        pdb = txdb;
+        return;
     }
 
+    // First time init.
+    filesystem::path directory = GetDataDir() / "txleveldb";
+    bool fCreate = strchr(pszMode, 'c');
 
+    options = GetOptions();
+    options.create_if_missing = fCreate;
+    options.filter_policy = leveldb::NewBloomFilterPolicy(10);
     boost::filesystem::create_directory(directory);
     LogPrintf("Opening LevelDB in %s\n", directory.string());
     leveldb::Status status = leveldb::DB::Open(options, directory.string(), &txdb);
