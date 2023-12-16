@@ -1,4 +1,4 @@
-# LITEDOGE- LDOG | CORE Wallet Version 3.6.0.1 
+# LITEDOGE- LDOGE | CORE Wallet Version 3.6.0.1 
 ![8b55011e9d71b1e9da2ebfb528d43268](https://github.com/ldoge/LDOGE/blob/master/src/qt/res/icons/litedogecoin-128.png) 
 LDOGE Information
 ====================
