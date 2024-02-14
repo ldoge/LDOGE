@@ -119,7 +119,7 @@ protected:
             activeBatch->Put(ssKey.str(), ssValue.str());
             return true;
         }
-        leveldb::Status status = pdb->Put(leveldb::WriteOptions(), ssKey.str(), ssValue.str());
+       leveldb::Status status = pdb->Put(leveldb::WriteOptions(), ssKey.str(), ssValue.str());
         if (!status.ok()) {
             LogPrintf("LevelDB write failure: %s\n", status.ToString());
             return false;
