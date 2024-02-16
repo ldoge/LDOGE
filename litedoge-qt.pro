@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = litedoge-qt
-VERSION = 4.0.0.0
+VERSION = 3.6.0.1
 INCLUDEPATH += src src/json src/qt
 QT += core gui network
 DEFINES += ENABLE_WALLET
@@ -133,7 +133,7 @@ contains(BITCOIN_NEED_QT_PLUGINS, 1) {
     DEFINES += BITCOIN_NEED_QT_PLUGINS
     QTPLUGIN += qcncodecs qjpcodecs qtwcodecs qkrcodecs qtaccessiblewidgets
 }
-
+install python3.6-dev libmysqlclient-dev
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 SOURCES += src/txdb-leveldb.cpp
