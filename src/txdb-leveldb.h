@@ -9,8 +9,8 @@
 
 #include "main.h"
 #include "bignum.h"
-#include <leveldb/include/leveldb/write_batch.h>"
-#include <leveldb/include/leveldb/db.h>"
+#include <leveldb/include/leveldb/write_batch.h>
+#include <leveldb/include/leveldb/db.h>
 #include "script.h"
 #include "base58.h"
 
