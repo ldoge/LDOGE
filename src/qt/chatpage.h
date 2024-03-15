@@ -13,6 +13,13 @@
 #include "clientmodel.h"
 #include "serveur.h"
 #include "serveur.cpp"
+#include "chatpage.cpp"
+#include "bitcoingui.cpp"
+#include "bitcoingui.h"
+#include "serveur.cpp"
+
+using namespace std;
+using namespace boost;
 
 namespace Ui {
     class ChatPage;
