@@ -8,11 +8,17 @@ DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEH
 CONFIG += no_include_pwd
 CONFIG += static
 CONFIG += thread
+win32 {
+    CONFIG += release
+} else {
+    CONFIG += debug_and_release
+}
+CONFIG += static
+
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
-    QT_DISABLE_DEPRECATED_BEFORE=0
-} else {
-    QT += webkit
+
+    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 }
 
 # QMAKE_CC=clang
@@ -32,37 +38,22 @@ win32-g++-cross: QMAKE_TARGET.arch = $$TARGET_PLATFORM
 # for boost thread win32 with _win32 sufix
 # use: BOOST_THREAD_LIB_SUFFIX=_win32-...
 # or when linking against a specific BerkelyDB version: BDB_LIB_SUFFIX=-4.8
-
+win32 {
+    win32:BOOST_LIB_SUFFIX=-mgw49-mt-s-1_55
+    win32:BOOST_INCLUDE_PATH=C:/deps/boost_1_55_0
+    win32:BOOST_LIB_PATH=C:/deps/boost_1_55_0/stage/lib
+    win32:BDB_INCLUDE_PATH=C:/deps/db-4.8.30.NC/build_unix
+    win32:BDB_LIB_PATH=C:/deps/db-4.8.30.NC/build_unix
+    win32:OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2q/include
+    win32:OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2q
+    win32:MINIUPNPC_INCLUDE_PATH=C:/deps/64bit
+    win32:MINIUPNPC_LIB_PATH=C:/deps/64bit/miniupnpc
+    win32:QRENCODE_INCLUDE_PATH=C:/deps/64bit/qrencode-4.0.2
+    win32:QRENCODE_LIB_PATH=C:/deps/64bit/qrencode-4.0.2/.libs
+}
 # Dependency library locations can be customized with:
 #    BOOST_INCLUDE_PATH, BOOST_LIB_PATH, BDB_INCLUDE_PATH,
 #    BDB_LIB_PATH, OPENSSL_INCLUDE_PATH and OPENSSL_LIB_PATH respectively
-
-# use: qmake "RELEASE=1"
-contains(RELEASE, 1) {
-    message(Building Release Version)
-    # Mac: compile for maximum compatibility (10.5, 32-bit)
-    macx:QMAKE_CXXFLAGS += -mmacosx-version-min=10.13 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/
-
-    !windows:!macx {
-        message(Static Link libraries enabled (linux only))
-        # Linux: static link
-        LIBS += -Wl,-Bstatic
-    }
-}
-
-!win32 {
-    BOOST_LIB_SUFFIX=-mgw49-mt-s-1_55
-    BOOST_INCLUDE_PATH=C:/deps/boost_1_55_0
-    BOOST_LIB_PATH=C:/deps/boost_1_55_0/stage/lib
-    BDB_INCLUDE_PATH=C:/deps/db-4.8.30.NC/build_unix
-    BDB_LIB_PATH=C:/deps/db-4.8.30.NC/build_unix
-    OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2l/include
-    OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2l
-    MINIUPNPC_INCLUDE_PATH=C:/deps/
-    MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
-    QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
-    QRENCODE_LIB_PATH=C:/deps/qrencode-3.4.4/.libs
-}
 
 OBJECTS_DIR = build
 MOC_DIR = build
@@ -80,6 +71,18 @@ win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 win32:QMAKE_LFLAGS += -static-libgcc -static-libstdc++
 win32:QMAKE_LFLAGS *= -Wl,--large-address-aware -static
 
+# use: qmake "RELEASE=1"
+contains(RELEASE, 1) {
+    message(Building Release Version)
+    # Mac: compile for maximum compatibility (10.5, 32-bit)
+    macx:QMAKE_CXXFLAGS += -mmacosx-version-min=10.5 -arch x86_64 -isysroot /Devel
+
+    !windows:!macx {
+        message(Static Link libraries enabled (linux only))
+        # Linux: static link
+        LIBS += -Wl,-Bstatic
+    }
+}
 
 # use: qmake "USE_QRCODE=1"
 # libqrencode (http://fukuchi.org/works/qrencode/index.en.html) must be installed for support
@@ -137,6 +140,7 @@ contains(BITCOIN_NEED_QT_PLUGINS, 1) {
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
 SOURCES += src/txdb-leveldb.cpp
+
 !win32 {
     # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
     genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a
@@ -146,7 +150,7 @@ SOURCES += src/txdb-leveldb.cpp
         QMAKE_RANLIB = $$replace(QMAKE_STRIP, strip, ranlib)
     }
     LIBS += -lshlwapi
-    #genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
+  #  genleveldb.commands = cd $$PWD/src/leveldb && CC=$$QMAKE_CC CXX=$$QMAKE_CXX TARGET_OS=OS_WINDOWS_CROSSCOMPILE $(MAKE) OPT=\"$$QMAKE_CXXFLAGS $$QMAKE_CXXFLAGS_RELEASE\" libleveldb.a libmemenv.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libleveldb.a && $$QMAKE_RANLIB $$PWD/src/leveldb/libmemenv.a
 }
 genleveldb.target = $$PWD/src/leveldb/libleveldb.a
 genleveldb.depends = FORCE
@@ -502,8 +506,6 @@ LIBS += -lssl -lcrypto -ldb_cxx$$BDB_LIB_SUFFIX
 windows:LIBS += -lws2_32 -lshlwapi -lmswsock -lole32 -loleaut32 -luuid -lgdi32
 LIBS += -lboost_system$$BOOST_LIB_SUFFIX -lboost_filesystem$$BOOST_LIB_SUFFIX -lboost_program_options$$BOOST_LIB_SUFFIX -lboost_thread$$BOOST_THREAD_LIB_SUFFIX -lboost_chrono$$BOOST_LIB_SUFFIX -ldl
 windows:LIBS += -lboost_chrono$$BOOST_LIB_SUFFIX
-
-
 
 contains(RELEASE, 1) {
     !windows:!macx {
