@@ -1,7 +1,7 @@
-// Copyright (c) 2009-2023 Satoshi Nakamoto
-// Copyright (c) 2009-2023 The Bitcoin developers
-// Copyright (c) 2023 The Novacoin developers
-// Copyright (c) 2023 The Litedoge developers
+// Copyright (c) 2009-2024 Satoshi Nakamoto
+// Copyright (c) 2009-2024 The Bitcoin developers
+// Copyright (c) 2024 The Novacoin developers
+// Copyright (c) 2015-2024 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -587,7 +587,7 @@ Value getbalance(const Array& params, bool fHelp)
 
 Value movecmd(const Array& params, bool fHelp)
 {
-    if (fHelp || params.size() < 3 || params.size() > 5)
+    if (fHelp || params.size() > 3)
         throw runtime_error(
             "move <fromaccount> <toaccount> <amount> [minconf=1] [comment]\n"
             "Move from one account in your wallet to another.");
