@@ -7,9 +7,10 @@
 #include "assert.h"
 #include "chainparams.h"
 #include "main.h"
+#include "db.h"
 #include "tinyformat.h"
 #include "util.h"
-
+#include "chainparamsseeds.h"
 #include <boost/assign/list_of.hpp>
 
 using namespace boost::assign;
@@ -19,7 +20,7 @@ struct SeedSpec6 {
     uint16_t port;
 };
 
-#include "chainparamsseeds.h"
+
 
 static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
 {
@@ -92,44 +93,41 @@ static void convertSeed6(std::vector<CAddress> &vSeedsOut, const SeedSpec6 *data
 class CMainParams : public CChainParams {
 public:
     CMainParams() {
-        strNetworkID = "main";
-        
         // Blocks 0 - 144999 are conventional difficulty calculation
-        consensus.nSubsidyHalvingInterval = 500000;
-        consensus.nMajorityEnforceBlockUpgrade = 750;
-        consensus.nMajorityRejectBlockOutdated = 950;
-        consensus.nMajorityWindow = 1000;
-        consensus.BIP34Height = 99324612;
-        consensus.BIP34Hash = uint256S("0x4bd3308d384e80094e4659f9a3245e6f444688edbec0ad88b9a5dfd4be87454e");
-        consensus.BIP65Height = 99324613; // 
-        consensus.BIP66Height = 99324613; // 80d1364201e5df97e696c03bdd24dc885e8617b9de51e453c10a4f629b1e797a - this is the last block that could be v2, 1900 blocks past the last v2 block
-        consensus.powLimit = uint256S("0x00000fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"); // ~uint256(0) >> 20;
-        consensus.fDigishieldDifficultyCalculation = false;
-        consensus.fPowAllowMinDifficultyBlocks = false;
-        consensus.fPowAllowDigishieldMinDifficultyBlocks = false;
-        consensus.fPowNoRetargeting = false;
-        consensus.nRuleChangeActivationThreshold = 750; // 95% of 10,080
-        consensus.nMinerConfirmationWindow = 1000; // 60 * 24 * 7 = 10,080 blocks, or one week
-        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].bit = 28;
-        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
-        consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
+        nMajorityEnforceBlockUpgrade = 750;
+        nMajorityRejectBlockOutdated = 950;
+        nMajorityWindow = 1000;
+        BIP34Height = 99324612;
+        BIP34Hash = uint256("0x4bd3308d384e80094e4659f9a3245e6f444688edbec0ad88b9a5dfd4be87454e");
+        BIP65Height = 99324613; // 
+        BIP66Height = 99324613; // 80d1364201e5df97e696c03bdd24dc885e8617b9de51e453c10a4f629b1e797a - this is the last block that could be v2, 1900 blocks past the last v2 block
+        powLimit = CBigNum(~uint256(0) >> 20);
+        fDigishieldDifficultyCalculation = false;
+        fPowAllowMinDifficultyBlocks = false;
+        fPowAllowDigishieldMinDifficultyBlocks = false;
+        fPowNoRetargeting = false;
+        nRuleChangeActivationThreshold = 750; // 95% of 10,080
+        .nMinerConfirmationWindow = 1000; // 60 * 24 * 7 = 10,080 blocks, or one week
+        vDeployments[DEPLOYMENT_TESTDUMMY].bit = 28;
+        vDeployments[DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
+        vDeployments[DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
         // Deployment of BIP68, BIP112, and BIP113.
         // XXX: BIP heights and hashes all need to be updated to Nyancoin values
-        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].bit = 0;
-        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 1612942090; // 
-        consensus.vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 1613546890; // 
+        vDeployments[Consensus::DEPLOYMENT_CSV].bit = 0;
+        vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 1612942090; // 
+        vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 1613546890; // 
 
         // Deployment of SegWit (BIP141, BIP143, and BIP147)
-        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].bit = 1;
-        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nStartTime = 1612942090; // 
-        consensus.vDeployments[Consensus::DEPLOYMENT_SEGWIT].nTimeout = 0; // Disabled
+        vDeployments[Consensus::DEPLOYMENT_SEGWIT].bit = 1;
+        vDeployments[Consensus::DEPLOYMENT_SEGWIT].nStartTime = 1612942090; // 
+        vDeployments[Consensus::DEPLOYMENT_SEGWIT].nTimeout = 0; // Disabled
 
         // The best chain should have at least this much work.
-        consensus.nMinimumChainWork = uint256S("0x00000000000000000000000000000000000000000000000000fd6e84dd5364d4");  // Block 11461900
+        nMinimumChainWork = uint256("0x00000000000000000000000000000000000000000000000000fd6e84dd5364d4");  // Block 11461900
 
         // By default assume that the signatures in ancestors of this block are valid.
-        consensus.defaultAssumeValid = uint256S("0xb477d9bc0721a1b96547495404583d68123f471fdd1d4058a9adff2fa7452298");  // Block 11461900
+        defaultAssumeValid = uint256("0xb477d9bc0721a1b96547495404583d68123f471fdd1d4058a9adff2fa7452298");  // Block 11461900
         
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
@@ -239,14 +237,19 @@ public:
         vSeeds.push_back(CDNSSeedData("seed01", "seed01.litedogeofficial.org"));
         vSeeds.push_back(CDNSSeedData("seed02", "seed02.litedogeofficial.org"));
         vSeeds.push_back(CDNSSeedData("seed03", "seed03.litedogeofficial.org"));
+        vSeeds.push_back(CDNSSeedData("seed04", "seed04.litedogeofficial.org"));
+        vSeeds.push_back(CDNSSeedData("seed05", "seed05.litedogeofficial.org"));
+        vSeeds.push_back(CDNSSeedData("seed06", "seed06.litedogeofficial.org"));
+        vSeeds.push_back(CDNSSeedData("seed07", "seed07.litedogeofficial.org"));
+        vSeeds.push_back(CDNSSeedData("seed08", "seed08.litedogeofficial.org"));
         vSeeds.push_back(CDNSSeedData("lab-support-node0", "ldoge.nerdlabs001.com"));
         vSeeds.push_back(CDNSSeedData("lab-support-node1", "ldoge.nerdlabs001.com"));
 
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,111);
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,196);
-        base58Prefixes[SECRET_KEY]     = std::vector<unsigned char>(1,239);
-        base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x35)(0x87)(0xCF).convert_to_container<std::vector<unsigned char> >();
-        base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x35)(0x83)(0x94).convert_to_container<std::vector<unsigned char> >();
+        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,90);
+        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,8);
+        base58Prefixes[SECRET_KEY]     = std::vector<unsigned char>(1,171);
+        base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container<std::vector<unsigned char> >();
+        base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container<std::vector<unsigned char> >();
 
         convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
 
