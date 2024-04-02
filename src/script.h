@@ -23,7 +23,6 @@
 
 typedef std::vector<unsigned char> valtype;
 
-class CCoins;
 class CTransaction;
 
 static const unsigned int MAX_SCRIPT_ELEMENT_SIZE = 520; // bytes
@@ -42,8 +41,7 @@ enum
 enum
 {
     SCRIPT_VERIFY_NONE      = 0,
-    SCRIPT_VERIFY_P2SH      = (1U << 0),
-    SCRIPT_VERIFY_NOCACHE   = (1U << 1), // do not store results in signature cache (but do query it)
+    SCRIPT_VERIFY_NOCACHE   = (1U << 0), // do not store results in signature cache (but do query it)
     SCRIPT_VERIFY_NULLDUMMY = (1U << 1), // verify dummy stack item consumed by CHECKMULTISIG is of zero-length
 };
 
@@ -462,20 +460,34 @@ private:
 class CScript : public std::vector<unsigned char>
 {
 protected:
-     CScript& push_int64(int64_t n)
+      CScript& push_int64(int64 n)
     {
         if (n == -1 || (n >= 1 && n <= 16))
         {
             push_back(n + (OP_1 - 1));
         }
-        else if (n == 0)
+        else
         {
-            push_back(OP_0);
+            CBigNum bn(n);
+            *this << bn.getvch();
+        }
+        return *this;
+    }
+
+    CScript& push_uint64(uint64 n)
+    {
+        if (n >= 1 && n <= 16)
+        {
+            push_back(n + (OP_1 - 1));
         }
         else
         {
-            *this << CScriptNum::serialize(n);
+            CBigNum bn(n);
+            *this << bn.getvch();
         }
+        return *this;
+    }
+
 public:
     CScript() { }
     CScript(const CScript& b) : std::vector<unsigned char>(b.begin(), b.end()) { }
