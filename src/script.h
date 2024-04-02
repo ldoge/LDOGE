@@ -1,5 +1,6 @@
-// Copyright (c) 2009-2022 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin developers
+// Copyright (c) 2009-2024 Satoshi Nakamoto
+// Copyright (c) 2009-2024 The Bitcoin developers
+// Copyright (c) 2009-2024 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -22,6 +23,7 @@
 
 typedef std::vector<unsigned char> valtype;
 
+class CCoins;
 class CTransaction;
 
 static const unsigned int MAX_SCRIPT_ELEMENT_SIZE = 520; // bytes
@@ -40,8 +42,10 @@ enum
 enum
 {
     SCRIPT_VERIFY_NONE      = 0,
-    SCRIPT_VERIFY_NOCACHE   = (1U << 0), // do not store results in signature cache (but do query it)
+    SCRIPT_VERIFY_P2SH      = (1U << 0),
+    SCRIPT_VERIFY_NOCACHE   = (1U << 1), // do not store results in signature cache (but do query it)
     SCRIPT_VERIFY_NULLDUMMY = (1U << 1), // verify dummy stack item consumed by CHECKMULTISIG is of zero-length
+};
 
     // Discourage use of NOPs reserved for upgrades (NOP1-10)
     //
@@ -458,32 +462,20 @@ private:
 class CScript : public std::vector<unsigned char>
 {
 protected:
-    CScript& push_int64(int64_t n)
+     CScript& push_int64(int64_t n)
     {
         if (n == -1 || (n >= 1 && n <= 16))
         {
             push_back(n + (OP_1 - 1));
         }
-        else
+        else if (n == 0)
         {
-	    *this << CScriptNum::serialize(n);
-        }
-        return *this;
-    }
-
-    CScript& push_uint64(uint64_t n)
-    {
-        if (n >= 1 && n <= 16)
-        {
-            push_back(n + (OP_1 - 1));
+            push_back(OP_0);
         }
         else
         {
-	    *this << CScriptNum::serialize(n);
+            *this << CScriptNum::serialize(n);
         }
-        return *this;
-    }
-
 public:
     CScript() { }
     CScript(const CScript& b) : std::vector<unsigned char>(b.begin(), b.end()) { }
@@ -535,6 +527,7 @@ public:
     CScript& operator<<(unsigned short b)     { return push_uint64(b); }
     CScript& operator<<(unsigned long b)      { return push_uint64(b); }
     CScript& operator<<(unsigned long long b) { return push_uint64(b); }
+    CScript& operator<<(uint64 b)         { return push_uint64(b); }
 
     CScript& operator<<(opcodetype opcode)
     {
