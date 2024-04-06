@@ -8,11 +8,9 @@
 #define BITCOIN_LEVELDB_H
 
 #include "main.h"
-#include "bignum.h"
-#include <leveldb/include/leveldb/write_batch.h>
-#include <leveldb/include/leveldb/db.h>
-#include "script.h"
 #include "base58.h"
+#include <leveldb/db.h>
+#include <leveldb/write_batch.h>
 
 #include <map>
 #include <string>
@@ -206,6 +204,8 @@ public:
     bool WriteSyncCheckpoint(uint256 hashCheckpoint);
     bool ReadCheckpointPubKey(std::string& strPubKey);
     bool WriteCheckpointPubKey(const std::string& strPubKey);
+    bool ReadModifierUpgradeTime(unsigned int& nUpgradeTime);
+    bool WriteModifierUpgradeTime(const unsigned int& nUpgradeTime);
     bool LoadBlockIndex();
 private:
     bool LoadBlockIndexGuts();
