@@ -20,57 +20,9 @@ struct SeedSpec6 {
     uint16_t port;
 };
 
-
-
-static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesisOutputScript, uint32_t nTime, uint32_t nNonce, uint32_t nBits, int32_t nVersion, const CAmount& genesisReward)
-{
-    CMutableTransaction txNew;
-    txNew.nVersion = 1;
-    txNew.vin.resize(1);
-    txNew.vout.resize(1);
-    txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << std::vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
-    txNew.vout[0].nValue = genesisReward;
-    txNew.vout[0].scriptPubKey = genesisOutputScript;
-
-    CBlock genesis;
-    genesis.nTime    = nTime;
-    genesis.nBits    = nBits;
-    genesis.nNonce   = nNonce;
-    genesis.nVersion = nVersion;
-    genesis.vtx.push_back(MakeTransactionRef(std::move(txNew)));
-    genesis.hashPrevBlock.SetNull();
-    genesis.hashMerkleRoot = BlockMerkleRoot(genesis);
-    return genesis;
-}
-
-/**
- * Build the genesis block. Note that the output of its generation
- * transaction cannot be spent since it did not originally exist in the
- * database.
- * 
- * CBlock(hash=12630d16a9, ver=1, hashPrevBlock=0000000000000000000000000000000000000000000000000000000000000000, hashMerkleRoot=12630d16a9, nTime=1426450258, nBits=1e0fffff, nNonce=1312314, vtx=1, vchBlockSig=)
- *   CTransaction(hash=12630d16a9, nTime=1426450258, ver=1, vin.size=1, vout.size=1, nLockTime=0)
- *     CTxIn(COutPoint(0000000000, 4294967295), coinbase 00012a24323020466562203230313420426974636f696e2041544d7320636f6d6520746f20555341)
- *     CTxOut(empty)
- *   vMerkleTree: 12630d16a9
- */
-static CBlock CreateGenesisBlock(uint32_t nTime, uint32_t nNonce, uint nBits, int nVersion, const CAmount& genesisReward)
-{
-    const char* pszTimestamp = "plz time stamp. stahp";
-    const CScript genesisOutputScript = CScript() << ParseHex("0x0") << OP_CHECKSIG;
-    return CreateGenesisBlock(pszTimestamp, genesisOutputScript, nTime, nNonce, nBits, nVersion, genesisReward);
-}
-
-/**
- * Main network
- */
-/**
- * What makes a good checkpoint block?
- * + Is surrounded by blocks with reasonable timestamps
- *   (no blocks before with a timestamp after, none after with
- *    timestamp before)
- * + Contains no strange transactions
- */
+//
+// Main network
+//
 
 // Convert the pnSeeds6 array into usable address objects.
 static void convertSeed6(std::vector<CAddress> &vSeedsOut, const SeedSpec6 *data, unsigned int count)
@@ -93,42 +45,6 @@ static void convertSeed6(std::vector<CAddress> &vSeedsOut, const SeedSpec6 *data
 class CMainParams : public CChainParams {
 public:
     CMainParams() {
-        // Blocks 0 - 144999 are conventional difficulty calculation
-        nMajorityEnforceBlockUpgrade = 750;
-        nMajorityRejectBlockOutdated = 950;
-        nMajorityWindow = 1000;
-        BIP34Height = 99324612;
-        BIP34Hash = uint256("0x4bd3308d384e80094e4659f9a3245e6f444688edbec0ad88b9a5dfd4be87454e");
-        BIP65Height = 99324613; // 
-        BIP66Height = 99324613; // 80d1364201e5df97e696c03bdd24dc885e8617b9de51e453c10a4f629b1e797a - this is the last block that could be v2, 1900 blocks past the last v2 block
-        powLimit = CBigNum(~uint256(0) >> 20);
-        fDigishieldDifficultyCalculation = false;
-        fPowAllowMinDifficultyBlocks = false;
-        fPowAllowDigishieldMinDifficultyBlocks = false;
-        fPowNoRetargeting = false;
-        nRuleChangeActivationThreshold = 750; // 95% of 10,080
-        .nMinerConfirmationWindow = 1000; // 60 * 24 * 7 = 10,080 blocks, or one week
-        vDeployments[DEPLOYMENT_TESTDUMMY].bit = 28;
-        vDeployments[DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
-        vDeployments[DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
-
-        // Deployment of BIP68, BIP112, and BIP113.
-        // XXX: BIP heights and hashes all need to be updated to Nyancoin values
-        vDeployments[Consensus::DEPLOYMENT_CSV].bit = 0;
-        vDeployments[Consensus::DEPLOYMENT_CSV].nStartTime = 1612942090; // 
-        vDeployments[Consensus::DEPLOYMENT_CSV].nTimeout = 1613546890; // 
-
-        // Deployment of SegWit (BIP141, BIP143, and BIP147)
-        vDeployments[Consensus::DEPLOYMENT_SEGWIT].bit = 1;
-        vDeployments[Consensus::DEPLOYMENT_SEGWIT].nStartTime = 1612942090; // 
-        vDeployments[Consensus::DEPLOYMENT_SEGWIT].nTimeout = 0; // Disabled
-
-        // The best chain should have at least this much work.
-        nMinimumChainWork = uint256("0x00000000000000000000000000000000000000000000000000fd6e84dd5364d4");  // Block 11461900
-
-        // By default assume that the signatures in ancestors of this block are valid.
-        defaultAssumeValid = uint256("0xb477d9bc0721a1b96547495404583d68123f471fdd1d4058a9adff2fa7452298");  // Block 11461900
-        
         // The message start string is designed to be unlikely to occur in normal data.
         // The characters are rarely used upper ASCII, not valid as UTF-8, and produce
         // a large 4-byte int at any alignment.
@@ -136,10 +52,11 @@ public:
         pchMessageStart[1] = 0x44;
         pchMessageStart[2] = 0x15;
         pchMessageStart[3] = 0x06;
+        vAlertPubKey = ParseHex("0447626947b30cd4d1bcf0573e51789e75c412ff7b304a5f106713ce50b6a99f047e1f924209836130933712edd86dda3454821060d591778d93b077fc4e11aa52");
         nDefaultPort = 17014;
         nRPCPort = 17015;
         bnProofOfWorkLimit = CBigNum(~uint256(0) >> 20);
-
+        
         // Build the genesis block. Note that the output of the genesis coinbase cannot
         // be spent as it did not originally exist in the database.
         //
@@ -186,11 +103,11 @@ public:
         vSeeds.push_back(CDNSSeedData("lab-support-node0", "ldoge.nerdlabs001.com"));
         vSeeds.push_back(CDNSSeedData("lab-support-node1", "ldoge.nerdlabs001.com"));
 
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,90);
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,8);
-        base58Prefixes[SECRET_KEY]     = std::vector<unsigned char>(1,171);
-        base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container<std::vector<unsigned char> >();
-        base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container<std::vector<unsigned char> >();
+        base58Prefixes[PUBKEY_ADDRESS] = list_of(90);
+        base58Prefixes[SCRIPT_ADDRESS] = list_of(8);
+        base58Prefixes[SECRET_KEY] =     list_of(171);
+        base58Prefixes[EXT_PUBLIC_KEY] = list_of(0x04)(0x88)(0xB2)(0x1E);
+        base58Prefixes[EXT_SECRET_KEY] = list_of(0x04)(0x88)(0xAD)(0xE4);
 
         convertSeed6(vFixedSeeds, pnSeed6, ARRAYLEN(pnSeed6));
     }
@@ -245,12 +162,14 @@ public:
         vSeeds.push_back(CDNSSeedData("lab-support-node0", "ldoge.nerdlabs001.com"));
         vSeeds.push_back(CDNSSeedData("lab-support-node1", "ldoge.nerdlabs001.com"));
 
-        base58Prefixes[PUBKEY_ADDRESS] = std::vector<unsigned char>(1,90);
-        base58Prefixes[SCRIPT_ADDRESS] = std::vector<unsigned char>(1,8);
-        base58Prefixes[SECRET_KEY]     = std::vector<unsigned char>(1,171);
-        base58Prefixes[EXT_PUBLIC_KEY] = boost::assign::list_of(0x04)(0x88)(0xB2)(0x1E).convert_to_container<std::vector<unsigned char> >();
-        base58Prefixes[EXT_SECRET_KEY] = boost::assign::list_of(0x04)(0x88)(0xAD)(0xE4).convert_to_container<std::vector<unsigned char> >();
-
+        base58Prefixes[PUBKEY_ADDRESS] = list_of(111);
+        base58Prefixes[SCRIPT_ADDRESS] = list_of(196);
+        base58Prefixes[SECRET_KEY]     = list_of(239);
+        base58Prefixes[EXT_PUBLIC_KEY] = list_of(0x04)(0x35)(0x87)(0xCF);
+        base58Prefixes[EXT_SECRET_KEY] = list_of(0x04)(0x35)(0x83)(0x94);
+       
+        convertSeed6(vFixedSeeds, pnSeed6_test, ARRAYLEN(pnSeed6_test));
+        
         
     }
     virtual Network NetworkID() const { return CChainParams::TESTNET; }
@@ -268,10 +187,10 @@ public:
         pchMessageStart[1] = 0xa9;
         pchMessageStart[2] = 0xb7;
         pchMessageStart[3] = 0xca;
-        bnProofOfWorkLimit = CBigNum(~uint256(0) >> 1);
-        genesis.nTime = 1426450258;
-        genesis.nBits  = bnProofOfWorkLimit.GetCompact();
-        genesis.nNonce = 1;
+        bnProofOfWorkLimit = CBigNum(~uint256(0) >> 20);
+        genesis.nTime    = 1426450258;
+        genesis.nBits    = bnProofOfWorkLimit.GetCompact();
+        genesis.nNonce   = 925125; 
         hashGenesisBlock = genesis.GetHash();
         nDefaultPort = 18445;
         nRPCPort = 18446;
