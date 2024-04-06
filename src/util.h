@@ -1,10 +1,12 @@
-// Copyright (c) 2009-2022 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin developers
+// Copyright (c) 2009-2024 Satoshi Nakamoto
+// Copyright (c) 2009-2024 The Bitcoin developers
+// Copyright (c) 2009-2024 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
 #ifndef BITCOIN_UTIL_H
 #define BITCOIN_UTIL_H
+
+#include "uint256.h"
 
 #ifndef WIN32
 #include <sys/types.h>
@@ -32,6 +34,12 @@
 #include <stdint.h>
 
 class uint256;
+
+#include "netbase.h" // for AddTimeData
+
+static const int32_t nOneHour = 60 * 60;
+static const int32_t nOneDay = 24 * 60 * 60;
+static const int64_t nOneWeek = 7 * 24 * 60 * 60;
 
 static const int64_t COIN = 100000000;
 static const int64_t CENT = 1000000;
@@ -65,6 +73,13 @@ static const int64_t CENT = 1000000;
   #define PRIpdx    "tx"
   #define PRIpdu    "tu"
   #define PRIpdd    "td"
+  #undef PRIu64
+  #undef PRId64
+  #undef PRIx64
+
+  #define PRIu64 "I64u"
+  #define PRId64 "I64d"
+  #define PRIx64 "I64x"
 #endif
 
 // This is needed because the foreach macro can't get over the comma in pair<t1, t2>
@@ -94,16 +109,24 @@ T* alignup(T* p)
 #endif
 #else
 #define MAX_PATH            1024
+inline void Sleep(int64_t n)
+{
+    /*Boost has a year 2038 problem— if the request sleep time is past epoch+2^31 seconds the sleep returns instantly.
+      So we clamp our sleeps here to 10 years and hope that boost is fixed by 2028.*/
+    boost::thread::sleep(boost::get_system_time() + boost::posix_time::milliseconds(n>315576000000LL?315576000000LL:n));
+}
 #endif
 
-inline void MilliSleep(int64_t n)
-{
-#if BOOST_VERSION >= 105000
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(n));
+/* This GNU C extension enables the compiler to check the format string against the parameters provided.
+ * X is the number of the "format string" parameter, and Y is the number of the first variadic parameter.
+ * Parameters count from 1.
+ */
+#ifdef __GNUC__
+#define ATTR_WARN_PRINTF(X,Y) __attribute__((format(printf,X,Y)))
 #else
-    boost::this_thread::sleep(boost::posix_time::milliseconds(n));
+#define ATTR_WARN_PRINTF(X,Y)
 #endif
-}
+
 
 
 
@@ -205,9 +228,19 @@ int GetRandInt(int nMax);
 uint64_t GetRand(uint64_t nMax);
 uint256 GetRandHash();
 int64_t GetTime();
+int64_t GetTimeMillis();
+int64_t GetTimeMicros();
 void SetMockTime(int64_t nMockTimeIn);
 std::string FormatFullVersion();
 std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments);
+void runCommand(std::string strCommand);
+
+int64_t GetAdjustedTime();
+int64_t GetTimeOffset();
+int64_t GetNodesOffset();
+std::string FormatFullVersion();
+std::string FormatSubVersion(const std::string& name, int nClientVersion, const std::vector<std::string>& comments);
+void AddTimeData(const CNetAddr& ip, int64_t nTime);
 void runCommand(std::string strCommand);
 
 
@@ -510,6 +543,11 @@ inline void SetThreadPriority(int nPriority)
 #else
     setpriority(PRIO_PROCESS, 0, nPriority);
 #endif
+}
+
+inline void ExitThread(size_t nExitCode)
+{
+    pthread_exit((void*)nExitCode);
 }
 #endif
 
