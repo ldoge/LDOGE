@@ -2,7 +2,8 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.6.0.1
 INCLUDEPATH += src src/json src/qt
-QT += core gui network
+QT += network
+ QT += widgets
 DEFINES += ENABLE_WALLET
 DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
 CONFIG += no_include_pwd
@@ -13,19 +14,16 @@ win32 {
 } else {
     CONFIG += debug_and_release
 }
-CONFIG += static
-
+greaterThan(QT_MAJOR_VERSION, 4) {
+   QT += webkit
+   DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+}
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT += widgets
-
-    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+    QT += webkitwidgets
+} else {
+    QT += webkit
 }
-
-# QMAKE_CC=clang
-# QMAKE_CXX=clang++
-# QMAKE_LINK=clang++
-
-QMAKE_CXXFLAGS += -std=c++11
 
 freebsd-g++: QMAKE_TARGET.arch = $$QMAKE_HOST.arch
 linux-g++: QMAKE_TARGET.arch = $$QMAKE_HOST.arch
@@ -71,6 +69,11 @@ win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 win32:QMAKE_LFLAGS += -static-libgcc -static-libstdc++
 win32:QMAKE_LFLAGS *= -Wl,--large-address-aware -static
 
+
+QMAKE_CXXFLAGS += -std=c++11
+# QMAKE_CC=clang
+# QMAKE_CXX=clang++
+# QMAKE_LINK=clang++
 # use: qmake "RELEASE=1"
 contains(RELEASE, 1) {
     message(Building Release Version)
@@ -202,6 +205,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/aboutdialog.h \
     src/qt/editaddressdialog.h \
     src/qt/bitcoinaddressvalidator.h \
+    src/alert.h \
     src/addrman.h \
     src/base58.h \
     src/bignum.h \
@@ -280,6 +284,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/threadsafety.h \
     src/tinyformat.h \
     src/qt/autosaver.h \
+     src/qt/chatpage.h \
     src/qt/qrcodedialog.h \
     src/qt/cookiejar.h \
     src/qt/serveur.h \
@@ -298,6 +303,7 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/aboutdialog.cpp \
     src/qt/editaddressdialog.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
+    src/alert.cpp \
     src/chainparams.cpp \
     src/version.cpp \
     src/sync.cpp \
@@ -364,7 +370,6 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/pbkdf2.cpp \
     src/qt/qwebview.cpp \
     src/qt/autosaver.cpp \
-    src/qt/qrcodedialog.cpp \
     src/qt/transactiontablemodel.cpp \
     src/qt/chatpage.cpp \
     src/qt/peertablemodel.cpp \
