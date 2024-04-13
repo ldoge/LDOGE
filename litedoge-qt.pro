@@ -15,14 +15,8 @@ win32 {
     CONFIG += debug_and_release
 }
 greaterThan(QT_MAJOR_VERSION, 4) {
-   QT += webkit
+   QT += widgets
    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-}
-greaterThan(QT_MAJOR_VERSION, 4) {
-    QT += widgets
-    QT += webkitwidgets
-} else {
-    QT += webkit
 }
 
 freebsd-g++: QMAKE_TARGET.arch = $$QMAKE_HOST.arch
