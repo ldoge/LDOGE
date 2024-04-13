@@ -16,14 +16,13 @@
 #include "checkpoints.h"
 #include "txdb.h"
 #include "util.h"
-#include "db.h"
 #include "main.h"
 #include "chainparams.h"
 
-#include <leveldb/include/leveldb/env.h>
-#include <leveldb/include/leveldb/cache.h>
-#include <leveldb/include/leveldb/slice.h>
-#include <leveldb/include/leveldb/filter_policy.h>
+#include <leveldb/env.h>
+#include <leveldb/cache.h>
+#include <leveldb/slice.h>
+#include <leveldb/filter_policy.h>
 #include <memenv/memenv.h>
 
 using namespace std;
@@ -393,6 +392,9 @@ bool CTxDB::LoadBlockIndex()
         iterator->Next();
     }
     delete iterator;
+    
+    if (fRequestShutdown)
+        return true;
 
     boost::this_thread::interruption_point();
 
