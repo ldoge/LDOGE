@@ -185,19 +185,19 @@ std::string ATTR_WARN_PRINTF(1,3) real_strprintf(const char *format, int dummy, 
 /** Overload strprintf for std::string, to be able to use it with _ (translation).
  * This will not support GCC format type warnings (-Wformat) so be careful.
  */
-std::string real_strprintf(const std::string &format, int dummy, ...);
-#define strprintf(format, ...) real_strprintf(format, 0, __VA_ARGS__)
+std::string real_LogPrintf(const std::string &format, int dummy, ...);
+#define LogPrintf(format, ...) real_LogPrintf(format, 0, __VA_ARGS__)
 std::string vstrprintf(const char *format, va_list ap);
 
 bool ATTR_WARN_PRINTF(1,2) error(const char *format, ...);
 
-/* Redefine printf so that it directs output to debug.log
+/* Redefine LogPrintf so that it directs output to debug.log
  *
  * Do this *after* defining the other printf-like functions, because otherwise the
  * __attribute__((format(printf,X,Y))) gets expanded to __attribute__((format(OutputDebugStringF,X,Y)))
  * which confuses gcc.
  */
-#define printf OutputDebugStringF
+#define LogPrintf OutputDebugStringF
 
 /* Return true if log accepts specified category */
 bool LogAcceptCategory(const char* category);
