@@ -376,9 +376,10 @@ std::string HexStr(const T itbegin, const T itend, bool fSpaces=false)
 }
 
 template<typename T>
-inline std::string HexStr(const T& vch, bool fSpaces=false)
+void skipspaces(T& it)
 {
-    return HexStr(vch.begin(), vch.end(), fSpaces);
+    while (isspace(*it))
+        ++it;
 }
 
 inline int64_t GetPerformanceCounter()
