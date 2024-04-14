@@ -26,13 +26,16 @@ class CReserveKey;
 class CFlatData;
 class CMessageHeader;
 class CWallet;
+class COutPoint;
+class CAddress;
+class CTxMemPool;
 
 static const int LAST_POW_BLOCK = 8000;
 
 /** The maximum allowed size for a serialized block, in bytes (network rule) */
 static const unsigned int MAX_BLOCK_SIZE = 1000000;
 /** The maximum size for mined blocks */
-static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/4;         // 250KB  block soft limit
+static const unsigned int MAX_BLOCK_SIZE_GEN = MAX_BLOCK_SIZE/2;
 /** The maximum size for transactions we're willing to relay/mine **/
 static const unsigned int MAX_STANDARD_TX_SIZE = MAX_BLOCK_SIZE_GEN/5;
 /** The maximum allowed number of signature check operations in a block (network rule) */
@@ -44,7 +47,7 @@ static const unsigned int MAX_TX_SIGOPS = MAX_BLOCK_SIGOPS/5;
 /** The maximum number of orphan transactions kept in memory */
 static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 /** Default for -maxorphanblocks, maximum number of orphan blocks kept in memory */
-static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 100;
+static const unsigned int DEFAULT_MAX_ORPHAN_BLOCKS = 1000;
 /** The maximum number of entries in an 'inv' protocol message */
 static const unsigned int MAX_INV_SZ = 50000;
 /** Fees smaller than this (in satoshi) are considered zero fee (for transaction creation) */
@@ -319,6 +322,8 @@ public:
      */
     int64_t GetValueIn(const MapPrevTx& mapInputs) const;
 
+    int64_t GetMinFee(unsigned int nBlockSize=1, enum GetMinFee_mode mode=GMF_BLOCK, unsigned int nBytes = 0) const;
+
     bool ReadFromDisk(CDiskTxPos pos, FILE** pfileRet=NULL)
     {
         CAutoFile filein = CAutoFile(OpenBlockFile(pos.nFile, 0, pfileRet ? "rb+" : "rb"), SER_DISK, CLIENT_VERSION);
@@ -360,12 +365,12 @@ public:
         return !(a == b);
     }
 
-    std::string ToString() const
+    std::string ToStringShort() const
     {
         std::string str;
         str += IsCoinBase()? "Coinbase" : (IsCoinStake()? "Coinstake" : "CTransaction");
         str += strprintf("(hash=%s, nTime=%d, ver=%d, vin.size=%" PRIszu ", vout.size=%" PRIszu ", nLockTime=%d)\n",
-            GetHash().ToString(),
+            GetHash().ToString().substr(0,10).c_str(),
             nTime,
             nVersion,
             vin.size(),
@@ -376,6 +381,11 @@ public:
         for (unsigned int i = 0; i < vout.size(); i++)
             str += "    " + vout[i].ToString() + "\n";
         return str;
+    }
+
+    void print() const
+    {
+        printf("%s", ToString().c_str());
     }
 
 
@@ -410,7 +420,7 @@ public:
      */
     bool ConnectInputs(CTxDB& txdb, MapPrevTx inputs,
                        std::map<uint256, CTxIndex>& mapTestPool, const CDiskTxPos& posThisTx,
-                       const CBlockIndex* pindexBlock, bool fBlock, bool fMiner, unsigned int flags = STANDARD_SCRIPT_VERIFY_FLAGS);
+                       const CBlockIndex* pindexBlock, bool fBlock, bool fMiner, unsigned int flags = MANDATORY_SCRIPT_VERIFY_FLAGS);
     bool CheckTransaction() const;
     bool GetCoinAge(CTxDB& txdb, uint64_t& nCoinAge) const;  // ppcoin: get transaction coin age
 
@@ -825,18 +835,18 @@ public:
         s << strprintf("CBlock(hash=%s, ver=%d, hashPrevBlock=%s, hashMerkleRoot=%s, nTime=%u, nBits=%08x, nNonce=%u, vtx=%" PRIszu ", vchBlockSig=%s)\n",
             GetHash().ToString(),
             nVersion,
-            hashPrevBlock.ToString(),
-            hashMerkleRoot.ToString(),
+            hashPrevBlock.ToString().c_str(),
+            hashMerkleRoot.ToString().c_str(),
             nTime, nBits, nNonce,
             vtx.size(),
-            HexStr(vchBlockSig.begin(), vchBlockSig.end()));
+            HexStr(vchBlockSig.begin(), vchBlockSig.end()).c_str());
         for (unsigned int i = 0; i < vtx.size(); i++)
         {
             s << "  " << vtx[i].ToString() << "\n";
         }
         s << "  vMerkleTree: ";
         for (unsigned int i = 0; i < vMerkleTree.size(); i++)
-            s << " " << vMerkleTree[i].ToString();
+            s << " " << vMerkleTree[i].ToString().substr(0,10).c_str());
         s << "\n";
         return s.str();
     }
@@ -1081,10 +1091,15 @@ public:
             FormatMoney(nMint), FormatMoney(nMoneySupply),
             GeneratedStakeModifier() ? "MOD" : "-", GetStakeEntropyBit(), IsProofOfStake()? "PoS" : "PoW",
             nStakeModifier,
-            hashProof.ToString(),
-            prevoutStake.ToString(), nStakeTime,
-            hashMerkleRoot.ToString(),
-            GetBlockHash().ToString());
+           hashProof.ToString().c_str(),
+            prevoutStake.ToString().c_str(), nStakeTime,
+            hashMerkleRoot.ToString().c_str(),
+            GetBlockHash().ToString().c_str());
+   }
+
+    void print() const
+    {
+        printf("%s\n", ToString().c_str());
     }
 };
 
@@ -1171,17 +1186,17 @@ public:
         std::string str = "CDiskBlockIndex(";
         str += CBlockIndex::ToString();
         str += strprintf("\n                hashBlock=%s, hashPrev=%s, hashNext=%s)",
-            GetBlockHash().ToString(),
-            hashPrev.ToString(),
-            hashNext.ToString());
+            GetBlockHash().ToString().c_str());
+            hashPrev.ToString().c_str());
+            hashNext.ToString().c_str());
         return str;
+ }
+
+    void print() const
+    {
+        printf("%s\n", ToString().c_str());
     }
 };
-
-
-
-
-
 
 
 
@@ -1247,7 +1262,7 @@ public:
             if (vHave.size() > 10)
                 nStep *= 2;
         }
-        vHave.push_back(Params().HashGenesisBlock());
+        vHave.push_back((!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet));
     }
 
     int GetDistanceBack()
@@ -1300,7 +1315,7 @@ public:
                     return hash;
             }
         }
-        return Params().HashGenesisBlock();
+        return (!fTestNet ? hashGenesisBlock : hashGenesisBlockTestNet);
     }
 
     int GetHeight()
@@ -1314,11 +1329,42 @@ public:
 
 
 
+class CTxMemPool
+{
+public:
+    mutable CCriticalSection cs;
+    std::map<uint256, CTransaction> mapTx;
+    std::map<COutPoint, CInPoint> mapNextTx;
 
+    bool addUnchecked(const uint256& hash, CTransaction &tx);
+    bool remove(const CTransaction &tx, bool fRecursive = false);
+    bool removeConflicts(const CTransaction &tx);
+    void clear();
+    void queryHashes(std::vector<uint256>& vtxid);
 
+    unsigned long size() const
+    {
+        LOCK(cs);
+        return mapTx.size();
+    }
 
+    bool exists(uint256 hash) const
+    {
+        LOCK(cs);
+        return (mapTx.count(hash) != 0);
+    }
 
+    bool lookup(uint256 hash, CTransaction& result) const
+    {
+        LOCK(cs);
+        std::map<uint256, CTransaction>::const_iterator i = mapTx.find(hash);
+        if (i == mapTx.end()) return false;
+        result = i->second;
+        return true;
+    }
+};
 
+extern CTxMemPool mempool;
 
 
 class CWalletInterface {
