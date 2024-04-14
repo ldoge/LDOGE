@@ -8,7 +8,6 @@
 #define BITCOIN_LEVELDB_H
 
 #include "main.h"
-#include "base58.h"
 #include <leveldb/db.h>
 #include <leveldb/write_batch.h>
 
