@@ -84,7 +84,7 @@ protected:
                 if (status.IsNotFound())
                     return false;
                 // Some unexpected error.
-                LogPrintf("LevelDB read failure: %s\n", status.ToString());
+                LogPrintf("LevelDB read failure: %s\n", status.ToString().c_str());
                 return false;
             }
         }
@@ -114,12 +114,12 @@ protected:
         ssValue << value;
 
         if (activeBatch) {
-            activeBatch->Put(ssKey.str(), ssValue.str());
+            activeBatch->Put(ssKey.str(), ssValue.str().c_str());
             return true;
         }
        leveldb::Status status = pdb->Put(leveldb::WriteOptions(), ssKey.str(), ssValue.str());
         if (!status.ok()) {
-            LogPrintf("LevelDB write failure: %s\n", status.ToString());
+            LogPrintf("LevelDB write failure: %s\n", status.ToString().c_str());
             return false;
         }
         return true;
@@ -137,10 +137,10 @@ protected:
         ssKey.reserve(1000);
         ssKey << key;
         if (activeBatch) {
-            activeBatch->Delete(ssKey.str());
+            activeBatch->Delete(ssKey.str().c_str());
             return true;
         }
-        leveldb::Status status = pdb->Delete(leveldb::WriteOptions(), ssKey.str());
+        leveldb::Status status = pdb->Delete(leveldb::WriteOptions(), ssKey.str().c_str());
         return (status.ok() || status.IsNotFound());
     }
 
