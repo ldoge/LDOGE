@@ -2,22 +2,26 @@ TEMPLATE = app
 TARGET = litedoge-qt
 VERSION = 3.6.0.1
 INCLUDEPATH += src src/json src/qt
-QT += network
- QT += widgets
-DEFINES += ENABLE_WALLET
-DEFINES += BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_BIND_GLOBAL_PLACEHOLDERS
+QT += core gui network
+greaterThan(QT_MAJOR_VERSION, 4) { QT += widgets
+DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE __STDC_FORMAT_MACROS __STDC_LIMIT_MACROS
 CONFIG += no_include_pwd
-CONFIG += static
 CONFIG += thread
-win32 {
+CONFIG += static
+
+!win32 {
     CONFIG += release
 } else {
     CONFIG += debug_and_release
 }
-greaterThan(QT_MAJOR_VERSION, 4) {
-   QT += widgets
+
    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
 }
+
+
+# QMAKE_CC=clang
+# QMAKE_CXX=clang++
+# QMAKE_LINK=clang++
 
 freebsd-g++: QMAKE_TARGET.arch = $$QMAKE_HOST.arch
 linux-g++: QMAKE_TARGET.arch = $$QMAKE_HOST.arch
@@ -59,15 +63,13 @@ QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
 # This can be enabled for Windows, when we switch to MinGW >= 4.4.x.
 }
 # for extra security on Windows: enable ASLR and DEP via GCC linker flags
+
 win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
 win32:QMAKE_LFLAGS += -static-libgcc -static-libstdc++
 win32:QMAKE_LFLAGS *= -Wl,--large-address-aware -static
 
 
 QMAKE_CXXFLAGS += -std=c++11
-# QMAKE_CC=clang
-# QMAKE_CXX=clang++
-# QMAKE_LINK=clang++
 # use: qmake "RELEASE=1"
 contains(RELEASE, 1) {
     message(Building Release Version)
