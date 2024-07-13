@@ -3,21 +3,20 @@
 // Copyright (c) 2009-2024 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
-
 #ifndef BITCOIN_UTIL_H
 #define BITCOIN_UTIL_H
 
 #include "uint256.h"
+
+#include <stdint.h>
 
 #ifndef WIN32
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #endif
-
 #include "serialize.h"
 #include "tinyformat.h"
-
 #include <map>
 #include <list>
 #include <utility>
@@ -25,18 +24,19 @@
 #include <string>
 
 #ifndef Q_MOC_RUN
+#include <boost/version.hpp>
 #include <boost/thread.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
-#endif
-
-#include <stdint.h>
 
 class uint256;
 
 #include "netbase.h" // for AddTimeData
+
+typedef long long  int64;
+typedef unsigned long long  uint64;
 
 static const int32_t nOneHour = 60 * 60;
 static const int32_t nOneDay = 24 * 60 * 60;
@@ -45,6 +45,7 @@ static const int64_t nOneWeek = 7 * 24 * 60 * 60;
 static const int64_t COIN = 100000000;
 static const int64_t CENT = 1000000;
 
+#define loop                for (;;)
 #define BEGIN(a)            ((char*)&(a))
 #define END(a)              ((char*)&((&(a))[1]))
 #define UBEGIN(a)           ((unsigned char*)&(a))
@@ -564,6 +565,9 @@ inline void SetThreadPriority(int nPriority)
 
 void RenameThread(const char* name);
 
+/**
+ * .. and a wrapper that just calls func once
+ */
 inline uint32_t ByteReverse(uint32_t value)
 {
     value = ((value & 0xFF00FF00) >> 8) | ((value & 0x00FF00FF) << 8);
@@ -577,6 +581,7 @@ inline uint32_t ByteReverse(uint32_t value)
 // or maybe:
 //    boost::function<void()> f = boost::bind(&FunctionWithArg, argument);
 //    threadGroup.create_thread(boost::bind(&LoopForever<boost::function<void()> >, "nothing", f, milliseconds));
+template <typename Callable> void TraceThread(const char* name,  Callable func)
 {
     std::string s = strprintf("litedoge-%s", name);
     RenameThread(s.c_str());
@@ -591,38 +596,17 @@ inline uint32_t ByteReverse(uint32_t value)
     }
     catch (boost::thread_interrupted)
     {
-        LogPrintf("%s thread stop\n", name);
-        throw;
-    }
-    catch (std::exception& e) {
-        PrintException(&e, name);
-    }
-    catch (...) {
-        PrintException(NULL, name);
-    }
-}
-// .. and a wrapper that just calls func once
-template <typename Callable> void TraceThread(const char* name,  Callable func)
-{
-    std::string s = strprintf("litedoge-%s", name);
-    RenameThread(s.c_str());
-    try
-    {
-        LogPrintf("%s thread start\n", name);
-        func();
         LogPrintf("%s thread exit\n", name);
-    }
-    catch (boost::thread_interrupted)
-    {
-        LogPrintf("%s thread interrupt\n", name);
         throw;
     }
     catch (std::exception& e) {
-        PrintException(&e, name);
+        PrintExceptionContinue(&e, name);
     }
     catch (...) {
-        PrintException(NULL, name);
+        PrintExceptionContinue(NULL, name);
     }
 }
 
-#endif
+std::string CopyrightHolders(const std::string& strPrefix);
+
+#endif // BITCOIN_UTIL_H
