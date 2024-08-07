@@ -10,87 +10,379 @@ on:
       - 'contrib/**'
       - '**/*.md'
 
+env:
+  MAKEJOBS: 3
+  DOCKER_BUILDKIT: 1
+  GITIAN_DIR: /opt/gitian-builder
+  GITIAN_CACHE: /opt/gitian-builder/cache
+  DEBIAN_FRONTEND: noninteractive
+  USE_DOCKER: 1
+
 jobs:
-  build:
-    name: ${{ matrix.name }}
-
-    env:
-      MAKEJOBS: "-j3"
-      CHECK_DOC: "0"
-      CCACHE_SIZE: "100M"
-      CCACHE_TEMPDIR: /tmp/.ccache-temp
-      CCACHE_COMPRESS: "1"
-      PYTHON_DEBUG: "1"
-      WINEDEBUG: fixme-all
-      SDK_URL: https://bitcoincore.org/depends-sources/sdks
-
+  binary:
+    runs-on: ubuntu-20.04
+    container: docker:stable-dind
     strategy:
-      fail-fast: false
       matrix:
         name:
+          - armhf-linux
+          - aarch64-linux
           - x86_64-linux
           - x86_64-macos
           - x86_64-win
         include:
-          - name: x86_64-linux
-            host: x86_64-unknown-linux-gnu
-            os: ubuntu-18.04
-            packages: bc python3-zmq libboost-dev libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libleveldb-dev 
-            run-tests: true
-            goal: install
-          - name: x86_64-win
+          - os: linux
+            name: armhf-linux
+            host: arm-linux-gnueabihf
+          - os: linux
+            name: aarch64-linux
+            host: aarch64-linux-gnu
+          - os: linux
+            name: x86_64-linux
+            host: x86_64-linux-gnu
+          - os: osx
+            name: x86_64-macos
+            host: x86_64-apple-darwin16
+          - os: win
+            name: x86_64-win
             host: x86_64-w64-mingw32
-            arch: "i386"
-            os: ubuntu-20.04
-            packages: python3 nsis g++-mingw-w64-x86-64 wine64 bc wine-binfmt libboost-dev libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libleveldb-dev 
-            postinstall: |
-              sudo update-alternatives --set x86_64-w64-mingw32-gcc  /usr/bin/x86_64-w64-mingw32-gcc-posix
-              sudo update-alternatives --set x86_64-w64-mingw32-g++  /usr/bin/x86_64-w64-mingw32-g++-posix
-              sudo update-binfmts --import /usr/share/binfmts/wine
-            run-tests: true
-            dep-opts: ""
-            config-opts: "--enable-reduce-exports --enable-gui=qt5"
-            goal: install
-          - name: x86_64-macos
-            host: x86_64-apple-darwin11
-            os: ubuntu-18.04
-            packages: cmake imagemagick libcap-dev librsvg2-bin libz-dev libtiff-tools libtinfo5 python3-setuptools xorriso libtinfo5 libboost-dev libboost-all-dev libssl-dev libdb++-dev libminiupnpc-dev libleveldb-dev 
-            run-tests: false
-            dep-opts: ""
-            config-opts: "--enable-gui=qt5 --enable-reduce-exports"
-            goal: install
-            sdk: 10.11
-
-    runs-on: ${{ matrix.os }}
-
     steps:
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+      - name: Set up environment
+        run: |
+          apk add --no-cache curl make ruby wget git sed tar grep bash
+          git clone https://github.com/devrandom/gitian-builder.git ${GITIAN_DIR}
+          mkdir -p ${GITIAN_DIR}/inputs ${GITIAN_DIR}/var
+          wget https://github.com/mikefarah/yq/releases/download/v4.13.5/yq_linux_amd64.tar.gz -O - |\
+            tar xz && mv yq_linux_amd64 /usr/bin/yq
+
+      - name: Fetch OSX SDK
+        if: ${{ matrix.os == 'osx' }}
+        run: wget -N https://bitcoincore.org/depends-sources/sdks/Xcode-12.2-12B45b-extracted-SDK-with-libcxx-headers.tar.gz -O ${GITIAN_DIR}/inputs/Xcode-12.2-12B45b-extracted-SDK-with-libcxx-headers.tar.gz
+
+      - uses: actions/checkout@v3
+
+      - name: Detect suite
+        id: detect
+        shell: bash
+        run: |
+          DESCRIPTOR=$PWD/contrib/gitian-descriptors/gitian-${{ matrix.os }}.yml
+          NAME=$(yq e '.name' ${DESCRIPTOR})
+          COMMIT_OR_TAG=$(git log --format="%H" -n 1)
+          FETCH_TAGS=""
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            COMMIT_OR_TAG=$(echo ${GITHUB_REF/refs\/tags\//})
+            FETCH_TAGS="--fetch-tags"
+          fi
+          echo "descriptor=${DESCRIPTOR}" >> $GITHUB_OUTPUT
+          echo "name=${NAME}" >> $GITHUB_OUTPUT
+          echo "version=$(echo ${NAME} | grep -Eo [0-9.]+)" >> $GITHUB_OUTPUT
+          echo "suite=$(yq e '.suites[0]' ${DESCRIPTOR})" >> $GITHUB_OUTPUT
+          echo "architecture=$(yq e '.architectures[0]' ${DESCRIPTOR})" >> $GITHUB_OUTPUT
+          echo "build-dir=${PWD}" >> $GITHUB_OUTPUT
+          echo "commit-or-tag=${COMMIT_OR_TAG}" >> $GITHUB_OUTPUT
+          echo "fetch-tags=${FETCH_TAGS}" >> $GITHUB_OUTPUT
+
+      - name: Build gitian base image
+        run: |
+          docker build --tag base-${{ steps.detect.outputs.suite }}-${{ steps.detect.outputs.architecture }} -<<EOF
+            FROM ubuntu:${{ steps.detect.outputs.suite }}
+            ENV DEBIAN_FRONTEND=noninteractive
+            RUN apt-get update && apt-get --no-install-recommends -y install pciutils build-essential git subversion language-pack-en wget lsb-release
+            RUN useradd -ms /bin/bash -U ubuntu
+            USER ubuntu:ubuntu
+            WORKDIR /home/ubuntu
+            CMD ["sleep", "infinity"]
+          EOF
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: gitian-deps
+        env:
+          cache-name: gitian-host
         with:
-            version: 5.12.8
-      - name: Add architecture
-        if: ${{ matrix.arch }}
-        run: |
-          sudo dpkg --add-architecture "${{ matrix.arch }}"
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install build-essential libtool autotools-dev automake pkg-config bsdmainutils curl ca-certificates ccache python3 rsync git procps bison
-          sudo apt-get install ${{ matrix.packages }}
-      - name: Post install
-        if: ${{ matrix.postinstall }}
-        run: ${{ matrix.postinstall }}
+          path: ${{ env.GITIAN_CACHE }}/${{ steps.detect.outputs.name }}/${{ matrix.host }}
+          key: ${{ matrix.name }}-${{ env.cache-name }}-${{ hashFiles('depends/packages/*') }}
 
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Install SDK
-        if: ${{ matrix.sdk }}
+      - name: Build binary
+        working-directory: ${{ env.GITIAN_DIR }}
         run: |
-          mkdir -p ./depends/sdk-sources
-          mkdir -p ./depends/SDKs
-          curl --location --fail $SDK_URL/MacOSX${{ matrix.sdk }}.sdk.tar.gz -o depends/sdk-sources/MacOSX${{ matrix.sdk }}.sdk.tar.gz
-          tar -C depends/SDKs -xf depends/sdk-sources/MacOSX${{ matrix.sdk }}.sdk.tar.gz
+          sed -i "s/^\ \ \(HOSTS=\"\).*/\ \ \1${{ matrix.host }}\"/g" ${{ steps.detect.outputs.descriptor }}
+          ./bin/gbuild -j $MAKEJOBS ${{ steps.detect.outputs.fetch-tags }} --commit peercoin=${{ steps.detect.outputs.commit-or-tag }} --url peercoin=${{ github.server_url }}/${{ github.repository }} ${{ steps.detect.outputs.descriptor }}
+          cp -r ${GITIAN_DIR}/build/out/* ${{ steps.detect.outputs.build-dir }}/
+
+      - name: Get short SHA
+        id: slug
+        run: echo "sha8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_OUTPUT
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: peercoin-${{ steps.slug.outputs.sha8 }}-${{ matrix.name }}
+          path: |
+            *.tar.gz
+            *.zip
+            *.exe
+            *.dmg
+            !*-debug*
+            !*-unsigned.tar.gz
+          retention-days: 5
+          if-no-files-found: error
+  docker:
+    runs-on: ubuntu-20.04
+    needs: [binary]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: peercoin/packaging
+
+      - uses: actions/download-artifact@v3
+        with:
+          path: docker
+
+      - name: Place artifacts
+        working-directory: docker
+        run: |
+          mkdir -p linux/amd64 linux/arm/v7 linux/arm64
+          mv peercoin-*-x86_64-linux/peercoin-*-x86_64-linux-gnu.tar.gz linux/amd64/
+          mv peercoin-*-armhf-linux/peercoin-*-arm-linux-gnueabihf.tar.gz linux/arm/v7/
+          mv peercoin-*-aarch64-linux/peercoin-*-aarch64-linux-gnu.tar.gz linux/arm64/
+
+      - uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm,arm64
+
+      - uses: docker/setup-buildx-action@v2
+        with:
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+      - name: Detect env
+        id: detect
+        shell: bash
+        run: |
+          PUSH=false
+          TAG_NAME=blank
+          if [[ $GITHUB_REF == refs/heads/develop ]]; then
+            PUSH=true
+            TAG_NAME=develop
+          fi
+          if [[ $GITHUB_REF == refs/heads/master ]]; then
+            PUSH=true
+            TAG_NAME=latest
+          fi
+          if [[ $GITHUB_REF == refs/heads/release-* ]]; then
+            PUSH=true
+            TAG_NAME=${GITHUB_REF/refs\/heads\//}
+          fi
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            PUSH=true
+            TAG_NAME=${GITHUB_REF/refs\/tags\//}
+            TAG_NAME=${TAG_NAME/ppc\./}
+            TAG_NAME=${TAG_NAME/ppc/}
+            TAG_NAME=${TAG_NAME/v/}
+          fi
+          echo "push=${PUSH}" >> $GITHUB_OUTPUT
+          echo "tag-name=${TAG_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        if: steps.detect.outputs.push == 'true'
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        if: steps.detect.outputs.push == 'true'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Build and push
+        working-directory: docker
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm/v7,linux/arm64 \
+            --output "type=image,push=${{ steps.detect.outputs.push }}" \
+            --progress=plain \
+            --tag peercoin/peercoind:${{ steps.detect.outputs.tag-name }} \
+            --tag ghcr.io/${{ github.repository }}/peercoind:${{ steps.detect.outputs.tag-name }} \
+          .
+  appimage:
+    runs-on: ubuntu-20.04
+    needs: [binary]
+    strategy:
+      matrix:
+        name:
+          - armhf
+          - aarch64
+          - x86_64
+        include:
+          - name: armhf
+            host: arm-linux-gnueabihf
+            sources_repo: http://ports.ubuntu.com/ubuntu-ports
+            apt_arch: armhf
+          - name: aarch64
+            host: aarch64-linux-gnu
+            sources_repo: http://ports.ubuntu.com/ubuntu-ports
+            apt_arch: arm64
+          - name: x86_64
+            host: x86_64-linux-gnu
+            sources_repo: http://archive.ubuntu.com/ubuntu
+            apt_arch: amd64
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: peercoin/packaging
+
+      - uses: actions/download-artifact@v3
+        with:
+          path: appimage
+
+      - name: Set up environment
+        working-directory: appimage
+        run: |
+          pip3 install --upgrade pyOpenSSL git+https://github.com/AppImageCrafters/appimage-builder@3396839c9e3419f4bd726cb129e54e6da4212e48
+
+      - name: Detect env
+        id: detect
+        shell: bash
+        run: |
+          SHA8=$(echo ${{ github.sha }} | cut -c1-8)
+          TAG_NAME=$SHA8
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            TAG_NAME=${GITHUB_REF/refs\/tags\//}
+            TAG_NAME=${TAG_NAME/ppc\./}
+            TAG_NAME=${TAG_NAME/ppc/}
+            TAG_NAME=${TAG_NAME/v/}
+          fi
+          echo "sha8=$SHA8" >> $GITHUB_OUTPUT
+          echo "tag-name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "build-dir=${PWD}" >> $GITHUB_OUTPUT
+
+      - name: Build AppImage
+        working-directory: appimage
+        run: |
+          tar xzf peercoin-${{ steps.detect.outputs.sha8 }}-${{ matrix.name }}-linux/peercoin-*-${{ matrix.host }}.tar.gz -C AppDir --strip-components=1
+          find AppDir/bin ! -name 'peercoin-qt' -type f -exec rm -f {} +
+          VERSION=${{ steps.detect.outputs.tag-name }} SOURCES_REPO=${{ matrix.sources_repo }} APT_ARCH=${{ matrix.apt_arch }} BUILD_ARCH=${{ matrix.name }} appimage-builder --skip-tests
+          mv *.AppImage ${{ steps.detect.outputs.build-dir }}/
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: peercoin-appimage-${{ steps.detect.outputs.tag-name }}-${{ matrix.name }}
+          path: |
+            *.AppImage
+          retention-days: 5
+  release:
+    runs-on: ubuntu-20.04
+    needs: [binary, appimage]
+    if: ${{ startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release-') }}
+    steps:
+      - name: Detect env
+        id: detect
+        shell: bash
+        run: |
+          TAG_NAME=noop
+          RELEASE_TITLE=noop
+          if [[ $GITHUB_REF == refs/heads/develop || $GITHUB_REF == refs/heads/release-* ]]; then
+            TAG_NAME=latest
+            RELEASE_TITLE="Development Build: ${GITHUB_REF/refs\/heads\//}"
+          fi
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            TAG_NAME=${GITHUB_REF/refs\/tags\//}
+            TAG_NAME_NO_DOT=${TAG_NAME/ppc\./}
+            RELEASE_TITLE="Release ${TAG_NAME_NO_DOT/ppc/}"
+          fi
+          if [[ -z "${{ secrets.GPG_PRIVATE_KEY }}" ]]; then
+            TAG_NAME=noop
+            RELEASE_TITLE=noop
+          fi
+          echo "tag-name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "release-title=${RELEASE_TITLE}" >> $GITHUB_OUTPUT
+          echo "sha8=$(echo ${{ github.sha }} | cut -c1-8)" >> $GITHUB_OUTPUT
+
+      - name: Set up environment
+        if: ${{ steps.detect.outputs.tag-name != 'noop' }}
+        run: sudo apt-get update && sudo apt-get install -y mktorrent gpg bash
+
+      - uses: actions/checkout@v3
+        if: ${{ steps.detect.outputs.tag-name != 'noop' }}
+
+      - uses: actions/download-artifact@v3
+        if: ${{ steps.detect.outputs.tag-name != 'noop' }}
+
+      - name: Import GPG key
+        if: ${{ steps.detect.outputs.tag-name != 'noop' }}
+        id: import_gpg
+        uses: crazy-max/ghaction-import-gpg@v5
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+
+      - name: GPG user IDs
+        if: ${{ steps.detect.outputs.tag-name != 'noop' }}
+        run: |
+          echo "fingerprint: ${{ steps.import_gpg.outputs.fingerprint }}"
+          echo "keyid:       ${{ steps.import_gpg.outputs.keyid }}"
+          echo "name:        ${{ steps.import_gpg.outputs.name }}"
+          echo "email:       ${{ steps.import_gpg.outputs.email }}"
+          gpg --keyserver hkp://keyserver.ubuntu.com --send-key ${{ steps.import_gpg.outputs.keyid }}
+
+      - name: Create torrent
+        if: ${{ steps.detect.outputs.tag-name != 'noop' }}
+        run: |
+          rm -rf ${{ steps.detect.outputs.tag-name }}/*
+          mkdir -p ${{ steps.detect.outputs.tag-name }}
+          mv peercoin-*-**/peercoin-*.tar.gz \
+            peercoin-*-**/peercoin-*.zip \
+            peercoin-*-**/peercoin-*.exe \
+            peercoin-*-**/peercoin-*.dmg \
+            peercoin-*-**/*.AppImage* \
+          ${{ steps.detect.outputs.tag-name }}/
+          cd ${{ steps.detect.outputs.tag-name }}
+          sha256sum * > SHA256SUMS
+          gpg --digest-algo sha256 --clearsign SHA256SUMS
+          rm SHA256SUMS
+          cd -
+          mktorrent -w ${{ github.server_url }}/${{ github.repository }}/releases/download \
+            -o ${{ steps.detect.outputs.tag-name }}/peercoin-${{ steps.detect.outputs.tag-name }}.torrent \
+            -a udp://tracker.opentrackr.org:1337/announce \
+            -a udp://tracker.openbittorrent.com:6969/announce \
+            -a udp://exodus.desync.com:6969/announce \
+          ${{ steps.detect.outputs.tag-name }}
+
+      - name: Check latest
+        id: detect-publish-latest
+        if: ${{ steps.detect.outputs.tag-name != 'noop' && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release-')) }}
+        run: |
+          PUBLISH=noop
+          git fetch origin +refs/tags/latest:refs/tags/latest
+          if ! git merge-base --is-ancestor refs/tags/latest HEAD; then
+            PUBLISH=op
+          fi
+          echo "publish=$PUBLISH" >> $GITHUB_OUTPUT
+
+      - name: Generate Changelog
+        if: ${{ steps.detect.outputs.tag-name != 'noop' && startsWith(github.ref, 'refs/tags/v') }}
+        run: |
+          git fetch --depth=1 origin +${{ github.ref }}:${{ github.ref }}
+          git tag -l --format='%(contents)' ${GITHUB_REF/refs\/tags\//} > ${{ github.workspace }}-CHANGELOG.txt
+
+      - uses: marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0
+        if: ${{ steps.detect.outputs.tag-name != 'noop' && steps.detect-publish-latest.outputs.publish == 'op' && (github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/heads/release-')) }}
+        with:
+          repo_token: ${{ github.token }}
+          automatic_release_tag: ${{ steps.detect.outputs.tag-name }}
+          prerelease: true
+          title: "${{ steps.detect.outputs.release-title }}"
+          files: ${{ steps.detect.outputs.tag-name }}/*
+
+      - uses: softprops/action-gh-release@6034af24fba4e5a8e975aaa6056554efe4c794d0
+        if: ${{ steps.detect.outputs.tag-name != 'noop' && startsWith(github.ref, 'refs/tags/v') }}
+        with:
+          body_path: ${{ github.workspace }}-CHANGELOG.txt
+          token: ${{ github.token }}
+          prerelease: true
+          name: "${{ steps.detect.outputs.release-title }}"
+          files: ${{ steps.detect.outputs.tag-name }}/*
       - name: QMake
         run: qmake RELEASE=1
       - name: Make
