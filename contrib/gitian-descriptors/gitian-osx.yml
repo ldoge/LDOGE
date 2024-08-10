@@ -1,7 +1,7 @@
 ---
 name: "litedoge"
 enable_cache: true
-distro: "ubuntu"
+distro: "osx"
 suites:
 - "focal"
 architectures:
