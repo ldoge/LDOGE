@@ -96,7 +96,7 @@ script: |
   create_per-host_compiler_wrapper "2000-01-01 12:00:00"
   export PATH=${WRAP_DIR}:${PATH}
 
-  cd peercoin
+  cd litedoge
   BASEPREFIX="${PWD}/depends"
   # Build dependencies for each host
   for i in $HOSTS; do
@@ -114,7 +114,7 @@ script: |
   # shellcheck source=contrib/gitian-descriptors/assign_DISTNAME
   source contrib/gitian-descriptors/assign_DISTNAME
 
-  GIT_ARCHIVE="${OUTDIR}/src/${DISTNAME}.tar.gz"
+  GIT_ARCHIVE="${OUTDIR}https://github.com/ldoge/LDOGE/archive/refs/tags/3.6.0.1.tar.gz"
 
   # Create the source tarball
   mkdir -p "$(dirname "$GIT_ARCHIVE")"
@@ -123,36 +123,51 @@ script: |
   ORIGPATH="$PATH"
   # Extract the git archive into a dir for each host and build
   for i in ${HOSTS}; do
-    export PATH=${BASEPREFIX}/${i}/native/bin:${ORIGPATH}
-    mkdir -p distsrc-${i}
-    cd distsrc-${i}
-    INSTALLPATH="${PWD}/installed/${DISTNAME}"
-    mkdir -p ${INSTALLPATH}
-    tar --strip-components=1 -xf "${GIT_ARCHIVE}"
-
-    ./autogen.sh
-    CONFIG_SITE=${BASEPREFIX}/${i}/share/config.site ./configure --prefix=/ --disable-ccache --disable-maintainer-mode --disable-dependency-tracking ${CONFIGFLAGS} CFLAGS="${HOST_CFLAGS}" CXXFLAGS="${HOST_CXXFLAGS}"
-    make ${MAKEOPTS}
-    make ${MAKEOPTS} -C src check-security
-    make ${MAKEOPTS} -C src check-symbols
-    make deploy BITCOIN_WIN_INSTALLER="${OUTDIR}/${DISTNAME}-win64-setup-litedoge.exe"
-    make install DESTDIR=${INSTALLPATH}
-    cd installed
-    mv ${DISTNAME}/bin/*.dll ${DISTNAME}/lib/
-    find . -name "lib*.la" -delete
-    find . -name "lib*.a" -delete
-    rm -rf ${DISTNAME}/lib/pkgconfig
-    find ${DISTNAME}/bin -type f -executable -print0 | xargs -0 -n1 -I{} ../contrib/devtools/split-debug.sh {} {} {}.dbg
-    find ${DISTNAME}/lib -type f -print0 | xargs -0 -n1 -I{} ../contrib/devtools/split-debug.sh {} {} {}.dbg
-    cp ../doc/README_windows.txt ${DISTNAME}/readme.txt
-    find ${DISTNAME} -not -name "*.dbg"  -type f | sort | zip -X@ ${OUTDIR}/${DISTNAME}-${i//x86_64-w64-mingw32/win64}.zip
-    find ${DISTNAME} -name "*.dbg"  -type f | sort | zip -X@ ${OUTDIR}/${DISTNAME}-${i//x86_64-w64-mingw32/win64}-debug.zip
-    cd ../../
-    rm -rf distsrc-${i}
+    export PATH=$PATH:$HOME/qt/bin/
+    #
+    mkdir boost_1_47_0
+    cd boost_1_47_0
+    mkdir -p stage/lib
+    unzip ../boost-win32-1.47.0-gitian.zip
+  cd bin/$GBUILD_BITS
+  for lib in *; do
+    i586-mingw32msvc-ar rc ../../stage/lib/libboost_${lib}-mt-s.a $lib/*.o
+    i586-mingw32msvc-ranlib ../../stage/lib/libboost_${lib}-mt-s.a
   done
-
-  cp -rf contrib/windeploy $BUILD_DIR
-  cd $BUILD_DIR/windeploy
-  mkdir unsigned
-  cp ${OUTDIR}/${DISTNAME}-win64-setup-litedoge.exe unsigned/
-  find . | sort | tar --mtime="$REFERENCE_DATETIME" --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | pigz -9n > ${OUTDIR}/${DISTNAME}-win-unsigned.tar.gz
+  cd ../..
+  mv include/boost .
+  cd ..
+  #
+  unzip litedoge-deps-0.0.1.zip
+  #
+  find -type f | xargs touch --date="$REFERENCE_DATETIME"
+  #
+  cd litedoge
+  mkdir -p $OUTDIR/src
+  git archive HEAD | tar -x -C $OUTDIR/src
+  cp $OUTDIR/src/doc/README_windows.txt $OUTDIR/readme.txt
+  cp $OUTDIR/src/COPYING $OUTDIR/license.txt
+  export LD_PRELOAD=/usr/lib/faketime/libfaketime.so.1
+  export FAKETIME=$REFERENCE_DATETIME
+  export TZ=UTC
+  $HOME/qt/src/bin/qmake -spec unsupported/win32-g++-cross MINIUPNPC_LIB_PATH=$HOME/build/miniupnpc MINIUPNPC_INCLUDE_PATH=$HOME/build/ BDB_LIB_PATH=$HOME/build/db-4.8.30.NC/build_unix BDB_INCLUDE_PATH=$HOME/build/db-4.8.30.NC/build_unix BOOST_LIB_PATH=$HOME/build/boost_1_47_0/stage/lib BOOST_INCLUDE_PATH=$HOME/build/boost_1_47_0 BOOST_LIB_SUFFIX=-mt-s BOOST_THREAD_LIB_SUFFIX=_win32-mt-s OPENSSL_LIB_PATH=$HOME/build/openssl-1.0.1b OPENSSL_INCLUDE_PATH=$HOME/build/openssl-1.0.1b/include QRENCODE_LIB_PATH=$HOME/build/qrencode-3.2.0/.libs QRENCODE_INCLUDE_PATH=$HOME/build/qrencode-3.2.0 INCLUDEPATH=$HOME/build DEFINES=BOOST_THREAD_USE_LIB BITCOIN_NEED_QT_PLUGINS=1 QMAKE_LRELEASE=lrelease QMAKE_CXXFLAGS=-frandom-seed=litedoge QMAKE_LFLAGS=-frandom-seed=litedoge USE_BUILD_INFO=1
+  make $MAKEOPTS
+  cp release/litedoge-qt.exe $OUTDIR/
+  #
+  cd src
+  export LD_PRELOAD=/usr/lib/faketime/libfaketime.so.1
+  export FAKETIME=$REFERENCE_DATETIME
+  export TZ=UTC
+  make -f makefile.linux-mingw $MAKEOPTS DEPSDIR=$HOME/build litedoged.exe USE_UPNP=1 DEBUGFLAGS="-frandom-seed=litedoge"
+  i586-mingw32msvc-strip litedoged.exe
+  mkdir $OUTDIR/daemon
+  cp litedoged.exe $OUTDIR/daemon
+  cd ..
+  mkdir nsis
+  git archive HEAD | tar -x -C nsis
+  cd nsis/src
+  mkdir ../release
+  cp ../../release/* ../release/
+  cp ../../src/*.exe .
+  makensis ../share/setup.nsi
+  cp ../share/litedoge-*-win-setup.exe $OUTDIR/
