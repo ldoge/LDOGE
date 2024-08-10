@@ -31,9 +31,9 @@ packages:
 - "pigz"
 remotes:
 - "url": "https://github.com/ldoge/ldoge.git"
-  "dir": "peercoin"
+  "dir": "litedoge"
 files:
-- "Xcode-12.2-12B45b-extracted-SDK-with-libcxx-headers.tar.gz"
+- "https://github.com/ldoge/ldoge.git"
 script: |
   set -e -o pipefail
 
@@ -129,11 +129,11 @@ script: |
     make ${MAKEOPTS}
     make ${MAKEOPTS} -C src check-security
     make ${MAKEOPTS} -C src check-symbols
-    make install-strip DESTDIR=${INSTALLPATH}
+    make install-strip INCLUDEPATH="$INSTDIR/include" LIBS="-L$INSTDIR/lib" RELEASE=1
 
-    make osx_volname
-    make deploydir
-    mkdir -p unsigned-app-${i}
+    make litedoge-qt
+    make -f makefile.unix STATIC=1 OPENSSL_INCLUDE_PATH="$INSTDIR/include" OPENSSL_LIB_PATH="$INSTDIR/lib" $MAKEOPTS litedoged USE_UPNP=1 DEBUGFLAGS=
+    mkdir -p -p $OUTDIR/bin/$GBUILD_BITS
     cp osx_volname unsigned-app-${i}/
     cp contrib/macdeploy/detached-sig-apply.sh unsigned-app-${i}
     cp contrib/macdeploy/detached-sig-create.sh unsigned-app-${i}
@@ -143,7 +143,7 @@ script: |
     find . | sort | tar --mtime="$REFERENCE_DATETIME" --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | pigz -9n > ${OUTDIR}/${DISTNAME}-osx-unsigned.tar.gz
     popd
 
-    make deploy OSX_DMG="${OUTDIR}/${DISTNAME}-osx-unsigned.dmg"
+    make deploy OSX_DMG="${OUTDIR}/${DISTNAME}-osx-litedoge-qt.dmg"
 
     cd installed
     find . -name "lib*.la" -delete
