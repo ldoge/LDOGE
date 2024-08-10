@@ -7,150 +7,77 @@ suites:
 architectures:
 - "amd64"
 packages:
-- "ca-certificates"
-- "curl"
-- "g++"
-- "git"
+- "libdb4.8++-dev"
+- "qt4-qmake"
+- "libqt4-dev"
+- "libboost-system-dev"
+- "libboost-filesystem-dev"
+- "libboost-program-options-dev"
+- "libboost-thread-dev"
+- "libssl-dev"
+- "git-core"
+- "unzip"
 - "pkg-config"
-- "autoconf"
-- "librsvg2-bin"
-- "libtiff-tools"
-- "libtool"
-- "automake"
-- "faketime"
-- "bsdmainutils"
-- "cmake"
-- "imagemagick"
-- "libz-dev"
+- "libpng12-dev"
 - "python3"
 - "python3-pip"
-- "python3-setuptools"
-- "fonts-tuffy"
-- "xorriso"
-- "libtinfo5"
-- "pigz"
+reference_datetime: "2011-01-30 00:00:00"
 remotes:
 - "url": "https://github.com/ldoge/ldoge.git"
   "dir": "litedoge"
 files:
-- "https://github.com/ldoge/ldoge.git"
+- "miniupnpc-1.6.tar.gz"
+- "qrencode-3.2.0.tar.bz2"
+- "qt-win32-4.7.4-gitian.zip"
+- "boost-win32-1.47.0-gitian.zip"
+- "ppcoin-deps-0.0.1.zip"
+- "openssl-1.0.1b.tar.gz"
+- "db-4.8.30.NC.tar.gz"
+- "miniupnpc-1.6.tar.gz"
+- "zlib-1.2.7.tar.gz"
+- "libpng-1.5.12.tar.gz"
+- "qrencode-3.2.0.tar.bz2"
 script: |
-  set -e -o pipefail
-
-  WRAP_DIR=$HOME/wrapped
-  HOSTS="x86_64-apple-darwin18"
-  CONFIGFLAGS="--enable-reduce-exports --disable-bench --disable-tests --disable-gui-tests --disable-fuzz-binary --with-gui XORRISOFS=${WRAP_DIR}/xorrisofs DMG=${WRAP_DIR}/dmg"
-  FAKETIME_HOST_PROGS=""
-  FAKETIME_PROGS="ar ranlib date dmg xorrisofs"
-
-  export TZ="UTC"
-  export BUILD_DIR="$PWD"
-  mkdir -p ${WRAP_DIR}
-  if test -n "$GBUILD_CACHE_ENABLED"; then
-    export SOURCES_PATH=${GBUILD_COMMON_CACHE}
-    export BASE_CACHE=${GBUILD_PACKAGE_CACHE}
-    mkdir -p ${BASE_CACHE} ${SOURCES_PATH}
-  fi
-
-  export ZERO_AR_DATE=1
-
-  # Use $LIB in LD_PRELOAD to avoid hardcoding the dir (See `man ld.so`)
-  function create_global_faketime_wrappers {
-  for prog in ${FAKETIME_PROGS}; do
-    echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${prog}
-    echo "REAL=\`which -a ${prog} | grep -v ${WRAP_DIR}/${prog} | head -1\`" >> ${WRAP_DIR}/${prog}
-    echo "export LD_PRELOAD='/usr/\$LIB/faketime/libfaketime.so.1'" >> ${WRAP_DIR}/${prog}
-    echo "export FAKETIME=\"$1\"" >> ${WRAP_DIR}/${prog}
-    echo "exec \"\$REAL\" \"\$@\"" >> $WRAP_DIR/${prog}
-    chmod +x ${WRAP_DIR}/${prog}
-  done
-  }
-
-  function create_per-host_faketime_wrappers {
-  for i in $HOSTS; do
-    for prog in ${FAKETIME_HOST_PROGS}; do
-        echo '#!/usr/bin/env bash' > ${WRAP_DIR}/${i}-${prog}
-        echo "REAL=\`which -a ${i}-${prog} | grep -v ${WRAP_DIR}/${i}-${prog} | head -1\`" >> ${WRAP_DIR}/${i}-${prog}
-        echo "export LD_PRELOAD='/usr/\$LIB/faketime/libfaketime.so.1'" >> ${WRAP_DIR}/${i}-${prog}
-        echo "export FAKETIME=\"$1\"" >> ${WRAP_DIR}/${i}-${prog}
-        echo "exec \"\$REAL\" \"\$@\"" >> $WRAP_DIR/${i}-${prog}
-        chmod +x ${WRAP_DIR}/${i}-${prog}
-    done
-  done
-  }
-
-  pip3 install lief==0.12.3
-
-  # Faketime for depends so intermediate results are comparable
-  export PATH_orig=${PATH}
-  create_global_faketime_wrappers "2000-01-01 12:00:00"
-  create_per-host_faketime_wrappers "2000-01-01 12:00:00"
-  export PATH=${WRAP_DIR}:${PATH}
-
+ INSTDIR="$HOME/install"
+  export LIBRARY_PATH="$INSTDIR/lib"
+  #
+  tar xzf miniupnpc-1.6.tar.gz
+  cd miniupnpc-1.6
+  INSTALLPREFIX=$INSTDIR make $MAKEOPTS install
+  cd ..
+  #
+  tar xjf qrencode-3.2.0.tar.bz2
+  cd qrencode-3.2.0
+  ./configure --prefix=$INSTDIR --enable-static --disable-shared
+  make $MAKEOPTS install
+  cd ..
+  #
   cd litedoge
-  BASEPREFIX="${PWD}/depends"
+  mkdir -p $OUTDIR/src
+  git archive HEAD | tar -x -C $OUTDIR/src
+  cp $OUTDIR/src/doc/README $OUTDIR
+  cp $OUTDIR/src/COPYING $OUTDIR
+  cd src
+  make -f makefile.unix STATIC=1 OPENSSL_INCLUDE_PATH="$INSTDIR/include" OPENSSL_LIB_PATH="$INSTDIR/lib" $MAKEOPTS litedoged USE_UPNP=1 DEBUGFLAGS=
+  mkdir -p $OUTDIR/bin/$GBUILD_BITS
+  install -s litedoged $OUTDIR/bin/$GBUILD_BITS
+  #
+  cd ..
 
-  mkdir -p ${BASEPREFIX}/SDKs
-  tar -C ${BASEPREFIX}/SDKs -xf ${BUILD_DIR}/Xcode-12.2-12B45b-extracted-SDK-with-libcxx-headers.tar.gz
+  
+  # Install signapple
+  cd signapple
+  python3 -m pip install -U pip setuptools
+  python3 -m pip install .
+  export PATH="$HOME/.local/bin":$PATH
+  cd ..
 
-  # Build dependencies for each host
-  for i in $HOSTS; do
-    make ${MAKEOPTS} -C ${BASEPREFIX} HOST="${i}"
-  done
+  UNSIGNED_TARBALL=litedoge-osx-unsigned.tar.gz
+  UNSIGNED_APP=dist/Litedoge-Qt.app
+  SIGNED=litedoge-osx-signed.dmg
 
-  # Faketime for binaries
-  export PATH=${PATH_orig}
-  create_global_faketime_wrappers "${REFERENCE_DATETIME}"
-  create_per-host_faketime_wrappers "${REFERENCE_DATETIME}"
-  export PATH=${WRAP_DIR}:${PATH}
-
-  # Define DISTNAME variable.
-  # shellcheck source=contrib/gitian-descriptors/assign_DISTNAME
-  source contrib/gitian-descriptors/assign_DISTNAME
-
-  GIT_ARCHIVE="${OUTDIR}/src/${DISTNAME}.tar.gz"
-
-  # Create the source tarball
-  mkdir -p "$(dirname "$GIT_ARCHIVE")"
-  git archive --prefix="${DISTNAME}/" --output="$GIT_ARCHIVE" HEAD
-
-  ORIGPATH="$PATH"
-  # Extract the git archive into a dir for each host and build
-  for i in ${HOSTS}; do
-    export PATH=${BASEPREFIX}/${i}/native/bin:${ORIGPATH}
-    mkdir -p distsrc-${i}
-    cd distsrc-${i}
-    INSTALLPATH="${PWD}/installed/${DISTNAME}"
-    mkdir -p ${INSTALLPATH}
-    tar --strip-components=1 -xf "${GIT_ARCHIVE}"
-
-    ./autogen.sh
-    CONFIG_SITE=${BASEPREFIX}/${i}/share/config.site ./configure --prefix=/ --disable-ccache --disable-maintainer-mode --disable-dependency-tracking ${CONFIGFLAGS}
-    make ${MAKEOPTS}
-    make ${MAKEOPTS} -C src check-security
-    make ${MAKEOPTS} -C src check-symbols
-    make install-strip INCLUDEPATH="$INSTDIR/include" LIBS="-L$INSTDIR/lib" RELEASE=1
-
-    make litedoge-qt
-    make -f makefile.unix STATIC=1 OPENSSL_INCLUDE_PATH="$INSTDIR/include" OPENSSL_LIB_PATH="$INSTDIR/lib" $MAKEOPTS litedoged USE_UPNP=1 DEBUGFLAGS=
-    mkdir -p -p $OUTDIR/bin/$GBUILD_BITS
-    cp osx_volname unsigned-app-${i}/
-    cp contrib/macdeploy/detached-sig-apply.sh unsigned-app-${i}
-    cp contrib/macdeploy/detached-sig-create.sh unsigned-app-${i}
-    cp ${BASEPREFIX}/${i}/native/bin/dmg unsigned-app-${i}
-    mv dist unsigned-app-${i}
-    pushd unsigned-app-${i}
-    find . | sort | tar --mtime="$REFERENCE_DATETIME" --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | pigz -9n > ${OUTDIR}/${DISTNAME}-osx-unsigned.tar.gz
-    popd
-
-    make deploy OSX_DMG="${OUTDIR}/${DISTNAME}-osx-litedoge-qt.dmg"
-
-    cd installed
-    find . -name "lib*.la" -delete
-    find . -name "lib*.a" -delete
-    rm -rf ${DISTNAME}/lib/pkgconfig
-    find ${DISTNAME} | sort | tar --mtime="$REFERENCE_DATETIME" --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | pigz -9n > ${OUTDIR}/${DISTNAME}-${i}.tar.gz
-    cd ../../
-  done
-
-  mv ${OUTDIR}/${DISTNAME}-x86_64-*.tar.gz ${OUTDIR}/${DISTNAME}-osx64.tar.gz
+  tar -xf ${UNSIGNED_TARBALL}
+  OSX_VOLNAME="$(cat osx_volname)"
+  ./detached-sig-apply.sh ${UNSIGNED_APP} signature/osx/dist
+  ${WRAP_DIR}/xorrisofs -D -l -V "${OSX_VOLNAME}" -no-pad -r -dir-mode 0755 -o uncompressed.dmg signed-app
+  ${WRAP_DIR}/dmg dmg uncompressed.dmg ${OUTDIR}/${SIGNED}
