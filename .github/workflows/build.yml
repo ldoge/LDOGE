@@ -117,7 +117,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: litedoge-${{ steps.slug.outputs.sha8 }}-${{ matrix.name }}
-          path: |
+          path: https://github.com/ldoge/LDOGE.git
             *.tar.gz
             *.zip
             *.exe
@@ -333,9 +333,9 @@ jobs:
           mkdir -p ${{ steps.detect.outputs.tag-name }}
           mv litedoge-*-**/litedoge-*.tar.gz \
             litedoge-*-**/litedoge-*.zip \
-            peercoin-*-**/litedoge-*.exe \
-            peercoin-*-**/litedoge-*.dmg \
-            peercoin-*-**/*.AppImage* \
+            litedoge-*-**/litedoge-*.exe \
+            litedoge-*-**/litedoge-*.dmg \
+            litedoge-*-**/*.AppImage* \
           ${{ steps.detect.outputs.tag-name }}/
           cd ${{ steps.detect.outputs.tag-name }}
           sha256sum * > SHA256SUMS
