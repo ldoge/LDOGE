@@ -110,48 +110,31 @@ script: |
   create_per-host_faketime_wrappers "2000-01-01 12:00:00"
   export PATH=${WRAP_DIR}:${PATH}
 
+  INSTDIR="$HOME/install"
+  export LIBRARY_PATH="$INSTDIR/lib"
+  #
+  tar xzf miniupnpc-1.6.tar.gz
+  cd miniupnpc-1.6
+  INSTALLPREFIX=$INSTDIR make $MAKEOPTS install
+  cd ..
+  #
+  tar xjf qrencode-3.2.0.tar.bz2
+  cd qrencode-3.2.0
+  ./configure --prefix=$INSTDIR --enable-static --disable-shared
+  make $MAKEOPTS install
+  cd ..
+  #
   cd litedoge
-  BASEPREFIX="${PWD}/depends"
-  # Build dependencies for each host
-  for i in $HOSTS; do
-    make ${MAKEOPTS} -C ${BASEPREFIX} HOST="${i}" CC=${i}-gcc-8 CXX=${i}-g++-8
-  done
-
-  # Faketime for binaries
-  export PATH=${PATH_orig}
-  create_global_faketime_wrappers "${REFERENCE_DATETIME}"
-  create_per-host_faketime_wrappers "${REFERENCE_DATETIME}"
-  export PATH=${WRAP_DIR}:${PATH}
-
-  # Define DISTNAME variable.
-  # shellcheck source=contrib/gitian-descriptors/assign_DISTNAME
-  source contrib/gitian-descriptors/assign_DISTNAME
-
-  GIT_ARCHIVE="${OUTDIR}/src/${DISTNAME}.tar.gz"
-
-  # Create the source tarball
-  mkdir -p "$(dirname "$GIT_ARCHIVE")"
-  git archive --prefix="${DISTNAME}/" --output="$GIT_ARCHIVE" HEAD
-
-  ORIGPATH="$PATH"
-  # Extract the git archive into a dir for each host and build
-  for i in ${HOSTS}; do
-    export PATH=${BASEPREFIX}/${i}/native/bin:${ORIGPATH}
-    if [ "${i}" = "powerpc64-linux-gnu" ]; then
-      # Workaround for https://bugs.launchpad.net/ubuntu/+source/gcc-8-cross-ports/+bug/1853740
-      # TODO: remove this when no longer needed
-      HOST_LDFLAGS="${HOST_LDFLAGS_BASE} -Wl,-z,noexecstack"
-    elif [ "${i}" = "arm-linux-gnueabihf" ] || [ "${i}" = "aarch64-linux-gnu" ]; then
-      HOST_LDFLAGS="${HOST_LDFLAGS_BASE} -lpthread"
-    else
-      HOST_LDFLAGS="${HOST_LDFLAGS_BASE}"
-    fi
-    tar xzf miniupnpc-1.6.tar.gz
-    cd miniupnpc-1.6
-    mkdir -p $OUTDIR/src
-    cp $OUTDIR/src/doc/README $OUTDIR
-    cp $OUTDIR/src/COPYING $OUTDIR
-    cd src
-    INSTALLPATH="${PWD}/installed/${DISTNAME}"
-    mkdir -p $OUTDIR/bin/$GBUILD_BITS
-    tar --strip-components=1 -xf "${GIT_ARCHIVE}"
+  mkdir -p $OUTDIR/src
+  git archive HEAD | tar -x -C $OUTDIR/src
+  cp $OUTDIR/src/doc/README $OUTDIR
+  cp $OUTDIR/src/COPYING $OUTDIR
+  cd src
+  make -f makefile.unix STATIC=1 OPENSSL_INCLUDE_PATH="$INSTDIR/include" OPENSSL_LIB_PATH="$INSTDIR/lib" $MAKEOPTS litedoged USE_UPNP=1 DEBUGFLAGS=
+  mkdir -p $OUTDIR/bin/$GBUILD_BITS
+  install -s litedoged $OUTDIR/bin/$GBUILD_BITS
+  #
+  cd ..
+  qmake INCLUDEPATH="$INSTDIR/include" LIBS="-L$INSTDIR/lib" RELEASE=1
+  make $MAKEOPTS
+  install litedoge-qt $OUTDIR/bin/$GBUILD_BITS
