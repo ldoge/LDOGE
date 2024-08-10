@@ -25,6 +25,15 @@ remotes:
 files:
 - "miniupnpc-1.6.tar.gz"
 - "qrencode-3.2.0.tar.bz2"
+ "qt-win32-4.7.4-gitian.zip"
+- "boost-win32-1.47.0-gitian.zip"
+- "ppcoin-deps-0.0.1.zip"
+- "openssl-1.0.1b.tar.gz"
+- "db-4.8.30.NC.tar.gz"
+- "miniupnpc-1.6.tar.gz"
+- "zlib-1.2.7.tar.gz"
+- "libpng-1.5.12.tar.gz"
+- "qrencode-3.2.0.tar.bz2"
 script: |
   INSTDIR="$HOME/install"
   export LIBRARY_PATH="$INSTDIR/lib"
