@@ -5,15 +5,24 @@ distro: "ubuntu"
 suites:
 - "focal"
 architectures:
+- "i386"
 - "amd64"
 packages:
 # Common dependencies.
 - "autoconf"
 - "automake"
-- "binutils"
-- "bison"
-- "bsdmainutils"
-- "ca-certificates"
+- "libdb4.8++-dev"
+- "qt4-qmake"
+- "libqt4-dev"
+- "libboost-system-dev"
+- "libboost-filesystem-dev"
+- "libboost-program-options-dev"
+- "libboost-thread-dev"
+- "libssl-dev"
+- "git-core"
+- "unzip"
+- "pkg-config"
+- "libpng12-dev"
 - "curl"
 - "faketime"
 - "g++-8"
@@ -110,7 +119,7 @@ script: |
   create_per-host_faketime_wrappers "2000-01-01 12:00:00"
   export PATH=${WRAP_DIR}:${PATH}
 
-  INSTDIR="$HOME/install"
+ INSTDIR="$HOME/install"
   export LIBRARY_PATH="$INSTDIR/lib"
   #
   tar xzf miniupnpc-1.6.tar.gz
