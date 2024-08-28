@@ -62,8 +62,8 @@ contains(RELEASE, 1) {
     BOOST_LIB_PATH=C:/deps/boost_1_55_0/stage/lib
     BDB_INCLUDE_PATH=C:/deps/db-4.8.30.NC/build_unix
     BDB_LIB_PATH=C:/deps/db-4.8.30.NC/build_unix
-    OPENSSL_INCLUDE_PATH=C:/deps/openssl-1.0.2l/include
-    OPENSSL_LIB_PATH=C:/deps/openssl-1.0.2l
+    OPENSSL_INCLUDE_PATH=C:/deps/openssl-3.0.0/include
+    OPENSSL_LIB_PATH=C:/deps/openssl-3.0.0
     MINIUPNPC_INCLUDE_PATH=C:/deps/
     MINIUPNPC_LIB_PATH=C:/deps/miniupnpc
     QRENCODE_INCLUDE_PATH=C:/deps/qrencode-3.4.4
@@ -204,6 +204,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/aboutdialog.h \
     src/qt/editaddressdialog.h \
     src/qt/bitcoinaddressvalidator.h \
+    src/qt/alert.h \
     src/addrman.h \
     src/base58.h \
     src/bignum.h \
@@ -232,6 +233,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/script.h \
     src/init.h \
     src/mruset.h \
+    src/warnings.h \
     src/json/json_spirit_writer_template.h \
     src/json/json_spirit_writer.h \
     src/json/json_spirit_value.h \
@@ -241,6 +243,7 @@ HEADERS += src/qt/bitcoingui.h \
     src/json/json_spirit_reader.h \
     src/json/json_spirit_error_position.h \
     src/json/json_spirit.h \
+    src/qt/clientversion.h \
     src/qt/clientmodel.h \
     src/qt/guiutil.h \
     src/qt/transactionrecord.h \
@@ -283,9 +286,9 @@ HEADERS += src/qt/bitcoingui.h \
     src/tinyformat.h \
     src/qt/autosaver.h \
     src/qt/qrcodedialog.h \
-    src/qt/cookiejar.h \
     src/qt/serveur.h \
-    src/qt/webview.h
+    src/qt/chatpage.h
+  
 
 
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
@@ -523,4 +526,4 @@ contains(RELEASE, 1) {
     LIBS += -lrt -ldl
 }
 
-system($$QMAKE_LRELEASE -silent $$PWD/src/qt/locale/translations.pro)
+system($$QMAKE_LRELEASE -silent)
