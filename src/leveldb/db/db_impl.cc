@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <set>
 #include <string>
-#include <stdint.h>
 #include <stdio.h>
 #include <vector>
 #include "db/builder.h"
