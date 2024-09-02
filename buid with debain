@@ -1,0 +1,17 @@
+autobuilding tests
+sudo apt install build-essential libpng-dev zlib1g-dev libbz2-dev python3-pip python3-requirements
+
+make -C upstream unarchive BASE_OS=ubuntu20
+
+*for 4.8 atleast do * make -C upstream patches
+
+make -C upstream build BASE_OS=ubuntu20
+
+daemon
+
+sudo make -C src -f makefile.unix STATIC=1
+
+sudo apt-get install qttools5-dev-tools qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools
+
+qmake "CONFIG += static" "CONFIG += release"
+make
