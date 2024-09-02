@@ -7,7 +7,6 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include "leveldb/env.h"
 #include "leveldb/slice.h"
 
