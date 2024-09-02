@@ -504,12 +504,6 @@ macx:HEADERS += src/qt/macdockiconhandler.h \
 macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm \
                           src/qt/macnotificationhandler.mm              
 macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
- $$BDB_LIB_PATH/libdb_cxx.a \
-        $$BOOST_LIB_PATH/libboost_system-mt.a \
-        $$BOOST_LIB_PATH/libboost_filesystem-mt.a \
-        $$BOOST_LIB_PATH/libboost_program_options-mt.a \
-        $$BOOST_LIB_PATH/libboost_thread-mt.a \
-        $$BOOST_LIB_PATH/libboost_chrono-mt.a
 macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
 macx:ICON = src/qt/res/icons/bitcoin.icns
 macx:QMAKE_INFO_PLIST = share/qt/Info.plist
