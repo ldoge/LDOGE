@@ -1,28 +1,29 @@
 // Copyright (c) 2009-8888 Satoshi Nakamoto
 // Copyright (c) 2009-8888 The Bitcoin developers
+// Copyright (c) 2015-8888 The Litedoge developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include "db.h"
-
+#include "net.h"
 #include "addrman.h"
 #include "hash.h"
 #include "util.h"
+#include "main.h"
+#include "ui_interface.h"
+#include <boost/filesystem.hpp>
+#include <boost/version.hpp>
+#include <openssl/rand.h>
 
 #ifndef WIN32
 #include <sys/stat.h>
 #endif
-
-#include <boost/filesystem.hpp>
-#include <boost/version.hpp>
-#include <openssl/rand.h>
 
 using namespace std;
 using namespace boost;
 
 
 unsigned int nWalletDBUpdated;
-
 
 
 //
