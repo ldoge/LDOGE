@@ -2,11 +2,18 @@
 # Copyright (c) 2009 - 2023 The Litedoge developers
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
+CC := ${CROSS_PREFIX}gcc
+CXX := ${CROSS_PREFIX}g++
+LD := ${CROSS_PREFIX}ld
+AR := ${CROSS_PREFIX}ar
+export CC CXX LD AR
 
-USE_LEVELDB:=0
-USE_IPV6:=1
-USE_UPNP:=1
-
+UPSTREAM_PATH = $(CURDIR)/../upstream
+UPSTREAM_INCLUDE_PATH = $(UPSTREAM_PATH)/include
+UPSTREAM_LIB_PATH = $(UPSTREAM_PATH)/lib
+OPENSSL_INCLUDE_PATH = $(UPSTREAM_INCLUDE_PATH)
+OPENSSL_LIB_PATH = $(UPSTREAM_LIB_PATH)
+USE_UPNP=0
 LINK:=$(CXX)
 ARCH:=$(shell uname -m)
 
@@ -27,14 +34,15 @@ endif
 # for boost 1.37, add -mt to the boost libraries
 LIBS += \
  -Wl,-B$(LMODE) \
-   -l boost_system$(BOOST_LIB_SUFFIX) \
-   -l boost_filesystem$(BOOST_LIB_SUFFIX) \
-   -l boost_program_options$(BOOST_LIB_SUFFIX) \
-   -l boost_chrono$(BOOST_LIB_SUFFIX) \
-   -l boost_thread$(BOOST_LIB_SUFFIX) \
-   -l db_cxx$(BDB_LIB_SUFFIX) \
-   -l ssl \
-   -l crypto
+   -lboost_system$(BOOST_LIB_SUFFIX) \
+   -lboost_filesystem$(BOOST_LIB_SUFFIX) \
+   -lboost_program_options$(BOOST_LIB_SUFFIX) \
+   -lboost_thread$(BOOST_LIB_SUFFIX) \
+   -lboost_chrono$(BOOST_LIB_SUFFIX) \
+   -ldb_cxx$(BDB_LIB_SUFFIX) \
+   -lssl \
+   -lcrypto \
+   -lrt
 
 ifndef USE_UPNP
 	override USE_UPNP = -
@@ -103,6 +111,7 @@ xCXXFLAGS=-O2 $(EXT_OPTIONS) -pthread -Wall -Wextra -Wno-ignored-qualifiers -Wfo
 xLDFLAGS=$(LDHARDENING) $(LDFLAGS)
 
 OBJS= \
+    obj/kernel.o \
     obj/version.o \
     obj/checkpoints.o \
     obj/netbase.o \
@@ -120,6 +129,7 @@ OBJS= \
     obj/rpcprotocol.o \
     obj/rpcserver.o \
     obj/rpcmisc.o \
+    obj/chatpage.o \
     obj/rpcnet.o \
     obj/rpcblockchain.o \
     obj/rpcrawtransaction.o \
@@ -148,10 +158,8 @@ endif
 
 all: litedoged
 
-#
-# LevelDB support
-#
-ifeq (${USE_LEVELDB}, 1)
+litedoged:: leveldb/libleveldb.a
+
 LIBS += $(CURDIR)/leveldb/libleveldb.a $(CURDIR)/leveldb/libmemenv.a
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
@@ -160,12 +168,17 @@ leveldb/libleveldb.a:
 		@echo "Building LevelDB ..."; cd leveldb; CC=$(CC) CXX=$(CXX) make libleveldb.a libmemenv.a; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
 endif
+
 ifneq (${USE_LEVELDB}, 1)
 OBJS += obj/txdb-bdb.o
 endif
 
 # auto-generated dependencies:
 -include obj/*.P
+-include obj-test/*.P
+
+obj/scrypt.o: scrypt.c
+	gcc -c $(xCXXFLAGS) -o $@ $^ $(xLDFLAGS) $(LIBS)
 
 obj/build.h: FORCE
 	/bin/sh ../share/genbuild.sh obj/build.h
@@ -204,9 +217,21 @@ test_litedoged: $(TESTOBJS) $(filter-out obj/init.o,$(OBJS:obj/%=obj/%))
 	$(CXX) $(xCXXFLAGS) -o $@ $(LIBPATHS) $^ -Wl,-B$(LMODE) -lboost_unit_test_framework $(xLDFLAGS) $(LIBS)	
 
 clean:
-	-rm -f litedoged
+	-rm -f litedoged test_litedoge
 	-rm -f obj/*.o
+	-rm -f obj-test/*.o
 	-rm -f obj/*.P
-	-rm -f obj/build.h
+	-rm -f obj-test/*.P
+	-rm -f src/build.h
+
 
 FORCE:
+
+# Define a target to print the variables
+print-vars:
+	@echo "UPSTREAM_PATH=$(UPSTREAM_PATH)"
+	@echo "UPSTREAM_INCLUDE_PATH=$(UPSTREAM_INCLUDE_PATH)"
+	@echo "UPSTREAM_LIB_PATH=$(UPSTREAM_LIB_PATH)"
+	@echo "OPENSSL_INCLUDE_PATH=$(OPENSSL_INCLUDE_PATH)"
+	@echo "OPENSSL_LIB_PATH=$(OPENSSL_LIB_PATH)"
+	@echo "USE_UPNP=$(USE_UPNP)"
