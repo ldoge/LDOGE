@@ -31,7 +31,6 @@
 #define WEBVIEW_H
 
 #include <QApplication>
-#include <QApp>
 #include <QtWebView>
 #include <QIcon>
 #include <QString>
