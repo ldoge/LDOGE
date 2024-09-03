@@ -36,7 +36,6 @@
 #include <QPalette>
 #include <QWidgetList>
 #include <QScreen>
-#include <qGuiApp>
 #include <QSessionManager> 
 #include <QObject>
 #include <QWindow::isTopLevel>
