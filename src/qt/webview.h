@@ -33,10 +33,8 @@
 #include <QApplication>
 #include <QIcon>
 #include <QString>
-#include <Qt::NavigationMode>
 #include <QPalette>
 #include <QWidgetList>
-#include <Qt::LayoutDirection>
 #include <QScreen>
 #include <qGuiApp>
 #include <QSessionManager> 
