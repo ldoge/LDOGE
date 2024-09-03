@@ -30,9 +30,22 @@
 #ifndef WEBVIEW_H
 #define WEBVIEW_H
 
-#include <QWebView>
-#include <QWidget>
+#include <QApplication>
+#include <QApp>
+#include <QtWebView>
 #include <QIcon>
+#include <QString>
+#include <Qt::NavigationMode>
+#include <QPalette>
+#include <QWidgetList>
+#include <Qt::LayoutDirection>
+#include <QScreen>
+#include <qGuiApp>
+#include <QSessionManager> 
+#include <QObject>
+#include <QWindow::isTopLevel>
+#include <QWindow::close>
+#include <QStyle>
 #include <QWebFrame>
 #include <QWebHistory>
 #include <QStackedWidget>
@@ -40,7 +53,6 @@
 #include <QNetworkReply>
 #include <QPushButton>
 #include <QList>
-#include <QString>
 #include <QUrl>
 
 class WebPage;
