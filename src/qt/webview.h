@@ -38,8 +38,7 @@
 #include <QScreen>
 #include <QSessionManager> 
 #include <QObject>
-#include <QWindow::isTopLevel>
-#include <QWindow::close>
+#include <QWindow>
 #include <QStyle>
 #include <QWebFrame>
 #include <QWebHistory>
