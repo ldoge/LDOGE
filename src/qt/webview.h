@@ -40,7 +40,6 @@
 #include <QObject>
 #include <QWindow>
 #include <QStyle>
-#include <QWebFrame>
 #include <QWebHistory>
 #include <QStackedWidget>
 #include <QDesktopServices>
