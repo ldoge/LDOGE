@@ -10,7 +10,6 @@
 #include <QMap>
 #include <QtGui>
 #include <QtNetwork>
-#include "Qwebview.cpp"
 #include "webview.h"
 #include "webview.cpp"
 #include "clientmodel.h"
