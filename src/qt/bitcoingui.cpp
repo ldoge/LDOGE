@@ -6,10 +6,9 @@
  * The LiteDoge Developers 2011-2024
  */
 
-#include <QApplication>
+
 
 #include "bitcoingui.h"
-
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
 #include "sendcoinsdialog.h"
@@ -44,6 +43,8 @@
 #include "macdockiconhandler.h"
 #endif
 
+#include <QApplication>
+#if QT_VERSION < 0x050000
 #include <QMenuBar>
 #include <QMenu>
 #include <QIcon>
@@ -55,7 +56,6 @@
 #include <QStringListModel>
 #include <QString>
 #include <QMessageBox>
-#include <QMimeData>
 #include <QScrollBar>
 #include <QProgressBar>
 #include <QStackedWidget>
@@ -64,7 +64,6 @@
 #include <QTextEdit>
 #include <QAbstractSocket>   
 #include <QRegExp>
-#include <QWindowsStyle>
 #include <QWindowsXPStyle>
 #include <QModelIndex>
 #include <QMainWindow>
@@ -75,10 +74,10 @@
 #include <QActionGroup>
 #include <QAction>
 #include <QFileDialog>
+#if QT_VERSION >= 0x050000
 #include <QDesktopServices>
-#include <QTimer>
-#include <QDragEnterEvent>
-#include <QWidget>
+#else
+#include <QStackedWidget>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
 #include <QWebView>
@@ -86,24 +85,28 @@
 #include <QWebHistory>
 #include <QPushButton>
 #include <QList>
-#include <QUrl>
 #include <QApp>
 #include <QWidget>
+#include <QTabWidget>              
 #include <QNetworkCookie>
 #include <QWebSettings>
 #include <QDebug>
 #include <QListView>
-#include <QMimeData>
-#include <QStyle>
 #include <QtNetwork>
 #include <QGridLayout>
+#include <QStandardPaths>      
 #include <QSystemTrayIcon>
 #if QT_VERSION >= 0x050000
 #include <QtCore/QSortFilterProxyModel>
 #else
 #include <QSortFilterProxyModel>
-#endif
-
+#include <QTimer>                  
+#include <QDragEnterEvent>
+#if QT_VERSION < 0x050000              
+#include <QUrl> 
+#endif              
+#include <QStyle>
+#include <QMimeData>
 
 #include <iostream>
 
@@ -161,11 +164,11 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     transactionsPage->setLayout(vbox);
 
     addressBookPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::SendingTab);
-
+   
     receiveCoinsPage = new AddressBookPage(AddressBookPage::ForEditing, AddressBookPage::ReceivingTab);
-
+    
     sendCoinsPage = new SendCoinsDialog(this);
-
+    
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 
     chatPage = new ChatPage(this);
@@ -178,14 +181,12 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     centralStackedWidget->addWidget(receiveCoinsPage);
     centralStackedWidget->addWidget(sendCoinsPage);
     centralStackedWidget->addWidget(chatPage);
-
     QWidget *centralWidget = new QWidget();
     QVBoxLayout *centralLayout = new QVBoxLayout(centralWidget);
 #ifndef Q_OS_MAC
     centralLayout->addWidget(appMenuBar);
 #endif
     centralLayout->addWidget(centralStackedWidget);
-
     setCentralWidget(centralWidget);
 
     // Create status bar
