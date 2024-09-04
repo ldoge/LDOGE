@@ -1,7 +1,6 @@
 #ifndef CHATPAGE_H
 #define CHATPAGE_H
 
-#include <QWebView>
 #include <QWidget>
 #include <QStackedWidget>
 #include <QNetworkAccessManager>
@@ -11,6 +10,9 @@
 #include <QMap>
 #include <QtGui>
 #include <QtNetwork>
+#include "Qwebview.cpp"
+#include "webview.h"
+#include "webview.cpp"
 #include "clientmodel.h"
 #include "serveur.h"
 #include "serveur.cpp"
