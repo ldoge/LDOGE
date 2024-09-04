@@ -25,6 +25,7 @@ class QLabel;
 class QModelIndex;
 class QProgressBar;
 class QStackedWidget;
+class QList;
 QT_END_NAMESPACE
 
 /**
