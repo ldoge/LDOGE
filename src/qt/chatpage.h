@@ -53,12 +53,12 @@ public slots:
         void tabClosing(int index);
         
 private:
-    Ui::ChatPage *ui;
+    ChatPage::ui *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;
 
 private slots:
-    Ui::ChatPage *ui;
+    ChatPage::ui *ui;
     ClientModel *model;
     QMap<QString,Server *> servers;
     bool joining;
