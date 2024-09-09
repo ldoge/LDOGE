@@ -1,5 +1,5 @@
-// Copyright (c) 2009-2022 The Bitcoin developers
-// Copyright (c) 2015-2021 The LiteDogecoin developers
+// Copyright (c) 2009-8888 The Bitcoin developers
+// Copyright (c) 2015-8888 The LiteDogecoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -108,7 +108,7 @@ public:
 CBlock* CreateNewBlock(CReserveKey& reservekey, bool fProofOfStake, int64_t* pFees)
 {
     // Create new block
-    auto_ptr<CBlock> pblock(new CBlock());
+    unique_ptr<CBlock> pblock(new CBlock());
     if (!pblock.get())
         return NULL;
     
@@ -581,25 +581,51 @@ void ThreadStakeMiner(CWallet *pwallet)
 
 void static BitcoinMiner(CWallet *pwallet)
 {
-    printf("BitcoinMiner started\n");
     SetThreadPriority(THREAD_PRIORITY_LOWEST);
+    
+    // Make this thread recognisable as the mining thread
     RenameThread("LiteDoge Miner");
+    printf("BitcoinMiner started\n");
+   
+   
 
     // Each thread has its own key and counter
     CReserveKey reservekey(pwallet);
     unsigned int nExtraNonce = 0;
 
-    try { for(;;) {
-        while (vNodes.empty())
+    while (true)
+    {
+        while (pwallet->IsLocked())
+        {
+            nLastCoinStakeSearchInterval = 0;
             MilliSleep(1000);
+        }
+        
+        while (vNodes.empty() || IsInitialBlockDownload())
+        {
+            nLastCoinStakeSearchInterval = 0;
+            fTryToSync = true;
+            MilliSleep(1000);
+        }
 
+        if (fTryToSync)
+        {
+            fTryToSync = false;
+            if (vNodes.size() < 3 || pindexBest->GetBlockTime() < GetTime() - 10 * 60)
+            {
+                MilliSleep(60000);
+                continue;
+            }
+        }
+        
         //
         // Create new block
         //
         unsigned int nTransactionsUpdatedLast = mempool.GetTransactionsUpdated();
         CBlockIndex* pindexPrev = pindexBest;
 
-       auto_ptr<CBlock> pblock(CreateNewBlock(reservekey));
+       int64_t nFees;
+       unique_ptr<CBlock> pblock(CreateNewBlock(reservekey, true, &nFees));
         if (!pblock.get())
             return;
         
@@ -641,16 +667,18 @@ void static BitcoinMiner(CWallet *pwallet)
 
                 if (hash <= hashTarget)
                 {
-                    // Found a solution
+                    // Trying to sign a block
                     pblock->nNonce = ByteReverse(nNonceFound);
-                    assert(hash == pblock->GetHash());
-
+                    {
                     SetThreadPriority(THREAD_PRIORITY_NORMAL);
                     CheckWork(pblock.get(), *pwallet, reservekey);
                     SetThreadPriority(THREAD_PRIORITY_LOWEST);
-                    break;
-                }
-            }
+                   MilliSleep(500);
+        }
+        else
+            MilliSleep(nMinerSleep);
+    }
+}
 
             // Meter hashes/sec
             static int64_t nHashCounter;
