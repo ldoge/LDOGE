@@ -102,7 +102,14 @@ OBJS= \
     obj/scrypt.o \
     obj/scrypt-x86.o \
     obj/scrypt-x86_64.o \
-    obj/chainparams.o
+    obj/chainparams.o \
+    obj/miner.o \
+    obj/rpcdump.o \
+    obj/rpcmining.o \
+    obj/rpcwallet.o \
+    obj/wallet.o \
+    obj/walletdb.o
+endif
 
 ifeq (${USE_WALLET}, 1)
     DEFS += -DENABLE_WALLET
