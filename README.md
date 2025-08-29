@@ -22,7 +22,7 @@ Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electr
 
 # LITEDOGE Development Repository
 
-# Official Website: https://litedogeofficial.org
+# Official Website: [https://ldoge.github.io/LDOGE/]
 ====================
 
 # Latest Wallets: https://github.com/ldoge/LDOGE/releases
@@ -31,7 +31,7 @@ Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electr
 # Wiki Build/Install guides: https://github.com/ldoge/LDOGE/wiki
 ====================
 
-# Development Channel: https://discord.gg/dVWy7MqE2J
+# Development Channel: [https://discord.gg/88sqh9jYt3]
 ====================
 
 Forums
@@ -40,8 +40,7 @@ Forums
 
 Block Explorers
 ====================
-# https://chainz.cryptoid.info/ldoge/
-# Same IP http://blocks.litedogeofficial.org
+# NEW BLOCK EXPLORER COMING SOON!
 
 
 Faucets
@@ -51,7 +50,7 @@ Faucets
 
 Social Media
 ====================
-# [Visit our Twitter page] https://twitter.com/litedoge2018
+# [Visit our Twitter page] [https://x.com/LiteDogeLDOGEUS/]
 
 License
 ====================
