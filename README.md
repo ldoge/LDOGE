@@ -1,5 +1,5 @@
 # LITEDOGE- LDOG | CORE Wallet Version 3.6.0.1 
-[https://s2.coinmarketcap.com/static/img/coins/64x64/853.png]
+https://s2.coinmarketcap.com/static/img/coins/64x64/853.png
 LDOGE Information
 ====================
 
@@ -22,7 +22,7 @@ Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electr
 
 # LITEDOGE Development Repository
 
-# Official Website: [https://ldoge.github.io/LDOGE/]
+# Official Website: [https://ldoge.github.io/LDOGE]
 ====================
 
 # Latest Wallets: https://github.com/ldoge/LDOGE/releases
@@ -50,7 +50,7 @@ Faucets
 
 Social Media
 ====================
-# [Visit our Twitter page] [https://x.com/LiteDogeLDOGEUS/]
+# [Visit our Twitter page] [https://x.com/LiteDogeLDOGEUS]
 
 License
 ====================
