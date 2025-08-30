@@ -1,4 +1,4 @@
-# LITEDOGE- LDOG | CORE Wallet Version 3.6.0.1 
+# LITEDOGE- LDOGE | CORE Wallet Version 3.6.0.1 
 https://s2.coinmarketcap.com/static/img/coins/64x64/853.png
 LDOGE Information
 ====================
@@ -41,6 +41,7 @@ Forums
 Block Explorers
 ====================
 # NEW BLOCK EXPLORER COMING SOON!
+Node Peer list to manually add nodes: 66.129.156.184:17014 46.105.78.216:17014 137.184.45.155:17014 95.217.77.209:17014 5.180.25.86:17014
 
 
 Faucets
