@@ -1,6 +1,7 @@
- <title>Litedoge: So Lite, So Fast! Much Fun!</title>
+Litedoge: So Lite, So Fast! Much Fun!
 # LITEDOGE- LDOGE | CORE Wallet Version 3.6.0.1 
 [https://s2.coinmarketcap.com/static/img/coins/64x64/853.png]
+src/qt/res/icons/litedogecoin-128.png
 LDOGE Information
 ====================
 
