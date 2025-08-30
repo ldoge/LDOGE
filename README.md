@@ -1,11 +1,11 @@
-Litedoge: So Lite, So Fast! Much Fun!
-# LITEDOGE- LDOGE | CORE Wallet Version 3.6.0.1 
-[https://s2.coinmarketcap.com/static/img/coins/64x64/853.png]
-src/qt/res/icons/litedogecoin-128.png
+# Litedoge: So Lite, So Fast! Much Fun!
+# CORE Wallet Version 3.6.0.1 
+https://s2.coinmarketcap.com/static/img/coins/64x64/853.png
+https://github.com/ldoge/LDOGE/blob/update-copyright-and-bug-fixes/src/qt/res/icons/litedogecoin-128.png
+
 LDOGE Information
 ====================
-
- Ticker: LDOGE          | PoW/PoS         | Algorithm:SCRYPT    |     Nodes         |     Ports
+ Ticker: LDOGE          | PoW/PoS         | Algorithm:SCRYPT |     Nodes         |     Ports
 :----------------------:|:---------------:|:----------------:|:-----------------:|:-------------:
  Genesis Block:         | 3/15/2015       | 08:15:00 PM UTC  |  108.95.86.140    |     MAINNET 
  Max POS REWARDS:       | 500.1 COINS     |                  |  122.173.26.30    |     PORT 17014
@@ -24,7 +24,7 @@ Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electr
 
 # LITEDOGE Development Repository
 
-# Official Website: [https://ldoge.github.io/LDOGE]
+# Official Website: https://ldoge.github.io/LDOGE
 ====================
 
 # Latest Wallets: https://github.com/ldoge/LDOGE/releases
@@ -33,12 +33,12 @@ Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electr
 # Wiki Build/Install guides: https://github.com/ldoge/LDOGE/wiki
 ====================
 
-# Development Channel: [https://discord.gg/88sqh9jYt3]
+# Development Channel: https://discord.gg/88sqh9jYt3
 ====================
 
 Forums
 ====================
-# [Visit our BitCoinTalk Forum] https://bitcointalk.org/index.php?topic=1308769.0
+# Visit our BitCoinTalk Forum https://bitcointalk.org/index.php?topic=1308769.0
 
 Block Explorers
 ====================
@@ -57,7 +57,7 @@ Faucets
 
 Social Media
 ====================
-# [Visit our Twitter/X page] [https://x.com/LiteDogeLDOGEUS]
+# Visit our Twitter/X page https://x.com/LiteDogeLDOGEUS
 
 License
 ====================
