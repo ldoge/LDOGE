@@ -47,9 +47,8 @@ Node Peer list to manually add nodes: 66.129.156.184:17014 46.105.78.216:17014 1
 
 Exchanges
 ====================
-[https://www.nofinex.com/market/pair/LDOGE-USDT.html]
-
-[HTTPS://btcpop.co]
+# https://www.nofinex.com/market/pair/LDOGE-USDT.html
+# HTTPS://btcpop.co
 
 Faucets
 ====================
@@ -58,7 +57,7 @@ Faucets
 
 Social Media
 ====================
-# [Visit our Twitter page] [https://x.com/LiteDogeLDOGEUS]
+# [Visit our Twitter/X page] [https://x.com/LiteDogeLDOGEUS]
 
 License
 ====================
