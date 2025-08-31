@@ -11,6 +11,18 @@ on:
       - '**/*.md'
 
 jobs:
+  build:
+    name: ${{ matrix.name }}
+
+    env:
+      MAKEJOBS: "-j3"
+      CHECK_DOC: "0"
+      CCACHE_SIZE: "100M"
+      CCACHE_TEMPDIR: /tmp/.ccache-temp
+      CCACHE_COMPRESS: "1"
+      PYTHON_DEBUG: "1"
+      WINEDEBUG: fixme-all
+      SDK_URL: https://bitcoincore.org/depends-sources/sdks
 jobs:
   macos13:
     runs-on: macos-13
