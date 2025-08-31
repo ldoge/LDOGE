@@ -1,5 +1,5 @@
-# Copyright (c) 2009- 2023 Satoshi Nakamoto
-# Copyright (c) 2009 - 2023 The Litedoge developers
+# Copyright (c) 2009 - 2027 Satoshi Nakamoto
+# Copyright (c) 2009 - 2027 The Litedoge developers
 # Distributed under the MIT/X11 software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 CC := ${CROSS_PREFIX}gcc
@@ -17,9 +17,10 @@ USE_UPNP=0
 LINK:=$(CXX)
 ARCH:=$(shell uname -m)
 
-DEFS=-DBOOST_SPIRIT_THREADSAFE -D__STDC_FORMAT_MACROS
+DEFS=-DBOOST_SPIRIT_THREADSAFE -D__STDC_FORMAT_MACROS -DUSE_IPV6
 
-DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/obj $(BOOST_INCLUDE_PATH) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH))
+DEFS += $(addprefix -I,$(CURDIR) $(CURDIR)/obj $(BOOST_INCLUDE_PATH) $(BDB_INCLUDE_PATH) $(OPENSSL_INCLUDE_PATH) $(UPSTREAM_INCLUDE_PATH))
+DEFS += -DALLOW_BURN
 LIBS = $(addprefix -L,$(BOOST_LIB_PATH) $(BDB_LIB_PATH) $(OPENSSL_LIB_PATH))
 
 LMODE = dynamic
@@ -29,6 +30,8 @@ ifdef STATIC
 	ifeq (${STATIC}, all)
 		LMODE2 = static
 	endif
+endif
+     TESTDEFS += -DBOOST_TEST_DYN_LINK
 endif
 
 # for boost 1.37, add -mt to the boost libraries
@@ -95,11 +98,9 @@ LIBS+= \
 
 DEBUGFLAGS=-g
 
-
 ifeq (${ARCH}, i686)
     EXT_OPTIONS=-msse2
 endif
-
 
 # CXXFLAGS can be specified on the make command line, so we use xCXXFLAGS that only
 # adds some defaults in front. Unfortunately, CXXFLAGS=... $(CXXFLAGS) does not work.
@@ -148,6 +149,9 @@ OBJS= \
     obj/scrypt-x86_64.o \
     obj/chainparams.o
     obj/db.o \
+    obj/clientmodel.o \
+    obj/webview.o \
+    obj/qwebview.o \
     obj/miner.o \
     obj/rpcdump.o \
     obj/rpcmining.o \
@@ -165,7 +169,7 @@ DEFS += $(addprefix -I,$(CURDIR)/leveldb/include)
 DEFS += $(addprefix -I,$(CURDIR)/leveldb/helpers)
 OBJS += obj/txdb-leveldb.o
 leveldb/libleveldb.a:
-		@echo "Building LevelDB ..."; cd leveldb; CC=$(CC) CXX=$(CXX) make libleveldb.a libmemenv.a; cd ..;
+		@echo "Building LevelDB ..."; cd leveldb; make libleveldb.a libmemenv.a; cd ..;
 obj/txdb-leveldb.o: leveldb/libleveldb.a
 endif
 
