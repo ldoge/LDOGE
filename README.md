@@ -1,3 +1,33 @@
+WELCOME TO Litedoge — READ THIS FIRST
+
+🐕 What is Litedoge?  
+Litedoge is a Solana token smart contract, 100 % bonded and even distribution. Launched on Pump.fun with unique narrative fees flowing back to help with LDOGE token and LDOGE layer 1 development, listings, and a no kill animal shelter.
+
+This isn’t just another dog coin.  
+It’s legacy meets meme culture.
+Hands on learning cryptocurrency!
+---
+
+⚡ Token Details  
+Ticker: LDOGE  
+Chain: Solana  
+CA:  
+6nq6NouBH2HiT7rRLrkagKM1UZ5GBGKqEQWx71QGpump  
+
+---
+
+📈 Decentralized Exchanges
+Dexscreener:  
+https://dexscreener.com/solana/7beuizqqf8hwn2twmm1x5jihsdx8csrqvrbx9bjzphym  
+
+Pump.fun:  
+https://pump.fun/coin/6nq6NouBH2HiT7rRLrkagKM1UZ5GBGKqEQWx71QGpump  
+
+---
+
+🌐 Community  
+Telegram: https://t.me/LDOGE
+
 # Litedoge: So Lite, So Fast! Much Fun!
 # CORE Wallet Version 3.6.0.1 
 https://s2.coinmarketcap.com/static/img/coins/64x64/853.png
