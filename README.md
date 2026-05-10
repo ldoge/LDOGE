@@ -54,7 +54,7 @@ Enable Proof of work again, Make rewards up to 18 coins per P.O.W. Block, Electr
 
 # LITEDOGE Development Repository
 
-# Official Website: https://ldoge.github.io/LDOGE
+# Official Website: https://litedoge.info
 ====================
 
 # Latest Wallets: https://github.com/ldoge/LDOGE/releases
@@ -72,8 +72,8 @@ Forums
 
 Block Explorers
 ====================
-# NEW BLOCK EXPLORER COMING SOON!
-Node Peer list to manually add nodes: 66.129.156.184:17014 46.105.78.216:17014 137.184.45.155:17014 95.217.77.209:17014 5.180.25.86:17014
+# http://blocks.litedogeofficial.org or http://explorer.litedogeofficial.org
+# Node Peer list to manually add nodes: 66.129.156.184:17014 46.105.78.216:17014 137.184.45.155:17014 95.217.77.209:17014 5.180.25.86:17014
 
 Exchanges
 ====================
